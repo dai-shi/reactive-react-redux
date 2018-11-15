@@ -28,7 +28,7 @@ the rendering process. (One-depth check only for now. No deep yet.)
 
 The first argument of `useReduxState` is an input array to
 avoid bailing out. Typically props are passed,
-and if any of them is changed, no bailing out happens.
+and if any of them are changed, no bailing out happens.
 
 Install
 -------
