@@ -4,17 +4,17 @@ react-hooks-easy-redux
 [![Build Status](https://travis-ci.com/dai-shi/react-hooks-easy-redux.svg?branch=master)](https://travis-ci.com/dai-shi/react-hooks-easy-redux)
 [![npm version](https://badge.fury.io/js/react-hooks-easy-redux.svg)](https://badge.fury.io/js/react-hooks-easy-redux)
 
-Easy Redux binding for React by Hooks API
+Easy React bindings for Redux by Hooks API
 
 Background
 ----------
 
 This is an experimental library to use React Hooks API for Redux.
-The most common Redux binding for React is `react-redux`.
+The most common React bindings for Redux is `react-redux`.
 While its `connect` is fine tuned for performance,
 writing a proper `mapStateToProps` function is sometimes
 difficult for beginners.
-We propose a new Redux binding for React,
+We propose new React bindings for Redux,
 which eliminates `mapStateToProps`.
 
 How it works

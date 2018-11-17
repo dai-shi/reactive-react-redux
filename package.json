@@ -1,6 +1,6 @@
 {
   "name": "react-hooks-easy-redux",
-  "description": "Easy Redux binding for React by Hooks API",
+  "description": "Easy React bindings for Redux by Hooks API",
   "version": "0.2.0",
   "author": "Daishi Kato",
   "repository": {
