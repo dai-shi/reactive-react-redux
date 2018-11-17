@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [0.2.0] - 2018-11-17
 ### Added
 - Use proxyequal for deep change detection
 

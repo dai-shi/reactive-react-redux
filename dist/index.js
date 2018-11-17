@@ -7,6 +7,8 @@ exports.bailOutHack = exports.useReduxState = exports.useReduxDispatch = exports
 
 var _react = require("react");
 
+var _proxyequal = require("proxyequal");
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -64,42 +66,33 @@ exports.useReduxDispatch = useReduxDispatch;
 var useReduxState = function useReduxState(inputs) {
   var state = (0, _react.useContext)(reduxStateContext);
   var prevState = (0, _react.useRef)(null);
-  var prevInputs = (0, _react.useRef)([]); // We assume state is an object.
-  // Checking only one depth for now.
-
-  var used = (0, _react.useRef)({});
+  var prevInputs = (0, _react.useRef)([]);
+  var trapped = (0, _react.useRef)(null);
   var changed = !prevState.current || !inputs || !inputs.every(function (x, i) {
     return inputs[i] === prevInputs.current[i];
-  }) || Object.keys(used.current).find(function (key) {
-    return state[key] !== prevState.current[key];
-  });
+  }) || !(0, _proxyequal.proxyEqual)(prevState.current, state, trapped.current.affected);
   if (!changed) throw new Error('bail out');
   prevState.current = state;
   prevInputs.current = inputs;
-  var handler = {
-    get: function get(target, name) {
-      used.current[name] = true;
-      return target[name];
-    }
-  };
-  return new Proxy(state, handler);
+  trapped.current = (0, _proxyequal.proxyState)(state);
+  return trapped.current.state;
 };
 
 exports.useReduxState = useReduxState;
 
 var bailOutHack = function bailOutHack(FunctionComponent) {
   return function (props) {
-    var ref = (0, _react.useRef)({});
+    var element = (0, _react.useRef)(null);
 
     try {
-      ref.current.lastElement = FunctionComponent(props);
+      element.current = FunctionComponent(props);
     } catch (e) {
       if (e.message !== 'bail out') {
         throw e;
       }
     }
 
-    return ref.current.lastElement;
+    return element.current;
   };
 };
 
