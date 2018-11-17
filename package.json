@@ -18,7 +18,8 @@
     "tslint": "tslint --project .",
     "tsc-test": "tsc --project . --noEmit",
     "examples:minimal": "DIR=01_minimal EXT=js webpack-dev-server",
-    "examples:typescript": "DIR=02_typescript webpack-dev-server"
+    "examples:typescript": "DIR=02_typescript webpack-dev-server",
+    "examples:deep": "DIR=03_deep webpack-dev-server"
   },
   "keywords": [
     "react",
@@ -30,7 +31,9 @@
     "pure"
   ],
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "proxyequal": "^2.0.1"
+  },
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.5",

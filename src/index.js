@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { proxyState, proxyEqual } from 'proxyequal';
 
 // global context
 
@@ -41,33 +42,26 @@ export const useReduxState = (inputs) => {
   const state = useContext(reduxStateContext);
   const prevState = useRef(null);
   const prevInputs = useRef([]);
-  // We assume state is an object.
-  // Checking only one depth for now.
-  const used = useRef({});
+  const trapped = useRef(null);
   const changed = !prevState.current
     || !inputs
     || !inputs.every((x, i) => inputs[i] === prevInputs.current[i])
-    || Object.keys(used.current).find(key => state[key] !== prevState.current[key]);
+    || !proxyEqual(prevState.current, state, trapped.current.affected);
   if (!changed) throw new Error('bail out');
   prevState.current = state;
   prevInputs.current = inputs;
-  const handler = {
-    get: (target, name) => {
-      used.current[name] = true;
-      return target[name];
-    },
-  };
-  return new Proxy(state, handler);
+  trapped.current = proxyState(state);
+  return trapped.current.state;
 };
 
 export const bailOutHack = FunctionComponent => (props) => {
-  const ref = useRef({});
+  const element = useRef(null);
   try {
-    ref.current.lastElement = FunctionComponent(props);
+    element.current = FunctionComponent(props);
   } catch (e) {
     if (e.message !== 'bail out') {
       throw e;
     }
   }
-  return ref.current.lastElement;
+  return element.current;
 };
