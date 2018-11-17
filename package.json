@@ -20,7 +20,8 @@
     "examples:minimal": "DIR=01_minimal EXT=js webpack-dev-server",
     "examples:typescript": "DIR=02_typescript webpack-dev-server",
     "examples:deep": "DIR=03_deep webpack-dev-server",
-    "examples:immer": "DIR=04_immer webpack-dev-server"
+    "examples:immer": "DIR=04_immer webpack-dev-server",
+    "examples:localstate": "DIR=05_localstate webpack-dev-server"
   },
   "keywords": [
     "react",
