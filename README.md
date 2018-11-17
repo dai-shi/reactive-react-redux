@@ -124,3 +124,8 @@ PORT=8080 npm run examples:minimal
 ```
 
 and open <http://localhost:8080> in your web browser.
+
+Blogs
+-----
+
+- [A deadly simple React bindings library for Redux with Hooks API](https://medium.com/@dai_shi/a-deadly-simple-react-bindings-library-for-redux-with-hooks-api-822295857282)
