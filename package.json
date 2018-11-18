@@ -94,6 +94,12 @@
           "devDependencies": true
         }
       ],
+      "import/no-unresolved": [
+        2,
+        {
+          "ignore": ["react-hooks-easy-redux"]
+        }
+      ],
       "react/prop-types": 0
     }
   },
