@@ -125,6 +125,9 @@ PORT=8080 npm run examples:minimal
 
 and open <http://localhost:8080> in your web browser.
 
+You can also try it in codesandbox.io:
+[01](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/01_minimal)
+
 Blogs
 -----
 
