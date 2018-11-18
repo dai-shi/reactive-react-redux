@@ -127,6 +127,10 @@ and open <http://localhost:8080> in your web browser.
 
 You can also try it in codesandbox.io:
 [01](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/01_minimal)
+[02](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/02_typescript)
+[03](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/03_deep)
+[04](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/04_immer)
+[05](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/05_localstate)
 
 Blogs
 -----
