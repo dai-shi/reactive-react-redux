@@ -1,3 +1,5 @@
+const path = require('path');
+
 const { DIR, EXT = 'ts' } = process.env;
 
 module.exports = {
@@ -25,6 +27,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    alias: {
+      'react-hooks-easy-redux': path.resolve(__dirname, 'src'),
+    },
   },
   devServer: {
     port: process.env.PORT || '8080',

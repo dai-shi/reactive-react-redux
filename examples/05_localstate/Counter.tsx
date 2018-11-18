@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { bailOutHack, useReduxDispatch, useReduxState } from '../../src/index';
+import { bailOutHack, useReduxDispatch, useReduxState } from 'react-hooks-easy-redux';
 
 import { Action, State } from './state';
 

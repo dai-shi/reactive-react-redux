@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createStore } from 'redux';
 
-import { ReduxProvider } from '../../src/index';
+import { ReduxProvider } from 'react-hooks-easy-redux';
 
 import { reducer } from './state';
 
