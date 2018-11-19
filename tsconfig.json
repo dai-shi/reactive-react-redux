@@ -7,7 +7,7 @@
     "noUnusedParameters": true,
     "baseUrl": ".",
     "paths": {
-      "react-hooks-easy-redux": ["./src"]
+      "react-hooks-easy-redux": ["."]
     }
   }
 }

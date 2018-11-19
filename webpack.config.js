@@ -1,4 +1,3 @@
-const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const { DIR, EXT = 'ts' } = process.env;
@@ -31,7 +30,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
-      'react-hooks-easy-redux': path.resolve(__dirname, 'src'),
+      'react-hooks-easy-redux': __dirname,
     },
   },
   devServer: {
