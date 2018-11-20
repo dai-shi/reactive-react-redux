@@ -30,6 +30,10 @@ The first argument of `useReduxState` is an input array to
 avoid bailing out. Typically props are passed,
 and if some of them are changed, no bailing out happens.
 
+Note: `bailOutHack` is a workaround until React provides
+a method for that. Possibly, it will never be provided.
+The current workaround is not stable and raises console errors.
+
 Install
 -------
 
@@ -131,6 +135,7 @@ You can also try it in codesandbox.io:
 [03](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/03_deep)
 [04](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/04_immer)
 [05](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/05_localstate)
+[06](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/06_memoization)
 
 Blogs
 -----
