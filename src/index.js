@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
   useState,
+  PureComponent,
 } from 'react';
 import { proxyState, proxyEqual } from 'proxyequal';
 
@@ -25,6 +26,34 @@ const StateProvider = ({ store, children }) => {
   return createElement(reduxStateContext.Provider, { value: state }, children);
 };
 
+// for bailOutHack
+
+class ErrorBoundary extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.lastChildren = null;
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    const { hasError } = this.state;
+    if (hasError) {
+      return createElement(
+        ErrorBoundary,
+        {},
+        this.lastChildren,
+      );
+    }
+    const { children } = this.props;
+    this.lastChildren = children;
+    return children;
+  }
+}
+
 // exports
 
 export const ReduxProvider = ({ store, children }) => createElement(
@@ -42,6 +71,7 @@ export const useReduxState = (inputs) => {
   const state = useContext(reduxStateContext);
   const prevState = useRef(null);
   const prevInputs = useRef([]);
+  const proxyMap = useRef(new WeakMap());
   const trapped = useRef(null);
   const changed = !prevState.current
     || !inputs
@@ -50,18 +80,21 @@ export const useReduxState = (inputs) => {
   if (!changed) throw new Error('bail out');
   prevState.current = state;
   prevInputs.current = inputs;
-  trapped.current = proxyState(state);
+  trapped.current = proxyState(state, null, proxyMap.current);
   return trapped.current.state;
 };
 
 export const bailOutHack = FunctionComponent => (props) => {
-  const element = useRef(null);
-  try {
-    element.current = FunctionComponent(props);
-  } catch (e) {
-    if (e.message !== 'bail out') {
-      throw e;
+  const HackComponent = () => {
+    const element = useRef(null);
+    try {
+      element.current = FunctionComponent(props);
+    } catch (e) {
+      if (e.message !== 'bail out') {
+        throw e;
+      }
     }
-  }
-  return element.current;
+    return element.current;
+  };
+  return createElement(ErrorBoundary, {}, createElement(HackComponent));
 };
