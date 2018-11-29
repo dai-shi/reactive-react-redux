@@ -3,6 +3,7 @@ react-hooks-easy-redux
 
 [![Build Status](https://travis-ci.com/dai-shi/react-hooks-easy-redux.svg?branch=master)](https://travis-ci.com/dai-shi/react-hooks-easy-redux)
 [![npm version](https://badge.fury.io/js/react-hooks-easy-redux.svg)](https://badge.fury.io/js/react-hooks-easy-redux)
+![bundle size](https://badgen.net/bundlephobia/minzip/react-hooks-easy-redux)
 
 Easy React bindings for Redux by Hooks API
 
