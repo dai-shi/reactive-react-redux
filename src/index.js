@@ -34,12 +34,12 @@ export const useReduxState = () => {
   const forceUpdate = useForceUpdate();
   const store = useContext(ReduxStoreContext);
   const state = useRef(store.getState());
-  const prev = useRef(null);
+  const prevState = useRef(null);
   const proxyMap = useRef(new WeakMap());
   const trapped = useRef(null);
-  if (state.current !== prev.current) {
+  if (state.current !== prevState.current) {
     trapped.current = proxyState(state.current, null, proxyMap.current);
-    prev.current = state.current;
+    prevState.current = state.current;
   }
   useEffect(() => {
     const callback = () => {
