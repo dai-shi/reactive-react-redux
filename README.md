@@ -137,3 +137,4 @@ Blogs
 -----
 
 - [A deadly simple React bindings library for Redux with Hooks API](https://medium.com/@dai_shi/a-deadly-simple-react-bindings-library-for-redux-with-hooks-api-822295857282)
+- [Developing React custom hooks for Redux without react-redux](https://medium.com/@dai_shi/developing-react-custom-hooks-for-redux-without-react-redux-483a90de0c71)
