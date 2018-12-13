@@ -19,5 +19,3 @@ export const ReduxProvider: ReduxProviderType;
 export const useReduxDispatch: <A extends Action>() => Dispatch<A>;
 
 export const useReduxState: <S>(inputs?: AnyInput[]) => S;
-
-export const bailOutHack: <P extends {}>(c: React.SFC<P>) => React.SFC<P>;

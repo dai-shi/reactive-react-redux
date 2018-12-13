@@ -31,10 +31,6 @@ The first argument of `useReduxState` is an input array to
 avoid bailing out. Typically props are passed,
 and if some of them are changed, no bailing out happens.
 
-Note: `bailOutHack` is a workaround until React provides
-a method for that. Possibly, it will never be provided.
-The current workaround is not stable and raises console errors.
-
 Install
 -------
 
@@ -49,7 +45,6 @@ Usage
 import React from 'react';
 import { createStore } from 'redux';
 import {
-  bailOutHack,
   ReduxProvider,
   useReduxDispatch,
   useReduxState,
@@ -71,7 +66,7 @@ const reducer = (state = initialState, action) => {
 
 const store = createStore(reducer);
 
-const Counter = bailOutHack(() => {
+const Counter = () => {
   const state = useReduxState([]);
   const dispatch = useReduxDispatch();
   return (
@@ -87,9 +82,9 @@ const Counter = bailOutHack(() => {
       </div>
     </div>
   );
-});
+};
 
-const TextBox = bailOutHack(() => {
+const TextBox = () => {
   const state = useReduxState([]);
   const dispatch = useReduxDispatch();
   return (
@@ -104,7 +99,7 @@ const TextBox = bailOutHack(() => {
       </div>
     </div>
   );
-});
+};
 
 const App = () => (
   <ReduxProvider store={store}>

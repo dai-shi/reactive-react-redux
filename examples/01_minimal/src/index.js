@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 
 import {
-  bailOutHack,
   ReduxProvider,
   useReduxDispatch,
   useReduxState,
@@ -27,7 +26,7 @@ const reducer = (state = initialState, action) => {
 
 const store = createStore(reducer);
 
-const Counter = bailOutHack(() => {
+const Counter = () => {
   const state = useReduxState([]);
   const dispatch = useReduxDispatch();
   return (
@@ -43,9 +42,9 @@ const Counter = bailOutHack(() => {
       </div>
     </div>
   );
-});
+};
 
-const TextBox = bailOutHack(() => {
+const TextBox = () => {
   const state = useReduxState([]);
   const dispatch = useReduxDispatch();
   return (
@@ -60,7 +59,7 @@ const TextBox = bailOutHack(() => {
       </div>
     </div>
   );
-});
+};
 
 const App = () => (
   <ReduxProvider store={store}>

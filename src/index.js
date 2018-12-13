@@ -3,98 +3,55 @@ import {
   createElement,
   useContext,
   useEffect,
+  useReducer,
   useRef,
-  useState,
-  PureComponent,
 } from 'react';
 import { proxyState, proxyEqual } from 'proxyequal';
 
 // global context
 
-const reduxDispatchContext = createContext();
-const reduxStateContext = createContext();
+const reduxStoreContext = createContext();
 
-// state provider component
+// helper hooks
 
-const StateProvider = ({ store, children }) => {
-  const [state, setState] = useState(store.getState());
-  useEffect(() => {
-    const callback = () => { setState(store.getState()); };
-    const unsubscribe = store.subscribe(callback);
-    return unsubscribe;
-  }, []);
-  return createElement(reduxStateContext.Provider, { value: state }, children);
-};
-
-// for bailOutHack
-
-class ErrorBoundary extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.lastChildren = null;
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
-  render() {
-    const { hasError } = this.state;
-    if (hasError) {
-      return createElement(
-        ErrorBoundary,
-        {},
-        this.lastChildren,
-      );
-    }
-    const { children } = this.props;
-    this.lastChildren = children;
-    return children;
-  }
-}
+const forcedReducer = state => !state;
+const useForceUpdate = () => useReducer(forcedReducer, false)[1];
 
 // exports
 
 export const ReduxProvider = ({ store, children }) => createElement(
-  reduxDispatchContext.Provider,
-  { value: store.dispatch },
-  createElement(StateProvider, { store }, children),
+  reduxStoreContext.Provider,
+  { value: store },
+  children,
 );
 
 export const useReduxDispatch = () => {
-  const dispatch = useContext(reduxDispatchContext);
-  return dispatch;
+  const store = useContext(reduxStoreContext);
+  return store.dispatch;
 };
 
-export const useReduxState = (inputs) => {
-  const state = useContext(reduxStateContext);
-  const prevState = useRef(null);
-  const prevInputs = useRef([]);
+export const useReduxState = () => {
+  const forceUpdate = useForceUpdate();
+  const store = useContext(reduxStoreContext);
+  const state = useRef(store.getState());
+  const prev = useRef(null);
   const proxyMap = useRef(new WeakMap());
   const trapped = useRef(null);
-  const changed = !prevState.current
-    || !inputs
-    || !inputs.every((x, i) => inputs[i] === prevInputs.current[i])
-    || !proxyEqual(prevState.current, state, trapped.current.affected);
-  if (!changed) throw new Error('bail out');
-  prevState.current = state;
-  prevInputs.current = inputs;
-  trapped.current = proxyState(state, null, proxyMap.current);
-  return trapped.current.state;
-};
-
-export const bailOutHack = FunctionComponent => (props) => {
-  const HackComponent = () => {
-    const element = useRef(null);
-    try {
-      element.current = FunctionComponent(props);
-    } catch (e) {
-      if (e.message !== 'bail out') {
-        throw e;
+  if (state.current !== prev.current) {
+    trapped.current = proxyState(state.current, null, proxyMap.current);
+    prev.current = state.current;
+  }
+  useEffect(() => {
+    const callback = () => {
+      const nextState = store.getState();
+      const changed = !proxyEqual(state.current, nextState, trapped.current.affected);
+      if (changed) {
+        state.current = nextState;
+        forceUpdate();
       }
-    }
-    return element.current;
-  };
-  return createElement(ErrorBoundary, {}, createElement(HackComponent));
+    };
+    const unsubscribe = store.subscribe(callback);
+    return unsubscribe;
+  }, []);
+  return trapped.current.state;
 };

@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Gave up bailOutHack and use subscriptions
 
 ## [0.3.0] - 2018-11-20
 ### Changed

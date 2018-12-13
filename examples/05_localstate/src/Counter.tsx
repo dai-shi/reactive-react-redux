@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import { bailOutHack, useReduxDispatch, useReduxState } from 'react-hooks-easy-redux';
+import { useReduxDispatch, useReduxState } from 'react-hooks-easy-redux';
 
 import { Action, State } from './state';
 
 const { useState } = React;
 
-const Counter = bailOutHack(() => {
+const Counter = () => {
   const [counter, setCounter] = useState(0);
   const state = useReduxState<State>([counter]);
   const dispatch = useReduxDispatch<Action>();
@@ -30,6 +30,6 @@ const Counter = bailOutHack(() => {
       </div>
     </div>
   );
-});
+};
 
 export default Counter;

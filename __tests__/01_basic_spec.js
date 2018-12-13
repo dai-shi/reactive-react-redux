@@ -7,7 +7,6 @@ import toJson from 'enzyme-to-json';
 import Adapter from 'enzyme-adapter-react-16';
 
 import {
-  bailOutHack,
   ReduxProvider,
   useReduxState,
   useReduxDispatch,
@@ -32,7 +31,7 @@ describe('basic spec', () => {
       return state;
     };
     const store = createStore(reducer);
-    const Counter = bailOutHack(() => {
+    const Counter = () => {
       const value = useReduxState([]);
       const dispatch = useReduxDispatch();
       return (
@@ -41,7 +40,7 @@ describe('basic spec', () => {
           <button type="button" onClick={() => dispatch({ type: 'increment' })}>+1</button>
         </div>
       );
-    });
+    };
     const App = () => (
       <ReduxProvider store={store}>
         <div>

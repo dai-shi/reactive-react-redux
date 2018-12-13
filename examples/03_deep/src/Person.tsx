@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { bailOutHack, useReduxDispatch, useReduxState } from 'react-hooks-easy-redux';
+import { useReduxDispatch, useReduxState } from 'react-hooks-easy-redux';
 
 import { Action, State } from './state';
 
@@ -10,7 +10,7 @@ const TextBox: React.SFC<{ text: string }> = ({ text }) => {
   return <span>{text}</span>;
 };
 
-const PersonFirstName = bailOutHack(() => {
+const PersonFirstName = () => {
   const state = useReduxState<State>([]);
   const dispatch = useReduxDispatch<Action>();
   return (
@@ -26,9 +26,9 @@ const PersonFirstName = bailOutHack(() => {
       />
     </div>
   );
-});
+};
 
-const PersonLastName = bailOutHack(() => {
+const PersonLastName = () => {
   const state = useReduxState<State>([]);
   const dispatch = useReduxDispatch<Action>();
   return (
@@ -44,9 +44,9 @@ const PersonLastName = bailOutHack(() => {
       />
     </div>
   );
-});
+};
 
-const PersonAge = bailOutHack(() => {
+const PersonAge = () => {
   const state = useReduxState<State>([]);
   const dispatch = useReduxDispatch<Action>();
   return (
@@ -61,7 +61,7 @@ const PersonAge = bailOutHack(() => {
       />
     </div>
   );
-});
+};
 
 const Person = () => (
   <>
