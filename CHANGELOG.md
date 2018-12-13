@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [0.5.0] - 2018-12-13
 ### Changed
 - Fix types and examples for the previous change
 
