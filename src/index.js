@@ -10,7 +10,7 @@ import { proxyState, proxyEqual } from 'proxyequal';
 
 // global context
 
-const reduxStoreContext = createContext();
+const ReduxStoreContext = createContext();
 
 // helper hooks
 
@@ -20,19 +20,19 @@ const useForceUpdate = () => useReducer(forcedReducer, false)[1];
 // exports
 
 export const ReduxProvider = ({ store, children }) => createElement(
-  reduxStoreContext.Provider,
+  ReduxStoreContext.Provider,
   { value: store },
   children,
 );
 
 export const useReduxDispatch = () => {
-  const store = useContext(reduxStoreContext);
+  const store = useContext(ReduxStoreContext);
   return store.dispatch;
 };
 
 export const useReduxState = () => {
   const forceUpdate = useForceUpdate();
-  const store = useContext(reduxStoreContext);
+  const store = useContext(ReduxStoreContext);
   const state = useRef(store.getState());
   const prev = useRef(null);
   const proxyMap = useRef(new WeakMap());

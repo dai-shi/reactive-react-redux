@@ -5,7 +5,7 @@ import { useReduxDispatch, useReduxState } from 'react-hooks-easy-redux';
 import { Action, State } from './state';
 
 const Counter: React.FC<{ firstName: string }> = ({ firstName }) => {
-  const state = useReduxState<State>([firstName]);
+  const state = useReduxState<State>();
   const dispatch = useReduxDispatch<Action>();
   return (
     <div>
@@ -24,7 +24,7 @@ const Counter: React.FC<{ firstName: string }> = ({ firstName }) => {
 };
 
 const Person = () => {
-  const state = useReduxState<State>([]);
+  const state = useReduxState<State>();
   const dispatch = useReduxDispatch<Action>();
   return (
     <div>

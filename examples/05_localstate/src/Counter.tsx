@@ -8,7 +8,7 @@ const { useState } = React;
 
 const Counter = () => {
   const [counter, setCounter] = useState(0);
-  const state = useReduxState<State>([counter]);
+  const state = useReduxState<State>();
   const dispatch = useReduxDispatch<Action>();
   return (
     <div>

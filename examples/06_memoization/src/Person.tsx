@@ -13,7 +13,7 @@ const TextBox: React.SFC<{ text: string }> = ({ text }) => {
 };
 
 const Person = () => {
-  const state = useReduxState<State>([]);
+  const state = useReduxState<State>();
   const dispatch = useReduxDispatch<Action>();
   const { age, firstName, lastName } = useMemo(
     () => ({

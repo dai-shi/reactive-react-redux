@@ -3,8 +3,6 @@ import { Action, AnyAction, Dispatch, Store } from 'redux';
 
 // tslint:disable-next-line:no-any
 export type AnyState = any;
-// tslint:disable-next-line:no-any
-export type AnyInput = any;
 
 export type ReduxProviderProps<S, A extends Action> = {
   store: Store<S, A>,
@@ -18,4 +16,4 @@ export const ReduxProvider: ReduxProviderType;
 
 export const useReduxDispatch: <A extends Action>() => Dispatch<A>;
 
-export const useReduxState: <S>(inputs?: AnyInput[]) => S;
+export const useReduxState: <S>() => S;

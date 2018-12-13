@@ -67,7 +67,7 @@ const reducer = (state = initialState, action) => {
 const store = createStore(reducer);
 
 const Counter = () => {
-  const state = useReduxState([]);
+  const state = useReduxState();
   const dispatch = useReduxDispatch();
   return (
     <div>
@@ -85,7 +85,7 @@ const Counter = () => {
 };
 
 const TextBox = () => {
-  const state = useReduxState([]);
+  const state = useReduxState();
   const dispatch = useReduxDispatch();
   return (
     <div>

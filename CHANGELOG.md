@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Fix types and examples for the previous change
 
 ## [0.4.0] - 2018-12-13
 ### Changed

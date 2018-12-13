@@ -11,7 +11,7 @@ const TextBox: React.SFC<{ text: string }> = ({ text }) => {
 };
 
 const PersonFirstName = () => {
-  const state = useReduxState<State>([]);
+  const state = useReduxState<State>();
   const dispatch = useReduxDispatch<Action>();
   return (
     <div>
@@ -29,7 +29,7 @@ const PersonFirstName = () => {
 };
 
 const PersonLastName = () => {
-  const state = useReduxState<State>([]);
+  const state = useReduxState<State>();
   const dispatch = useReduxDispatch<Action>();
   return (
     <div>
@@ -47,7 +47,7 @@ const PersonLastName = () => {
 };
 
 const PersonAge = () => {
-  const state = useReduxState<State>([]);
+  const state = useReduxState<State>();
   const dispatch = useReduxDispatch<Action>();
   return (
     <div>

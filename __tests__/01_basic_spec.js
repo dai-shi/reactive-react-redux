@@ -32,7 +32,7 @@ describe('basic spec', () => {
     };
     const store = createStore(reducer);
     const Counter = () => {
-      const value = useReduxState([]);
+      const value = useReduxState();
       const dispatch = useReduxDispatch();
       return (
         <div>
