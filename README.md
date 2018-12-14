@@ -24,12 +24,8 @@ How it works
 A hook `useReduxState` returns the entire Redux state object,
 but it keeps track of which properties of the object are used
 in rendering. When the state is updated, this hook checks
-whether used properties are changed. If not, it "bails out"
-the rendering process.
-
-The first argument of `useReduxState` is an input array to
-avoid bailing out. Typically props are passed,
-and if some of them are changed, no bailing out happens.
+whether used properties are changed.
+Only if it detects changes in the state, it re-renders.
 
 Install
 -------
