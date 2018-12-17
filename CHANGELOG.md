@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Support changing store
 
 ## [0.5.0] - 2018-12-13
 ### Changed

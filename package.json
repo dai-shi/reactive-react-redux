@@ -26,7 +26,8 @@
     "examples:deep": "DIR=03_deep webpack-dev-server",
     "examples:immer": "DIR=04_immer webpack-dev-server",
     "examples:localstate": "DIR=05_localstate webpack-dev-server",
-    "examples:memoization": "DIR=06_memoization webpack-dev-server"
+    "examples:memoization": "DIR=06_memoization webpack-dev-server",
+    "examples:multistore": "DIR=07_multistore webpack-dev-server"
   },
   "keywords": [
     "react",

@@ -42,6 +42,13 @@ export const useReduxState = () => {
     prevState.current = state.current;
   }
   useEffect(() => {
+    if (state.current !== store.getState()) {
+      // store changed, re-initializing
+      state.current = store.getState();
+      prevState.current = null;
+      proxyMap.current = new WeakMap();
+      forceUpdate();
+    }
     const callback = () => {
       const nextState = store.getState();
       const changed = !proxyEqual(state.current, nextState, trapped.current.affected);
@@ -52,6 +59,6 @@ export const useReduxState = () => {
     };
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
-  }, []);
+  }, [store]);
   return trapped.current.state;
 };

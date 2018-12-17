@@ -128,6 +128,7 @@ You can also try them in codesandbox.io:
 [04](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/04_immer)
 [05](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/05_localstate)
 [06](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/06_memoization)
+[07](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/07_multistore)
 
 Blogs
 -----
