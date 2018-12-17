@@ -5,7 +5,7 @@ react-hooks-easy-redux
 [![npm version](https://badge.fury.io/js/react-hooks-easy-redux.svg)](https://badge.fury.io/js/react-hooks-easy-redux)
 [![bundle size](https://badgen.net/bundlephobia/minzip/react-hooks-easy-redux)](https://bundlephobia.com/result?p=react-hooks-easy-redux)
 
-Easy React bindings for Redux by Hooks API
+Easy React bindings for Redux with Hooks API
 
 Background
 ----------
