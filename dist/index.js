@@ -10,7 +10,7 @@ var _react = require("react");
 var _proxyequal = require("proxyequal");
 
 // global context
-var reduxStoreContext = (0, _react.createContext)(); // helper hooks
+var ReduxStoreContext = (0, _react.createContext)(); // helper hooks
 
 var forcedReducer = function forcedReducer(state) {
   return !state;
@@ -24,7 +24,7 @@ var useForceUpdate = function useForceUpdate() {
 var ReduxProvider = function ReduxProvider(_ref) {
   var store = _ref.store,
       children = _ref.children;
-  return (0, _react.createElement)(reduxStoreContext.Provider, {
+  return (0, _react.createElement)(ReduxStoreContext.Provider, {
     value: store
   }, children);
 };
@@ -32,7 +32,7 @@ var ReduxProvider = function ReduxProvider(_ref) {
 exports.ReduxProvider = ReduxProvider;
 
 var useReduxDispatch = function useReduxDispatch() {
-  var store = (0, _react.useContext)(reduxStoreContext);
+  var store = (0, _react.useContext)(ReduxStoreContext);
   return store.dispatch;
 };
 
@@ -40,18 +40,26 @@ exports.useReduxDispatch = useReduxDispatch;
 
 var useReduxState = function useReduxState() {
   var forceUpdate = useForceUpdate();
-  var store = (0, _react.useContext)(reduxStoreContext);
+  var store = (0, _react.useContext)(ReduxStoreContext);
   var state = (0, _react.useRef)(store.getState());
-  var prev = (0, _react.useRef)(null);
+  var prevState = (0, _react.useRef)(null);
   var proxyMap = (0, _react.useRef)(new WeakMap());
   var trapped = (0, _react.useRef)(null);
 
-  if (state.current !== prev.current) {
+  if (state.current !== prevState.current) {
     trapped.current = (0, _proxyequal.proxyState)(state.current, null, proxyMap.current);
-    prev.current = state.current;
+    prevState.current = state.current;
   }
 
   (0, _react.useEffect)(function () {
+    if (state.current !== store.getState()) {
+      // store changed, re-initializing
+      state.current = store.getState();
+      prevState.current = null;
+      proxyMap.current = new WeakMap();
+      forceUpdate();
+    }
+
     var callback = function callback() {
       var nextState = store.getState();
       var changed = !(0, _proxyequal.proxyEqual)(state.current, nextState, trapped.current.affected);
@@ -64,7 +72,7 @@ var useReduxState = function useReduxState() {
 
     var unsubscribe = store.subscribe(callback);
     return unsubscribe;
-  }, []);
+  }, [store]);
   return trapped.current.state;
 };
 
