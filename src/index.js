@@ -41,27 +41,22 @@ export const useReduxDispatch = () => {
 export const useReduxState = () => {
   const forceUpdate = useForceUpdate();
   const store = useContext(ReduxStoreContext);
-  const state = useRef(store.getState());
-  const prevState = useRef(null);
-  const proxyMap = useRef(new WeakMap());
-  const trapped = useRef(null);
-  if (state.current !== prevState.current) {
-    trapped.current = proxyState(state.current, null, proxyMap.current);
-    prevState.current = state.current;
+  const state = useRef();
+  state.current = store.getState();
+  const proxyMap = useRef();
+  const stateUpdated = useRef(false);
+  if (stateUpdated.current) {
+    stateUpdated.current = false;
+  } else {
+    proxyMap.current = new WeakMap();
   }
+  const trapped = useRef();
+  trapped.current = proxyState(state.current, null, proxyMap.current);
   useEffect(() => {
-    if (state.current !== store.getState()) {
-      // store changed, re-initializing
-      state.current = store.getState();
-      prevState.current = null;
-      proxyMap.current = new WeakMap();
-      forceUpdate();
-    }
     const callback = () => {
-      const nextState = store.getState();
-      const changed = !proxyEqual(state.current, nextState, trapped.current.affected);
+      const changed = !proxyEqual(state.current, store.getState(), trapped.current.affected);
       if (changed) {
-        state.current = nextState;
+        stateUpdated.current = true;
         forceUpdate();
       }
     };

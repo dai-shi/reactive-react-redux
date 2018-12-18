@@ -3,6 +3,8 @@
 ## [Unreleased]
 ### Add
 - Better warning message for no ReduxProvider
+### Changed
+- Refactor to support dynamic updating
 
 ## [0.6.0] - 2018-12-17
 ### Changed
