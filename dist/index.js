@@ -10,7 +10,17 @@ var _react = require("react");
 var _proxyequal = require("proxyequal");
 
 // global context
-var ReduxStoreContext = (0, _react.createContext)(); // helper hooks
+var warningObject = {
+  get dispatch() {
+    throw new Error('Please use <ReduxProvider store={store}>');
+  },
+
+  get getState() {
+    throw new Error('Please use <ReduxProvider store={store}>');
+  }
+
+};
+var ReduxStoreContext = (0, _react.createContext)(warningObject); // helper hooks
 
 var forcedReducer = function forcedReducer(state) {
   return !state;
@@ -41,31 +51,25 @@ exports.useReduxDispatch = useReduxDispatch;
 var useReduxState = function useReduxState() {
   var forceUpdate = useForceUpdate();
   var store = (0, _react.useContext)(ReduxStoreContext);
-  var state = (0, _react.useRef)(store.getState());
-  var prevState = (0, _react.useRef)(null);
-  var proxyMap = (0, _react.useRef)(new WeakMap());
-  var trapped = (0, _react.useRef)(null);
+  var state = (0, _react.useRef)();
+  state.current = store.getState();
+  var proxyMap = (0, _react.useRef)();
+  var refreshProxyMap = (0, _react.useRef)(true);
 
-  if (state.current !== prevState.current) {
-    trapped.current = (0, _proxyequal.proxyState)(state.current, null, proxyMap.current);
-    prevState.current = state.current;
+  if (refreshProxyMap.current) {
+    proxyMap.current = new WeakMap();
+  } else {
+    refreshProxyMap.current = true;
   }
 
+  var trapped = (0, _react.useRef)();
+  trapped.current = (0, _proxyequal.proxyState)(state.current, null, proxyMap.current);
   (0, _react.useEffect)(function () {
-    if (state.current !== store.getState()) {
-      // store changed, re-initializing
-      state.current = store.getState();
-      prevState.current = null;
-      proxyMap.current = new WeakMap();
-      forceUpdate();
-    }
-
     var callback = function callback() {
-      var nextState = store.getState();
-      var changed = !(0, _proxyequal.proxyEqual)(state.current, nextState, trapped.current.affected);
+      var changed = !(0, _proxyequal.proxyEqual)(state.current, store.getState(), trapped.current.affected);
 
       if (changed) {
-        state.current = nextState;
+        refreshProxyMap.current = false;
         forceUpdate();
       }
     };
