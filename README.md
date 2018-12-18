@@ -129,6 +129,7 @@ You can also try them in codesandbox.io:
 [05](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/05_localstate)
 [06](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/06_memoization)
 [07](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/07_multistore)
+[08](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/08_dynamic)
 
 Blogs
 -----
