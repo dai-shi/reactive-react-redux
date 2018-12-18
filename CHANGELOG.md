@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Add
+- Better warning message for no ReduxProvider
 
 ## [0.6.0] - 2018-12-17
 ### Changed

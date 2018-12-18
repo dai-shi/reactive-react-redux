@@ -10,7 +10,15 @@ import { proxyState, proxyEqual } from 'proxyequal';
 
 // global context
 
-const ReduxStoreContext = createContext();
+const warningObject = {
+  get dispatch() {
+    throw new Error('Please use <ReduxProvider store={store}>');
+  },
+  get getState() {
+    throw new Error('Please use <ReduxProvider store={store}>');
+  },
+};
+const ReduxStoreContext = createContext(warningObject);
 
 // helper hooks
 
