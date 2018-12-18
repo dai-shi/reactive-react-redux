@@ -44,11 +44,11 @@ export const useReduxState = () => {
   const state = useRef();
   state.current = store.getState();
   const proxyMap = useRef();
-  const stateUpdated = useRef(false);
-  if (stateUpdated.current) {
-    stateUpdated.current = false;
-  } else {
+  const refreshProxyMap = useRef(true);
+  if (refreshProxyMap.current) {
     proxyMap.current = new WeakMap();
+  } else {
+    refreshProxyMap.current = true;
   }
   const trapped = useRef();
   trapped.current = proxyState(state.current, null, proxyMap.current);
@@ -56,7 +56,7 @@ export const useReduxState = () => {
     const callback = () => {
       const changed = !proxyEqual(state.current, store.getState(), trapped.current.affected);
       if (changed) {
-        stateUpdated.current = true;
+        refreshProxyMap.current = false;
         forceUpdate();
       }
     };
