@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.8.0] - 2018-12-24
+### Changed
+- No spread guards in proxyequal for better compatibility
+
 ## [0.7.0] - 2018-12-19
 ### Add
 - Better warning message for no ReduxProvider
