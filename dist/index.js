@@ -9,7 +9,9 @@ var _react = require("react");
 
 var _proxyequal = require("proxyequal");
 
-// global context
+// https://github.com/dai-shi/react-hooks-easy-redux/issues/1#issuecomment-449665675
+(0, _proxyequal.spreadGuardsEnabled)(false); // global context
+
 var warningObject = {
   get dispatch() {
     throw new Error('Please use <ReduxProvider store={store}>');
