@@ -3,6 +3,7 @@ import {
   createElement,
   useContext,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
 } from 'react';
@@ -67,4 +68,30 @@ export const useReduxState = () => {
     return unsubscribe;
   }, [store]);
   return trapped.current.state;
+};
+
+export const useReduxStateSimple = () => {
+  const forceUpdate = useForceUpdate();
+  const store = useContext(ReduxStoreContext);
+  const state = useRef();
+  state.current = store.getState();
+  const used = useMemo(() => ({}), [store]);
+  const handler = useMemo(() => ({
+    get: (target, name) => {
+      used[name] = true;
+      return target[name];
+    },
+  }), [store]);
+  useEffect(() => {
+    const callback = () => {
+      const nextState = store.getState();
+      const changed = Object.keys(used).find(key => state.current[key] !== nextState[key]);
+      if (changed) {
+        forceUpdate();
+      }
+    };
+    const unsubscribe = store.subscribe(callback);
+    return unsubscribe;
+  }, [store]);
+  return new Proxy(state.current, handler);
 };

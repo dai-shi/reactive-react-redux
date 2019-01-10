@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.useReduxState = exports.useReduxDispatch = exports.ReduxProvider = void 0;
+exports.useReduxStateSimple = exports.useReduxState = exports.useReduxDispatch = exports.ReduxProvider = void 0;
 
 var _react = require("react");
 
@@ -83,3 +83,39 @@ var useReduxState = function useReduxState() {
 };
 
 exports.useReduxState = useReduxState;
+
+var useReduxStateSimple = function useReduxStateSimple() {
+  var forceUpdate = useForceUpdate();
+  var store = (0, _react.useContext)(ReduxStoreContext);
+  var state = (0, _react.useRef)();
+  state.current = store.getState();
+  var used = (0, _react.useMemo)(function () {
+    return {};
+  }, [store]);
+  var handler = (0, _react.useMemo)(function () {
+    return {
+      get: function get(target, name) {
+        used[name] = true;
+        return target[name];
+      }
+    };
+  }, [store]);
+  (0, _react.useEffect)(function () {
+    var callback = function callback() {
+      var nextState = store.getState();
+      var changed = Object.keys(used).find(function (key) {
+        return state.current[key] !== nextState[key];
+      });
+
+      if (changed) {
+        forceUpdate();
+      }
+    };
+
+    var unsubscribe = store.subscribe(callback);
+    return unsubscribe;
+  }, [store]);
+  return new Proxy(state.current, handler);
+};
+
+exports.useReduxStateSimple = useReduxStateSimple;

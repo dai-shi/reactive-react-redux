@@ -2,12 +2,16 @@
 
 ## [Unreleased]
 
+## [0.9.0] - 2019-01-10
+### Added
+- useReduxStateSimple for shallow object comparison
+
 ## [0.8.0] - 2018-12-24
 ### Changed
 - No spread guards in proxyequal for better compatibility
 
 ## [0.7.0] - 2018-12-19
-### Add
+### Added
 - Better warning message for no ReduxProvider
 ### Changed
 - Refactor to support dynamic updating

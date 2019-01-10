@@ -14,3 +14,5 @@ export const ReduxProvider: ReduxProviderType;
 export const useReduxDispatch: <A extends Action>() => Dispatch<A>;
 
 export const useReduxState: <S>() => S;
+
+export const useReduxStateSimple: <S>() => S;
