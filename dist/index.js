@@ -69,6 +69,7 @@ var useReduxState = function useReduxState() {
   (0, _react.useEffect)(function () {
     var callback = function callback() {
       var changed = !(0, _proxyequal.proxyEqual)(state.current, store.getState(), trapped.current.affected);
+      (0, _proxyequal.drainDifference)();
 
       if (changed) {
         refreshProxyMap.current = false;
