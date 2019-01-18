@@ -7,7 +7,12 @@ import {
   useReducer,
   useRef,
 } from 'react';
-import { proxyState, proxyEqual, spreadGuardsEnabled } from 'proxyequal';
+import {
+  drainDifference,
+  proxyState,
+  proxyEqual,
+  spreadGuardsEnabled,
+} from 'proxyequal';
 
 // https://github.com/dai-shi/react-hooks-easy-redux/issues/1#issuecomment-449665675
 spreadGuardsEnabled(false);
@@ -59,6 +64,7 @@ export const useReduxState = () => {
   useEffect(() => {
     const callback = () => {
       const changed = !proxyEqual(state.current, store.getState(), trapped.current.affected);
+      drainDifference();
       if (changed) {
         refreshProxyMap.current = false;
         forceUpdate();
