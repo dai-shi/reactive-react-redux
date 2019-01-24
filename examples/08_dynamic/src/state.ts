@@ -11,11 +11,11 @@ export type State = typeof initialState;
 
 export type Action =
   | { type: 'dummy' } // XXX typescript somehow complaints without this
-  | { type: 'increment', index: number }
-  | { type: 'decrement', index: number }
-  | { type: 'setFirstName', firstName: string }
-  | { type: 'setLastName', lastName: string }
-  | { type: 'setAge', age: number };
+  | { type: 'increment'; index: number }
+  | { type: 'decrement'; index: number }
+  | { type: 'setFirstName'; firstName: string }
+  | { type: 'setLastName'; lastName: string }
+  | { type: 'setAge'; age: number };
 
 export const reducer = (state = initialState, action: Action) => {
   switch (action.type) {

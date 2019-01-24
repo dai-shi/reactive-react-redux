@@ -1,9 +1,14 @@
 import * as React from 'react';
-import { Action, AnyAction, Dispatch, Store } from 'redux';
+import {
+  Action,
+  AnyAction,
+  Dispatch,
+  Store,
+} from 'redux';
 
 export type ReduxProviderProps<S, A extends Action> = {
-  store: Store<S, A>,
-  children?: React.ReactNode,
+  store: Store<S, A>;
+  children?: React.ReactNode;
 };
 
 export type ReduxProviderType<S = unknown, A extends Action = AnyAction>

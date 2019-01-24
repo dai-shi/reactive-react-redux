@@ -7,7 +7,7 @@ import { Action, State } from './state';
 const { useMemo } = React;
 
 const TextBox: React.SFC<{ text: string }> = ({ text }) => {
-  // tslint:disable-next-line:no-console
+  // eslint-disable-next-line no-console
   console.log('rendering text:', text);
   return <span>{text}</span>;
 };
@@ -21,7 +21,8 @@ const Person = () => {
       firstName: state.person.name.firstName,
       lastName: state.person.name.lastName,
     }),
-    [state.person]);
+    [state.person],
+  );
   return (
     <div>
       <div>

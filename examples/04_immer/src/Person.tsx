@@ -5,7 +5,7 @@ import { useReduxDispatch, useReduxState } from 'react-hooks-easy-redux';
 import { Action, State } from './state';
 
 const TextBox: React.SFC<{ text: string }> = ({ text }) => {
-  // tslint:disable-next-line:no-console
+  // eslint-disable-next-line no-console
   console.log('rendering text:', text);
   return <span>{text}</span>;
 };

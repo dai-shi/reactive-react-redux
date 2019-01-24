@@ -17,8 +17,8 @@ const App = () => {
   const [store, setStore] = useState(store1);
   return (
     <div>
-      <button onClick={() => setStore(store1)}>store1</button>
-      <button onClick={() => setStore(store2)}>store2</button>
+      <button type="button" onClick={() => setStore(store1)}>store1</button>
+      <button type="button" onClick={() => setStore(store2)}>store2</button>
       <ReduxProvider store={store}>
         <h1>Counter</h1>
         <Counter />
