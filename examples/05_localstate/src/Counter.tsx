@@ -13,18 +13,12 @@ const Counter = () => {
   return (
     <div>
       <div>
-        <span>
-          Local counter:
-          {counter}
-        </span>
+        <span>Local counter:{counter}</span>
         <button type="button" onClick={() => setCounter(v => v + 1)}>+1</button>
         <button type="button" onClick={() => setCounter(v => v - 1)}>-1</button>
       </div>
       <div>
-        <span>
-          Global counter:
-          {state.counter}
-        </span>
+        <span>Global counter:{state.counter}</span>
         <button type="button" onClick={() => dispatch({ type: 'increment' })}>+1</button>
         <button type="button" onClick={() => dispatch({ type: 'decrement' })}>-1</button>
       </div>

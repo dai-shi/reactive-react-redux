@@ -14,10 +14,7 @@ const Counter = () => {
     <div>
       {Math.random()}
       <div>
-        <span>
-          Count:
-          {state.counter[index]}
-        </span>
+        <span>Count:{state.counter[index]}</span>
         <button type="button" onClick={() => dispatch({ index, type: 'increment' })}>+1</button>
         <button type="button" onClick={() => dispatch({ index, type: 'decrement' })}>-1</button>
         <input value={index} onChange={e => setIndex(Number(e.target.value) || 0)} />

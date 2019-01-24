@@ -33,10 +33,7 @@ const Counter = () => {
     <div>
       {Math.random()}
       <div>
-        <span>
-          Count:
-          {state.counter}
-        </span>
+        <span>Count:{state.counter}</span>
         <button type="button" onClick={() => dispatch({ type: 'increment' })}>+1</button>
         <button type="button" onClick={() => dispatch({ type: 'decrement' })}>-1</button>
       </div>
@@ -51,10 +48,7 @@ const TextBox = () => {
     <div>
       {Math.random()}
       <div>
-        <span>
-          Text:
-          {state.text}
-        </span>
+        <span>Text:{state.text}</span>
         <input value={state.text} onChange={event => dispatch({ type: 'setText', text: event.target.value })} />
       </div>
     </div>

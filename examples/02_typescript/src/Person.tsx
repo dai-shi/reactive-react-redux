@@ -12,10 +12,7 @@ const Counter: React.FC<{ firstName: string }> = ({ firstName }) => {
       {Math.random()}
       {firstName}
       <div>
-        <span>
-          Count:
-          {state.counter}
-        </span>
+        <span>Count:{state.counter}</span>
         <button type="button" onClick={() => dispatch({ type: 'increment' })}>+1</button>
         <button type="button" onClick={() => dispatch({ type: 'decrement' })}>-1</button>
       </div>
