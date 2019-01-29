@@ -81,23 +81,27 @@ export const useReduxStateSimple = () => {
   const store = useContext(ReduxStoreContext);
   const state = useRef();
   state.current = store.getState();
-  const used = useMemo(() => ({}), [store]);
+  const used = useRef({});
   const handler = useMemo(() => ({
     get: (target, name) => {
-      used[name] = true;
+      used.current[name] = true;
       return target[name];
     },
-  }), [store]);
+  }), []);
   useEffect(() => {
     const callback = () => {
       const nextState = store.getState();
-      const changed = Object.keys(used).find(key => state.current[key] !== nextState[key]);
+      const changed = Object.keys(used.current).find(key => state.current[key] !== nextState[key]);
       if (changed) {
         forceUpdate();
       }
     };
     const unsubscribe = store.subscribe(callback);
-    return unsubscribe;
+    const cleanup = () => {
+      unsubscribe();
+      used.current = {};
+    };
+    return cleanup;
   }, [store]);
   return new Proxy(state.current, handler);
 };
