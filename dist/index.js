@@ -90,21 +90,19 @@ var useReduxStateSimple = function useReduxStateSimple() {
   var store = (0, _react.useContext)(ReduxStoreContext);
   var state = (0, _react.useRef)();
   state.current = store.getState();
-  var used = (0, _react.useMemo)(function () {
-    return {};
-  }, [store]);
+  var used = (0, _react.useRef)({});
   var handler = (0, _react.useMemo)(function () {
     return {
       get: function get(target, name) {
-        used[name] = true;
+        used.current[name] = true;
         return target[name];
       }
     };
-  }, [store]);
+  }, []);
   (0, _react.useEffect)(function () {
     var callback = function callback() {
       var nextState = store.getState();
-      var changed = Object.keys(used).find(function (key) {
+      var changed = Object.keys(used.current).find(function (key) {
         return state.current[key] !== nextState[key];
       });
 
@@ -114,7 +112,13 @@ var useReduxStateSimple = function useReduxStateSimple() {
     };
 
     var unsubscribe = store.subscribe(callback);
-    return unsubscribe;
+
+    var cleanup = function cleanup() {
+      unsubscribe();
+      used.current = {};
+    };
+
+    return cleanup;
   }, [store]);
   return new Proxy(state.current, handler);
 };

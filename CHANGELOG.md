@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.10.0] - 2019-01-29
+### Changed
+- Do not use useMemo as a semantic guarantee
+
 ## [0.9.0] - 2019-01-10
 ### Added
 - useReduxStateSimple for shallow object comparison
