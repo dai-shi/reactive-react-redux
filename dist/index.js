@@ -75,8 +75,10 @@ var useReduxState = function useReduxState() {
         refreshProxyMap.current = false;
         forceUpdate();
       }
-    };
+    }; // run once in case the state is already changed
 
+
+    callback();
     var unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]);
@@ -109,8 +111,10 @@ var useReduxStateSimple = function useReduxStateSimple() {
       if (changed) {
         forceUpdate();
       }
-    };
+    }; // run once in case the state is already changed
 
+
+    callback();
     var unsubscribe = store.subscribe(callback);
 
     var cleanup = function cleanup() {

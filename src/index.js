@@ -70,6 +70,8 @@ export const useReduxState = () => {
         forceUpdate();
       }
     };
+    // run once in case the state is already changed
+    callback();
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]);
@@ -96,6 +98,8 @@ export const useReduxStateSimple = () => {
         forceUpdate();
       }
     };
+    // run once in case the state is already changed
+    callback();
     const unsubscribe = store.subscribe(callback);
     const cleanup = () => {
       unsubscribe();

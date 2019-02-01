@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Improve initialization for concurrent mode
 
 ## [0.10.0] - 2019-01-29
 ### Changed
