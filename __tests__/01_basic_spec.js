@@ -15,7 +15,7 @@ import {
 configure({ adapter: new Adapter() });
 
 describe('basic spec', () => {
-  it('hacks are defiend', () => {
+  it('hooks are defiend', () => {
     expect(useReduxState).toBeDefined();
     expect(useReduxDispatch).toBeDefined();
   });
@@ -36,7 +36,7 @@ describe('basic spec', () => {
       const dispatch = useReduxDispatch();
       return (
         <div>
-          <span>{value}</span>
+          <span>{value.counter1}</span>
           <button type="button" onClick={() => dispatch({ type: 'increment' })}>+1</button>
         </div>
       );
@@ -56,6 +56,7 @@ describe('basic spec', () => {
     const wrapper = mount(<App />);
     expect(toJson(wrapper)).toMatchSnapshot();
     wrapper.find('.first button').simulate('click');
+    wrapper.update();
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 });
