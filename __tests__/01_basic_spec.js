@@ -1,10 +1,12 @@
-/* eslint-env jest */
-
 import React from 'react';
 import { createStore } from 'redux';
-import { configure, mount } from 'enzyme';
-import toJson from 'enzyme-to-json';
-import Adapter from 'enzyme-adapter-react-16';
+
+import {
+  render,
+  fireEvent,
+  flushEffects,
+  cleanup,
+} from 'react-testing-library';
 
 import {
   ReduxProvider,
@@ -12,15 +14,15 @@ import {
   useReduxDispatch,
 } from '../src/index';
 
-configure({ adapter: new Adapter() });
-
 describe('basic spec', () => {
+  afterEach(cleanup);
+
   it('hooks are defiend', () => {
     expect(useReduxState).toBeDefined();
     expect(useReduxDispatch).toBeDefined();
   });
 
-  it.skip('create a component', () => {
+  it('create a component', () => {
     const initialState = {
       counter1: 0,
     };
@@ -43,20 +45,14 @@ describe('basic spec', () => {
     };
     const App = () => (
       <ReduxProvider store={store}>
-        <div>
-          <div className="first">
-            <Counter />
-          </div>
-          <div className="second">
-            <Counter />
-          </div>
-        </div>
+        <Counter />
+        <Counter />
       </ReduxProvider>
     );
-    const wrapper = mount(<App />);
-    expect(toJson(wrapper)).toMatchSnapshot();
-    wrapper.find('.first button').simulate('click');
-    wrapper.update();
-    expect(toJson(wrapper)).toMatchSnapshot();
+    const { getByText, container } = render(<App />);
+    expect(container).toMatchSnapshot();
+    fireEvent.click(getByText('+1'));
+    flushEffects();
+    expect(container).toMatchSnapshot();
   });
 });
