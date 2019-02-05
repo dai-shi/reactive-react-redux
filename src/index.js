@@ -31,8 +31,7 @@ const ReduxStoreContext = createContext(warningObject);
 
 // helper hooks
 
-const forcedReducer = state => !state;
-const useForceUpdate = () => useReducer(forcedReducer, false)[1];
+const useForceUpdate = () => useReducer(state => !state, false)[1];
 
 // exports
 
