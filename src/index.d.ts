@@ -20,4 +20,4 @@ export const useReduxDispatch: <A extends Action>() => Dispatch<A>;
 
 export const useReduxState: <S>() => S;
 
-export const useReduxStateSimple: <S>() => S;
+export const useReduxStateSimple: <S extends {}>() => S;
