@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Improve initialization for concurrent mode
+- Updated dependencies (React 16.8)
 
 ## [0.10.0] - 2019-01-29
 ### Changed

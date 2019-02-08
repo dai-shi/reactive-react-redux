@@ -11,14 +11,16 @@ import Person from './Person';
 const store = createStore(reducer);
 
 const App = () => (
-  <ReduxProvider store={store}>
-    <h1>Counter</h1>
-    <Counter />
-    <Counter />
-    <h1>Person</h1>
-    <Person />
-    <Person />
-  </ReduxProvider>
+  <React.StrictMode>
+    <ReduxProvider store={store}>
+      <h1>Counter</h1>
+      <Counter />
+      <Counter />
+      <h1>Person</h1>
+      <Person />
+      <Person />
+    </ReduxProvider>
+  </React.StrictMode>
 );
 
 export default App;

@@ -7,16 +7,18 @@ react-hooks-easy-redux
 
 Easy React bindings for Redux with Hooks API
 
-Background
-----------
+Introduction
+------------
 
-This is an experimental library to use React Hooks API for Redux.
-The most common React bindings for Redux is `react-redux`.
+This is a React bindings library for Redux with Hooks API.
+There are many such libraries, but this one is specialized for
+auto-detecting state usage with Proxy.
+
+The official React bindings for Redux is `react-redux`.
 While its `connect` is fine tuned for performance,
 writing a proper `mapStateToProps` function is sometimes
 difficult for beginners.
-We propose new React bindings for Redux,
-which eliminates `mapStateToProps`.
+This library eliminates writing `mapStateToProps` at all.
 
 How it works
 ------------
@@ -25,7 +27,7 @@ A hook `useReduxState` returns the entire Redux state object,
 but it keeps track of which properties of the object are used
 in rendering. When the state is updated, this hook checks
 whether used properties are changed.
-Only if it detects changes in the state, it re-renders.
+Only if it detects changes in the state, it re-renders components.
 
 Install
 -------

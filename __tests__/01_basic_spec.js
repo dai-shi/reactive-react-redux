@@ -1,12 +1,7 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import { createStore } from 'redux';
 
-import {
-  render,
-  fireEvent,
-  flushEffects,
-  cleanup,
-} from 'react-testing-library';
+import { render, fireEvent, cleanup } from 'react-testing-library';
 
 import {
   ReduxProvider,
@@ -44,15 +39,16 @@ describe('basic spec', () => {
       );
     };
     const App = () => (
-      <ReduxProvider store={store}>
-        <Counter />
-        <Counter />
-      </ReduxProvider>
+      <StrictMode>
+        <ReduxProvider store={store}>
+          <Counter />
+          <Counter />
+        </ReduxProvider>
+      </StrictMode>
     );
     const { getByText, container } = render(<App />);
     expect(container).toMatchSnapshot();
     fireEvent.click(getByText('+1'));
-    flushEffects();
     expect(container).toMatchSnapshot();
   });
 });

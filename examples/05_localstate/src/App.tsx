@@ -10,12 +10,14 @@ import Counter from './Counter';
 const store = createStore(reducer);
 
 const App = () => (
-  <ReduxProvider store={store}>
-    <h1>Counter</h1>
-    <Counter />
-    <h1>Counter</h1>
-    <Counter />
-  </ReduxProvider>
+  <React.StrictMode>
+    <ReduxProvider store={store}>
+      <h1>Counter</h1>
+      <Counter />
+      <h1>Counter</h1>
+      <Counter />
+    </ReduxProvider>
+  </React.StrictMode>
 );
 
 export default App;

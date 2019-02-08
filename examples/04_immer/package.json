@@ -5,9 +5,9 @@
   "dependencies": {
     "@types/react": "^16.7.6",
     "@types/react-dom": "^16.0.9",
-    "immer": "^1.7.4",
-    "react": "next",
-    "react-dom": "next",
+    "immer": "^2.0.0",
+    "react": "latest",
+    "react-dom": "latest",
     "react-hooks-easy-redux": "latest",
     "react-scripts": "^2.1.1",
     "redux": "^4.0.1",

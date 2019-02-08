@@ -1,6 +1,6 @@
 /* eslint-env browser */
 
-import React from 'react';
+import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 
@@ -56,14 +56,16 @@ const TextBox = () => {
 };
 
 const App = () => (
-  <ReduxProvider store={store}>
-    <h1>Counter</h1>
-    <Counter />
-    <Counter />
-    <h1>TextBox</h1>
-    <TextBox />
-    <TextBox />
-  </ReduxProvider>
+  <StrictMode>
+    <ReduxProvider store={store}>
+      <h1>Counter</h1>
+      <Counter />
+      <Counter />
+      <h1>TextBox</h1>
+      <TextBox />
+      <TextBox />
+    </ReduxProvider>
+  </StrictMode>
 );
 
 ReactDOM.render(<App />, document.getElementById('app'));
