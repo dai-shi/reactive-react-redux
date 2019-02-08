@@ -24,12 +24,10 @@ var warningObject = {
 };
 var ReduxStoreContext = (0, _react.createContext)(warningObject); // helper hooks
 
-var forcedReducer = function forcedReducer(state) {
-  return !state;
-};
-
 var useForceUpdate = function useForceUpdate() {
-  return (0, _react.useReducer)(forcedReducer, false)[1];
+  return (0, _react.useReducer)(function (state) {
+    return !state;
+  }, false)[1];
 }; // exports
 
 

@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [1.0.0] - 2019-02-09
 ### Changed
 - Improve initialization for concurrent mode
 - Updated dependencies (React 16.8)
