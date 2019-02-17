@@ -50,27 +50,26 @@ exports.useReduxDispatch = useReduxDispatch;
 
 var useReduxState = function useReduxState() {
   var forceUpdate = useForceUpdate();
-  var store = (0, _react.useContext)(ReduxStoreContext);
-  var state = (0, _react.useRef)();
-  state.current = store.getState();
-  var proxyMap = (0, _react.useRef)();
-  var refreshProxyMap = (0, _react.useRef)(true);
+  var store = (0, _react.useContext)(ReduxStoreContext); // state
 
-  if (refreshProxyMap.current) {
-    proxyMap.current = new WeakMap();
-  } else {
-    refreshProxyMap.current = true;
-  }
+  var state = store.getState();
+  var lastState = (0, _react.useRef)();
+  (0, _react.useEffect)(function () {
+    lastState.current = state;
+  }); // trapped
 
-  var trapped = (0, _react.useRef)();
-  trapped.current = (0, _proxyequal.proxyState)(state.current, null, proxyMap.current);
+  var lastTrapped = (0, _react.useRef)();
+  var trapped = (0, _proxyequal.proxyState)(state);
+  (0, _react.useEffect)(function () {
+    lastTrapped.current = trapped;
+  }); // subscription
+
   (0, _react.useEffect)(function () {
     var callback = function callback() {
-      var changed = !(0, _proxyequal.proxyEqual)(state.current, store.getState(), trapped.current.affected);
+      var changed = !(0, _proxyequal.proxyEqual)(lastState.current, store.getState(), lastTrapped.current.affected);
       (0, _proxyequal.drainDifference)();
 
       if (changed) {
-        refreshProxyMap.current = false;
         forceUpdate();
       }
     }; // run once in case the state is already changed
@@ -80,7 +79,7 @@ var useReduxState = function useReduxState() {
     var unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]);
-  return trapped.current.state;
+  return trapped.state;
 };
 
 exports.useReduxState = useReduxState;
@@ -88,8 +87,6 @@ exports.useReduxState = useReduxState;
 var useReduxStateSimple = function useReduxStateSimple() {
   var forceUpdate = useForceUpdate();
   var store = (0, _react.useContext)(ReduxStoreContext);
-  var state = (0, _react.useRef)();
-  state.current = store.getState();
   var used = (0, _react.useRef)({});
   var handler = (0, _react.useMemo)(function () {
     return {
@@ -99,11 +96,16 @@ var useReduxStateSimple = function useReduxStateSimple() {
       }
     };
   }, []);
+  var state = store.getState();
+  var lastState = (0, _react.useRef)();
+  (0, _react.useEffect)(function () {
+    lastState.current = state;
+  });
   (0, _react.useEffect)(function () {
     var callback = function callback() {
       var nextState = store.getState();
       var changed = Object.keys(used.current).find(function (key) {
-        return state.current[key] !== nextState[key];
+        return lastState.current[key] !== nextState[key];
       });
 
       if (changed) {
@@ -122,7 +124,7 @@ var useReduxStateSimple = function useReduxStateSimple() {
 
     return cleanup;
   }, [store]);
-  return new Proxy(state.current, handler);
+  return new Proxy(state, handler);
 };
 
 exports.useReduxStateSimple = useReduxStateSimple;
