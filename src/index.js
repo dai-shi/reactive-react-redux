@@ -49,23 +49,28 @@ export const useReduxDispatch = () => {
 export const useReduxState = () => {
   const forceUpdate = useForceUpdate();
   const store = useContext(ReduxStoreContext);
-  const state = useRef();
-  state.current = store.getState();
-  const proxyMap = useRef();
-  const refreshProxyMap = useRef(true);
-  if (refreshProxyMap.current) {
-    proxyMap.current = new WeakMap();
-  } else {
-    refreshProxyMap.current = true;
-  }
-  const trapped = useRef();
-  trapped.current = proxyState(state.current, null, proxyMap.current);
+  // state
+  const state = store.getState();
+  const lastState = useRef();
+  useEffect(() => {
+    lastState.current = state;
+  });
+  // trapped
+  const lastTrapped = useRef();
+  const trapped = proxyState(state);
+  useEffect(() => {
+    lastTrapped.current = trapped;
+  });
+  // subscription
   useEffect(() => {
     const callback = () => {
-      const changed = !proxyEqual(state.current, store.getState(), trapped.current.affected);
+      const changed = !proxyEqual(
+        lastState.current,
+        store.getState(),
+        lastTrapped.current.affected,
+      );
       drainDifference();
       if (changed) {
-        refreshProxyMap.current = false;
         forceUpdate();
       }
     };
@@ -74,14 +79,12 @@ export const useReduxState = () => {
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]);
-  return trapped.current.state;
+  return trapped.state;
 };
 
 export const useReduxStateSimple = () => {
   const forceUpdate = useForceUpdate();
   const store = useContext(ReduxStoreContext);
-  const state = useRef();
-  state.current = store.getState();
   const used = useRef({});
   const handler = useMemo(() => ({
     get: (target, name) => {
@@ -89,10 +92,17 @@ export const useReduxStateSimple = () => {
       return target[name];
     },
   }), []);
+  const state = store.getState();
+  const lastState = useRef();
+  useEffect(() => {
+    lastState.current = state;
+  });
   useEffect(() => {
     const callback = () => {
       const nextState = store.getState();
-      const changed = Object.keys(used.current).find(key => state.current[key] !== nextState[key]);
+      const changed = Object.keys(used.current).find(
+        key => lastState.current[key] !== nextState[key],
+      );
       if (changed) {
         forceUpdate();
       }
@@ -106,5 +116,5 @@ export const useReduxStateSimple = () => {
     };
     return cleanup;
   }, [store]);
-  return new Proxy(state.current, handler);
+  return new Proxy(state, handler);
 };
