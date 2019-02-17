@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [1.1.0] - 2019-02-17
 ### Changed
 - Improve useRef usage for concurrent mode
 
