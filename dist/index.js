@@ -24,10 +24,12 @@ var warningObject = {
 };
 var ReduxStoreContext = (0, _react.createContext)(warningObject); // helper hooks
 
+var forcedReducer = function forcedReducer(state) {
+  return !state;
+};
+
 var useForceUpdate = function useForceUpdate() {
-  return (0, _react.useReducer)(function (state) {
-    return !state;
-  }, false)[1];
+  return (0, _react.useReducer)(forcedReducer, false)[1];
 }; // exports
 
 
@@ -53,12 +55,12 @@ var useReduxState = function useReduxState() {
   var store = (0, _react.useContext)(ReduxStoreContext); // state
 
   var state = store.getState();
-  var lastState = (0, _react.useRef)();
+  var lastState = (0, _react.useRef)(null);
   (0, _react.useEffect)(function () {
     lastState.current = state;
   }); // trapped
 
-  var lastTrapped = (0, _react.useRef)();
+  var lastTrapped = (0, _react.useRef)(null);
   var trapped = (0, _proxyequal.proxyState)(state);
   (0, _react.useEffect)(function () {
     lastTrapped.current = trapped;
@@ -97,7 +99,7 @@ var useReduxStateSimple = function useReduxStateSimple() {
     };
   }, []);
   var state = store.getState();
-  var lastState = (0, _react.useRef)();
+  var lastState = (0, _react.useRef)(null);
   (0, _react.useEffect)(function () {
     lastState.current = state;
   });

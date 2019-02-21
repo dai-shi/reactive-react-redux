@@ -52,12 +52,12 @@ export const useReduxState = () => {
   const store = useContext(ReduxStoreContext);
   // state
   const state = store.getState();
-  const lastState = useRef();
+  const lastState = useRef(null);
   useEffect(() => {
     lastState.current = state;
   });
   // trapped
-  const lastTrapped = useRef();
+  const lastTrapped = useRef(null);
   const trapped = proxyState(state);
   useEffect(() => {
     lastTrapped.current = trapped;
@@ -94,7 +94,7 @@ export const useReduxStateSimple = () => {
     },
   }), []);
   const state = store.getState();
-  const lastState = useRef();
+  const lastState = useRef(null);
   useEffect(() => {
     lastState.current = state;
   });
