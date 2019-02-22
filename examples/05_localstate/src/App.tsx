@@ -8,7 +8,6 @@ import { reducer } from './state';
 import Counter from './Counter';
 
 const {
-  StrictMode,
   // @ts-ignore
   unstable_ConcurrentMode: ConcurrentMode,
 } = React;
@@ -16,16 +15,14 @@ const {
 const store = createStore(reducer);
 
 const App = () => (
-  <StrictMode>
-    <ConcurrentMode>
-      <ReduxProvider store={store}>
-        <h1>Counter</h1>
-        <Counter />
-        <h1>Counter</h1>
-        <Counter />
-      </ReduxProvider>
-    </ConcurrentMode>
-  </StrictMode>
+  <ConcurrentMode>
+    <ReduxProvider store={store}>
+      <h1>Counter</h1>
+      <Counter />
+      <h1>Counter</h1>
+      <Counter />
+    </ReduxProvider>
+  </ConcurrentMode>
 );
 
 export default App;

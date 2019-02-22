@@ -1,6 +1,6 @@
 /* eslint-env browser */
 
-import React, { StrictMode, unstable_ConcurrentMode as ConcurrentMode } from 'react';
+import React, { unstable_ConcurrentMode as ConcurrentMode } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 
@@ -56,18 +56,16 @@ const TextBox = () => {
 };
 
 const App = () => (
-  <StrictMode>
-    <ConcurrentMode>
-      <ReduxProvider store={store}>
-        <h1>Counter</h1>
-        <Counter />
-        <Counter />
-        <h1>TextBox</h1>
-        <TextBox />
-        <TextBox />
-      </ReduxProvider>
-    </ConcurrentMode>
-  </StrictMode>
+  <ConcurrentMode>
+    <ReduxProvider store={store}>
+      <h1>Counter</h1>
+      <Counter />
+      <Counter />
+      <h1>TextBox</h1>
+      <TextBox />
+      <TextBox />
+    </ReduxProvider>
+  </ConcurrentMode>
 );
 
 ReactDOM.render(<App />, document.getElementById('app'));
