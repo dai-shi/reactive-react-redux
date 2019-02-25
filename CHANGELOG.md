@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [1.2.0] - 2019-02-25
 ### Changed
 - Cache proxy state for more performance
 
