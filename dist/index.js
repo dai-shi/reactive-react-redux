@@ -60,11 +60,21 @@ var useReduxState = function useReduxState() {
     lastState.current = state;
   }); // trapped
 
+  var proxyMap = (0, _react.useRef)(new WeakMap());
+  var trappedMap = (0, _react.useRef)(new WeakMap());
   var lastTrapped = (0, _react.useRef)(null);
-  var trapped = (0, _proxyequal.proxyState)(state);
+  var trapped;
   (0, _react.useEffect)(function () {
     lastTrapped.current = trapped;
-  }); // subscription
+  });
+
+  if (trappedMap.current.has(state)) {
+    trapped = trappedMap.current.get(state);
+  } else {
+    trapped = (0, _proxyequal.proxyState)(state, null, proxyMap.current);
+    trappedMap.current.set(state, trapped);
+  } // subscription
+
 
   (0, _react.useEffect)(function () {
     var callback = function callback() {

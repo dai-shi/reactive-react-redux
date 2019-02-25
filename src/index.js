@@ -57,11 +57,19 @@ export const useReduxState = () => {
     lastState.current = state;
   });
   // trapped
+  const proxyMap = useRef(new WeakMap());
+  const trappedMap = useRef(new WeakMap());
   const lastTrapped = useRef(null);
-  const trapped = proxyState(state);
+  let trapped;
   useEffect(() => {
     lastTrapped.current = trapped;
   });
+  if (trappedMap.current.has(state)) {
+    trapped = trappedMap.current.get(state);
+  } else {
+    trapped = proxyState(state, null, proxyMap.current);
+    trappedMap.current.set(state, trapped);
+  }
   // subscription
   useEffect(() => {
     const callback = () => {
