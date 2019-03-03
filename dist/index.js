@@ -76,21 +76,32 @@ var useReduxState = function useReduxState() {
   } // subscription
 
 
+  var callback = (0, _react.useRef)(null);
   (0, _react.useEffect)(function () {
-    var callback = function callback() {
+    callback.current = function () {
       var changed = !(0, _proxyequal.proxyEqual)(lastState.current, store.getState(), lastTrapped.current.affected);
       (0, _proxyequal.drainDifference)();
 
       if (changed) {
         forceUpdate();
       }
-    }; // run once in case the state is already changed
+    };
 
+    var unsubscribe = store.subscribe(callback.current);
 
-    callback();
-    var unsubscribe = store.subscribe(callback);
-    return unsubscribe;
-  }, [store]);
+    var cleanup = function cleanup() {
+      unsubscribe();
+      callback.current = null;
+    };
+
+    return cleanup;
+  }, [store]); // run callback in each commit phase in case something has changed.
+
+  (0, _react.useEffect)(function () {
+    if (callback.current) {
+      callback.current();
+    }
+  });
   return trapped.state;
 };
 
@@ -113,8 +124,9 @@ var useReduxStateSimple = function useReduxStateSimple() {
   (0, _react.useEffect)(function () {
     lastState.current = state;
   });
+  var callback = (0, _react.useRef)(null);
   (0, _react.useEffect)(function () {
-    var callback = function callback() {
+    callback.current = function () {
       var nextState = store.getState();
       var changed = Object.keys(used.current).find(function (key) {
         return lastState.current[key] !== nextState[key];
@@ -123,19 +135,24 @@ var useReduxStateSimple = function useReduxStateSimple() {
       if (changed) {
         forceUpdate();
       }
-    }; // run once in case the state is already changed
+    };
 
-
-    callback();
-    var unsubscribe = store.subscribe(callback);
+    var unsubscribe = store.subscribe(callback.current);
 
     var cleanup = function cleanup() {
       unsubscribe();
+      callback.current = null;
       used.current = {};
     };
 
     return cleanup;
-  }, [store]);
+  }, [store]); // run callback in each commit phase in case something has changed.
+
+  (0, _react.useEffect)(function () {
+    if (callback.current) {
+      callback.current();
+    }
+  });
   return new Proxy(state, handler);
 };
 

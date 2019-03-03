@@ -71,8 +71,9 @@ export const useReduxState = () => {
     trappedMap.current.set(state, trapped);
   }
   // subscription
+  const callback = useRef(null);
   useEffect(() => {
-    const callback = () => {
+    callback.current = () => {
       const changed = !proxyEqual(
         lastState.current,
         store.getState(),
@@ -83,11 +84,19 @@ export const useReduxState = () => {
         forceUpdate();
       }
     };
-    // run once in case the state is already changed
-    callback();
-    const unsubscribe = store.subscribe(callback);
-    return unsubscribe;
+    const unsubscribe = store.subscribe(callback.current);
+    const cleanup = () => {
+      unsubscribe();
+      callback.current = null;
+    };
+    return cleanup;
   }, [store]);
+  // run callback in each commit phase in case something has changed.
+  useEffect(() => {
+    if (callback.current) {
+      callback.current();
+    }
+  });
   return trapped.state;
 };
 
@@ -106,8 +115,9 @@ export const useReduxStateSimple = () => {
   useEffect(() => {
     lastState.current = state;
   });
+  const callback = useRef(null);
   useEffect(() => {
-    const callback = () => {
+    callback.current = () => {
       const nextState = store.getState();
       const changed = Object.keys(used.current).find(
         key => lastState.current[key] !== nextState[key],
@@ -116,14 +126,19 @@ export const useReduxStateSimple = () => {
         forceUpdate();
       }
     };
-    // run once in case the state is already changed
-    callback();
-    const unsubscribe = store.subscribe(callback);
+    const unsubscribe = store.subscribe(callback.current);
     const cleanup = () => {
       unsubscribe();
+      callback.current = null;
       used.current = {};
     };
     return cleanup;
   }, [store]);
+  // run callback in each commit phase in case something has changed.
+  useEffect(() => {
+    if (callback.current) {
+      callback.current();
+    }
+  });
   return new Proxy(state, handler);
 };
