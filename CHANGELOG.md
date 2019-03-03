@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [1.3.0] - 2019-03-03
 ### Changed
 - Better handling stale props issue
 
