@@ -1,5 +1,4 @@
-react-hooks-easy-redux
-======================
+# react-hooks-easy-redux
 
 [![Build Status](https://travis-ci.com/dai-shi/react-hooks-easy-redux.svg?branch=master)](https://travis-ci.com/dai-shi/react-hooks-easy-redux)
 [![npm version](https://badge.fury.io/js/react-hooks-easy-redux.svg)](https://badge.fury.io/js/react-hooks-easy-redux)
@@ -7,8 +6,7 @@ react-hooks-easy-redux
 
 Easy React bindings for Redux with Hooks API
 
-Introduction
-------------
+## Introduction
 
 This is a React bindings library for Redux with Hooks API.
 There are many such libraries, but this one is specialized for
@@ -20,8 +18,7 @@ writing a proper `mapStateToProps` function is sometimes
 difficult for beginners.
 This library eliminates writing `mapStateToProps` at all.
 
-How it works
-------------
+## How it works
 
 A hook `useReduxState` returns the entire Redux state object,
 but it keeps track of which properties of the object are used
@@ -29,15 +26,13 @@ in rendering. When the state is updated, this hook checks
 whether used properties are changed.
 Only if it detects changes in the state, it re-renders components.
 
-Install
--------
+## Install
 
 ```bash
 npm install react-hooks-easy-redux
 ```
 
-Usage
------
+## Usage
 
 ```javascript
 import React from 'react';
@@ -71,10 +66,7 @@ const Counter = () => {
     <div>
       {Math.random()}
       <div>
-        <span>
-          Count:
-          {state.counter}
-        </span>
+        <span>Count:{state.counter}</span>
         <button type="button" onClick={() => dispatch({ type: 'increment' })}>+1</button>
         <button type="button" onClick={() => dispatch({ type: 'decrement' })}>-1</button>
       </div>
@@ -89,10 +81,7 @@ const TextBox = () => {
     <div>
       {Math.random()}
       <div>
-        <span>
-          Text:
-          {state.text}
-        </span>
+        <span>Text:{state.text}</span>
         <input value={state.text} onChange={event => dispatch({ type: 'setText', text: event.target.value })} />
       </div>
     </div>
@@ -111,8 +100,7 @@ const App = () => (
 );
 ```
 
-Examples
---------
+## Examples
 
 The [examples](examples) folder contains working examples.
 You can run one of them with
@@ -134,8 +122,7 @@ You can also try them in codesandbox.io:
 [08](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/08_dynamic)
 [09](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/09_thunk)
 
-Blogs
------
+## Blogs
 
 - [A deadly simple React bindings library for Redux with Hooks API](https://medium.com/@dai_shi/a-deadly-simple-react-bindings-library-for-redux-with-hooks-api-822295857282)
 - [Developing React custom hooks for Redux without react-redux](https://medium.com/@dai_shi/developing-react-custom-hooks-for-redux-without-react-redux-483a90de0c71)
