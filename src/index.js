@@ -11,7 +11,6 @@ import {
   drainDifference,
   proxyState,
   proxyEqual,
-  spreadGuardsEnabled,
 } from 'proxyequal';
 
 // global context
