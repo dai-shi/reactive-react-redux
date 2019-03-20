@@ -14,9 +14,6 @@ import {
   spreadGuardsEnabled,
 } from 'proxyequal';
 
-// https://github.com/dai-shi/react-hooks-easy-redux/issues/1#issuecomment-449665675
-spreadGuardsEnabled(false);
-
 // global context
 
 const warningObject = {
