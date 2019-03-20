@@ -86,7 +86,7 @@ export const useReduxState = () => {
       callback.current = null;
     };
     return cleanup;
-  }, [store]);
+  }, [store, forceUpdate]);
   // run callback in each commit phase in case something has changed.
   //   [CAUTION] Limitations in subscription in useEffect
   //   There is a possibility that the state from the store is inconsistent
@@ -132,7 +132,7 @@ export const useReduxStateSimple = () => {
       used.current = {};
     };
     return cleanup;
-  }, [store]);
+  }, [store, forceUpdate]);
   // run callback in each commit phase in case something has changed.
   useEffect(() => {
     if (callback.current) {
