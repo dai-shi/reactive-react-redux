@@ -88,8 +88,11 @@ export const useReduxState = () => {
     return cleanup;
   }, [store]);
   // run callback in each commit phase in case something has changed.
+  //   [CAUTION] Limitations in subscription in useEffect
+  //   There is a possibility that the state from the store is inconsistent
+  //   across components which may cause problems in edge cases.
   useEffect(() => {
-    if (callback.current) {
+    if (callback.current) { // XXX don't we need this condition?
       callback.current();
     }
   });
