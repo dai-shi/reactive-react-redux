@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 - Avoid recalculating collectValuables
+- Use unstable_batchedUpdates for optimization
+  - This is not a breaking change as it has a fallback
+  - Not tested with react-native (help wanted)
 
 ## [1.3.0] - 2019-03-03
 ### Changed
