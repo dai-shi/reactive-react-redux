@@ -1,6 +1,7 @@
 # Change Log
 
 ## [Unreleased]
+- Avoid recalculating collectValuables
 
 ## [1.3.0] - 2019-03-03
 ### Changed

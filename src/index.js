@@ -10,7 +10,8 @@ import {
 import {
   drainDifference,
   proxyState,
-  proxyEqual,
+  proxyCompare,
+  collectValuables,
 } from 'proxyequal';
 
 // global context
@@ -45,35 +46,35 @@ export const useReduxDispatch = () => {
 
 export const useReduxState = () => {
   const forceUpdate = useForceUpdate();
+  // store&state
   const store = useContext(ReduxStoreContext);
-  // state
   const state = store.getState();
-  const lastState = useRef(null);
-  useEffect(() => {
-    lastState.current = state;
-  });
   // trapped
   const proxyMap = useRef(new WeakMap());
   const trappedMap = useRef(new WeakMap());
-  const lastTrapped = useRef(null);
   let trapped;
-  useEffect(() => {
-    lastTrapped.current = trapped;
-  });
   if (trappedMap.current.has(state)) {
     trapped = trappedMap.current.get(state);
+    trapped.reset();
   } else {
     trapped = proxyState(state, null, proxyMap.current);
     trappedMap.current.set(state, trapped);
   }
+  // update refs
+  const lastState = useRef(null);
+  const lastAffected = useRef(null);
+  useEffect(() => {
+    lastState.current = state;
+    lastAffected.current = collectValuables(trapped.affected);
+  });
   // subscription
   const callback = useRef(null);
   useEffect(() => {
     callback.current = () => {
-      const changed = !proxyEqual(
+      const changed = !proxyCompare(
         lastState.current,
         store.getState(),
-        lastTrapped.current.affected,
+        lastAffected.current,
       );
       drainDifference();
       if (changed) {
