@@ -49,35 +49,35 @@ var useReduxDispatch = function useReduxDispatch() {
 exports.useReduxDispatch = useReduxDispatch;
 
 var useReduxState = function useReduxState() {
-  var forceUpdate = useForceUpdate();
-  var store = (0, _react.useContext)(ReduxStoreContext); // state
+  var forceUpdate = useForceUpdate(); // store&state
 
-  var state = store.getState();
-  var lastState = (0, _react.useRef)(null);
-  (0, _react.useEffect)(function () {
-    lastState.current = state;
-  }); // trapped
+  var store = (0, _react.useContext)(ReduxStoreContext);
+  var state = store.getState(); // trapped
 
   var proxyMap = (0, _react.useRef)(new WeakMap());
   var trappedMap = (0, _react.useRef)(new WeakMap());
-  var lastTrapped = (0, _react.useRef)(null);
   var trapped;
-  (0, _react.useEffect)(function () {
-    lastTrapped.current = trapped;
-  });
 
   if (trappedMap.current.has(state)) {
     trapped = trappedMap.current.get(state);
+    trapped.reset();
   } else {
     trapped = (0, _proxyequal.proxyState)(state, null, proxyMap.current);
     trappedMap.current.set(state, trapped);
-  } // subscription
+  } // update refs
 
+
+  var lastState = (0, _react.useRef)(null);
+  var lastAffected = (0, _react.useRef)(null);
+  (0, _react.useEffect)(function () {
+    lastState.current = state;
+    lastAffected.current = (0, _proxyequal.collectValuables)(trapped.affected);
+  }); // subscription
 
   var callback = (0, _react.useRef)(null);
   (0, _react.useEffect)(function () {
     callback.current = function () {
-      var changed = !(0, _proxyequal.proxyEqual)(lastState.current, store.getState(), lastTrapped.current.affected);
+      var changed = !(0, _proxyequal.proxyCompare)(lastState.current, store.getState(), lastAffected.current);
       (0, _proxyequal.drainDifference)();
 
       if (changed) {
@@ -93,7 +93,7 @@ var useReduxState = function useReduxState() {
     };
 
     return cleanup;
-  }, [store]); // run callback in each commit phase in case something has changed.
+  }, [store, forceUpdate]); // run callback in each commit phase in case something has changed.
   //   [CAUTION] Limitations in subscription in useEffect
   //   There is a possibility that the state from the store is inconsistent
   //   across components which may cause problems in edge cases.
@@ -148,7 +148,7 @@ var useReduxStateSimple = function useReduxStateSimple() {
     };
 
     return cleanup;
-  }, [store]); // run callback in each commit phase in case something has changed.
+  }, [store, forceUpdate]); // run callback in each commit phase in case something has changed.
 
   (0, _react.useEffect)(function () {
     if (callback.current) {
