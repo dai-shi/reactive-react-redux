@@ -13,6 +13,7 @@ import {
   proxyCompare,
   collectValuables,
 } from 'proxyequal';
+import { batchedUpdates } from './batchedUpdates';
 
 // global context
 
@@ -31,11 +32,39 @@ const ReduxStoreContext = createContext(warningObject);
 const forcedReducer = state => !state;
 const useForceUpdate = () => useReducer(forcedReducer, false)[1];
 
+// patch store with batchedUpdates
+const patchReduxStore = (origStore) => {
+  if (!batchedUpdates) return origStore;
+  const listeners = [];
+  let unsubscribe;
+  const subscribe = (listener) => {
+    listeners.push(listener);
+    if (listeners.length === 1) {
+      unsubscribe = origStore.subscribe(() => {
+        batchedUpdates(() => {
+          listeners.forEach(l => l());
+        });
+      });
+    }
+    return () => {
+      const index = listeners.indexOf(listener);
+      listeners.splice(index, 1);
+      if (listeners.length === 0) {
+        unsubscribe();
+      }
+    };
+  };
+  return {
+    ...origStore,
+    subscribe,
+  };
+};
+
 // exports
 
 export const ReduxProvider = ({ store, children }) => createElement(
   ReduxStoreContext.Provider,
-  { value: store },
+  { value: patchReduxStore(store) },
   children,
 );
 

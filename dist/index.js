@@ -9,6 +9,12 @@ var _react = require("react");
 
 var _proxyequal = require("proxyequal");
 
+var _batchedUpdates = require("./batchedUpdates");
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 // global context
 var warningObject = {
   get dispatch() {
@@ -28,6 +34,40 @@ var forcedReducer = function forcedReducer(state) {
 
 var useForceUpdate = function useForceUpdate() {
   return (0, _react.useReducer)(forcedReducer, false)[1];
+}; // patch store with batchedUpdates
+
+
+var patchReduxStore = function patchReduxStore(origStore) {
+  if (!_batchedUpdates.batchedUpdates) return origStore;
+  var listeners = [];
+  var unsubscribe;
+
+  var subscribe = function subscribe(listener) {
+    listeners.push(listener);
+
+    if (listeners.length === 1) {
+      unsubscribe = origStore.subscribe(function () {
+        (0, _batchedUpdates.batchedUpdates)(function () {
+          listeners.forEach(function (l) {
+            return l();
+          });
+        });
+      });
+    }
+
+    return function () {
+      var index = listeners.indexOf(listener);
+      listeners.splice(index, 1);
+
+      if (listeners.length === 0) {
+        unsubscribe();
+      }
+    };
+  };
+
+  return _objectSpread({}, origStore, {
+    subscribe: subscribe
+  });
 }; // exports
 
 
@@ -35,7 +75,7 @@ var ReduxProvider = function ReduxProvider(_ref) {
   var store = _ref.store,
       children = _ref.children;
   return (0, _react.createElement)(ReduxStoreContext.Provider, {
-    value: store
+    value: patchReduxStore(store)
   }, children);
 };
 
