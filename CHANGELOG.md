@@ -1,7 +1,9 @@
 # Change Log
 
 ## [Unreleased]
-- Avoid recalculating collectValuables
+
+## [1.4.0] - 2019-03-25
+- Avoid recalculating collectValuables for optimization
 - Use unstable_batchedUpdates for optimization
   - This is not a breaking change as it has a fallback
   - Not tested with react-native (help wanted)
