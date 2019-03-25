@@ -62,11 +62,14 @@ const patchReduxStore = (origStore) => {
 
 // exports
 
-export const ReduxProvider = ({ store, children }) => createElement(
-  ReduxStoreContext.Provider,
-  { value: patchReduxStore(store) },
-  children,
-);
+export const ReduxProvider = ({ store, children }) => {
+  const patchedStore = useMemo(() => patchReduxStore(store), [store]);
+  return createElement(
+    ReduxStoreContext.Provider,
+    { value: patchedStore },
+    children,
+  );
+};
 
 export const useReduxDispatch = () => {
   const store = useContext(ReduxStoreContext);

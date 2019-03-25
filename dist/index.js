@@ -74,8 +74,11 @@ var patchReduxStore = function patchReduxStore(origStore) {
 var ReduxProvider = function ReduxProvider(_ref) {
   var store = _ref.store,
       children = _ref.children;
+  var patchedStore = (0, _react.useMemo)(function () {
+    return patchReduxStore(store);
+  }, [store]);
   return (0, _react.createElement)(ReduxStoreContext.Provider, {
-    value: patchReduxStore(store)
+    value: patchedStore
   }, children);
 };
 
