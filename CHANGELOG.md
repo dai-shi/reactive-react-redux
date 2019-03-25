@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [1.5.0] - 2019-03-25
 ### Changed
 - No running callback in every commit phase (reverting #5)
 
