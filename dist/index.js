@@ -114,36 +114,21 @@ var useReduxState = function useReduxState() {
     lastAffected.current = (0, _proxyequal.collectValuables)(trapped.affected);
   }); // subscription
 
-  var callback = (0, _react.useRef)(null);
   (0, _react.useEffect)(function () {
-    callback.current = function () {
+    var callback = function callback() {
       var changed = !(0, _proxyequal.proxyCompare)(lastState.current, store.getState(), lastAffected.current);
       (0, _proxyequal.drainDifference)();
 
       if (changed) {
         forceUpdate();
       }
-    };
+    }; // run once in case the state is already changed
 
-    var unsubscribe = store.subscribe(callback.current);
 
-    var cleanup = function cleanup() {
-      unsubscribe();
-      callback.current = null;
-    };
-
-    return cleanup;
-  }, [store, forceUpdate]); // run callback in each commit phase in case something has changed.
-  //   [CAUTION] Limitations in subscription in useEffect
-  //   There is a possibility that the state from the store is inconsistent
-  //   across components which may cause problems in edge cases.
-
-  (0, _react.useEffect)(function () {
-    if (callback.current) {
-      // XXX don't we need this condition?
-      callback.current();
-    }
-  });
+    callback();
+    var unsubscribe = store.subscribe(callback);
+    return unsubscribe;
+  }, [store, forceUpdate]);
   return trapped.state;
 };
 
@@ -166,9 +151,8 @@ var useReduxStateSimple = function useReduxStateSimple() {
   (0, _react.useEffect)(function () {
     lastState.current = state;
   });
-  var callback = (0, _react.useRef)(null);
   (0, _react.useEffect)(function () {
-    callback.current = function () {
+    var callback = function callback() {
       var nextState = store.getState();
       var changed = Object.keys(used.current).find(function (key) {
         return lastState.current[key] !== nextState[key];
@@ -177,24 +161,19 @@ var useReduxStateSimple = function useReduxStateSimple() {
       if (changed) {
         forceUpdate();
       }
-    };
+    }; // run once in case the state is already changed
 
-    var unsubscribe = store.subscribe(callback.current);
+
+    callback();
+    var unsubscribe = store.subscribe(callback);
 
     var cleanup = function cleanup() {
       unsubscribe();
-      callback.current = null;
       used.current = {};
     };
 
     return cleanup;
-  }, [store, forceUpdate]); // run callback in each commit phase in case something has changed.
-
-  (0, _react.useEffect)(function () {
-    if (callback.current) {
-      callback.current();
-    }
-  });
+  }, [store, forceUpdate]);
   return new Proxy(state, handler);
 };
 

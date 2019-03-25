@@ -1,8 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- No running callback in every commit phase (reverting #5)
 
 ## [1.4.0] - 2019-03-25
+### Changed
 - Avoid recalculating collectValuables for optimization
 - Use unstable_batchedUpdates for optimization
   - This is not a breaking change as it has a fallback
