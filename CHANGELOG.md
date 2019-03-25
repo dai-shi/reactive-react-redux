@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [1.6.0] - 2019-03-25
 ### Changed
 - Memoize patched store with batchedUpdates
 
