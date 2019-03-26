@@ -28,7 +28,8 @@
     "examples:memoization": "DIR=06_memoization webpack-dev-server",
     "examples:multistore": "DIR=07_multistore webpack-dev-server",
     "examples:dynamic": "DIR=08_dynamic webpack-dev-server",
-    "examples:thunk": "DIR=09_thunk webpack-dev-server"
+    "examples:thunk": "DIR=09_thunk webpack-dev-server",
+    "postinstall": "patch-package"
   },
   "keywords": [
     "react",
@@ -41,6 +42,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "patch-package": "^6.0.7",
     "proxyequal": "^2.0.3"
   },
   "devDependencies": {

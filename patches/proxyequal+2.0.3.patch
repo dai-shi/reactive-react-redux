@@ -1,0 +1,33 @@
+diff --git a/node_modules/proxyequal/lib/index.js b/node_modules/proxyequal/lib/index.js
+index 9609399..57d5045 100644
+--- a/node_modules/proxyequal/lib/index.js
++++ b/node_modules/proxyequal/lib/index.js
+@@ -242,6 +242,8 @@ var collectValuables = function collectValuables(lines) {
+   }
+   return lines.filter(function (line) {
+     return values.indexOf(line) < 0;
++  }).map(function(line) {
++    return line.split('.');
+   });
+ };
+ 
+@@ -249,6 +251,8 @@ var collectShallows = function collectShallows(lines) {
+   var trie = (0, _searchTrie2.default)(lines);
+   return lines.filter(function (value) {
+     return trie(value + '.') || !value.lastIndexOf('.');
++  }).map(function(line) {
++    return line.split('.');
+   });
+ };
+ 
+@@ -270,8 +274,7 @@ var drainDifference = exports.drainDifference = function drainDifference() {
+ 
+ var proxyCompare = function proxyCompare(a, b, locations) {
+   for (var i = 0; i < locations.length; ++i) {
+-    var key = locations[i];
+-    var path = key.split('.');
++    var path = locations[i];
+     var la = deepDeproxify(get(a, path));
+     var lb = deepDeproxify(get(b, path));
+     if (la !== lb) {
+exports.collectValuables = collectValuables;
