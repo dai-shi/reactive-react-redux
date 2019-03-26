@@ -1,5 +1,5 @@
 diff --git a/node_modules/proxyequal/lib/index.js b/node_modules/proxyequal/lib/index.js
-index 9609399..57d5045 100644
+index 9609399..59bd143 100644
 --- a/node_modules/proxyequal/lib/index.js
 +++ b/node_modules/proxyequal/lib/index.js
 @@ -242,6 +242,8 @@ var collectValuables = function collectValuables(lines) {
@@ -20,7 +20,19 @@ index 9609399..57d5045 100644
    });
  };
  
-@@ -270,8 +274,7 @@ var drainDifference = exports.drainDifference = function drainDifference() {
+@@ -260,22 +264,17 @@ var get = function get(target, path) {
+   return result;
+ };
+ 
+-var differs = [];
+-
+ var drainDifference = exports.drainDifference = function drainDifference() {
+-  var d = differs;
+-  differs = [];
+-  return d;
++  console.log('drainDifference is no longer supported.');
++  return [];
+ };
  
  var proxyCompare = function proxyCompare(a, b, locations) {
    for (var i = 0; i < locations.length; ++i) {
@@ -30,4 +42,15 @@ index 9609399..57d5045 100644
      var la = deepDeproxify(get(a, path));
      var lb = deepDeproxify(get(b, path));
      if (la !== lb) {
-exports.collectValuables = collectValuables;
+-      differs.push([key, 'differs', la, lb]);
+       return false;
+     }
+   }
+@@ -310,7 +309,6 @@ var proxyShallowEqual = function proxyShallowEqual(a, b, locations) {
+   var pair = void 0;
+   while (pair = tails.next().value) {
+     if (!pair[1]) {
+-      differs.push([pair[0], 'not equal']);
+       return false;
+     }
+   }
