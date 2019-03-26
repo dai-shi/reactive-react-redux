@@ -120,7 +120,6 @@ var useReduxState = function useReduxState() {
   (0, _react.useEffect)(function () {
     var callback = function callback() {
       var changed = !(0, _proxyequal.proxyCompare)(lastState.current, store.getState(), lastAffected.current);
-      (0, _proxyequal.drainDifference)();
 
       if (changed) {
         forceUpdate();

@@ -8,7 +8,6 @@ import {
   useRef,
 } from 'react';
 import {
-  drainDifference,
   proxyState,
   proxyCompare,
   collectValuables,
@@ -107,7 +106,6 @@ export const useReduxState = () => {
         store.getState(),
         lastAffected.current,
       );
-      drainDifference();
       if (changed) {
         forceUpdate();
       }

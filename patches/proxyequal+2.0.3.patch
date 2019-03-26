@@ -1,7 +1,16 @@
 diff --git a/node_modules/proxyequal/lib/index.js b/node_modules/proxyequal/lib/index.js
-index 9609399..5fa0c24 100644
+index 9609399..d872ba1 100644
 --- a/node_modules/proxyequal/lib/index.js
 +++ b/node_modules/proxyequal/lib/index.js
+@@ -3,7 +3,7 @@
+ Object.defineProperty(exports, "__esModule", {
+   value: true
+ });
+-exports.collectValuables = exports.collectShallows = exports.getProxyKey = exports.isProxyfied = exports.deproxify = exports.get = exports.proxyCompare = exports.proxyState = exports.proxyShallowEqual = exports.proxyShallow = exports.proxyEqual = exports.drainDifference = exports.sourceMutationsEnabled = exports.spreadGuardsEnabled = undefined;
++exports.collectValuables = exports.collectShallows = exports.getProxyKey = exports.isProxyfied = exports.deproxify = exports.get = exports.proxyCompare = exports.proxyState = exports.proxyShallowEqual = exports.proxyShallow = exports.proxyEqual = exports.sourceMutationsEnabled = exports.spreadGuardsEnabled = undefined;
+ 
+ var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+ 
 @@ -242,6 +242,8 @@ var collectValuables = function collectValuables(lines) {
    }
    return lines.filter(function (line) {
@@ -20,20 +29,18 @@ index 9609399..5fa0c24 100644
    });
  };
  
-@@ -260,22 +264,17 @@ var get = function get(target, path) {
+@@ -260,22 +264,12 @@ var get = function get(target, path) {
    return result;
  };
  
 -var differs = [];
 -
- var drainDifference = exports.drainDifference = function drainDifference() {
+-var drainDifference = exports.drainDifference = function drainDifference() {
 -  var d = differs;
 -  differs = [];
 -  return d;
-+  // drainDifference is no longer supported.
-+  return [];
- };
- 
+-};
+-
  var proxyCompare = function proxyCompare(a, b, locations) {
    for (var i = 0; i < locations.length; ++i) {
 -    var key = locations[i];
@@ -46,7 +53,7 @@ index 9609399..5fa0c24 100644
        return false;
      }
    }
-@@ -310,7 +309,6 @@ var proxyShallowEqual = function proxyShallowEqual(a, b, locations) {
+@@ -310,7 +304,6 @@ var proxyShallowEqual = function proxyShallowEqual(a, b, locations) {
    var pair = void 0;
    while (pair = tails.next().value) {
      if (!pair[1]) {
