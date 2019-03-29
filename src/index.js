@@ -45,13 +45,25 @@ const patchReduxStore = (origStore) => {
   const subscribe = (listener) => {
     listeners.push(listener);
     if (listeners.length === 1) {
-      unsubscribe = origStore.subscribe(() => {
+      let pending = false;
+      const runBatchedUpdates = () => {
+        if (stateForUpdates) {
+          pending = true;
+          return;
+        }
         stateForUpdates = origStore.getState();
+        const onFinishRendering = () => {
+          stateForUpdates = null;
+          if (pending) {
+            pending = false;
+            runBatchedUpdates();
+          }
+        };
         batchedUpdates(() => {
           listeners.forEach(l => l());
-        });
-        stateForUpdates = null;
-      });
+        }, onFinishRendering);
+      };
+      unsubscribe = origStore.subscribe(runBatchedUpdates);
     }
     return () => {
       const index = listeners.indexOf(listener);

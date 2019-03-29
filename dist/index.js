@@ -53,15 +53,33 @@ var patchReduxStore = function patchReduxStore(origStore) {
     listeners.push(listener);
 
     if (listeners.length === 1) {
-      unsubscribe = origStore.subscribe(function () {
+      var pending = false;
+
+      var runBatchedUpdates = function runBatchedUpdates() {
+        if (stateForUpdates) {
+          pending = true;
+          return;
+        }
+
         stateForUpdates = origStore.getState();
+
+        var onFinishRendering = function onFinishRendering() {
+          stateForUpdates = null;
+
+          if (pending) {
+            pending = false;
+            runBatchedUpdates();
+          }
+        };
+
         (0, _batchedUpdates.batchedUpdates)(function () {
           listeners.forEach(function (l) {
             return l();
           });
-        });
-        stateForUpdates = null;
-      });
+        }, onFinishRendering);
+      };
+
+      unsubscribe = origStore.subscribe(runBatchedUpdates);
     }
 
     return function () {
