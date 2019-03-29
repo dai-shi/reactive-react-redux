@@ -36,14 +36,21 @@ const useForceUpdate = () => useReducer(forcedReducer, false)[1];
 const patchReduxStore = (origStore) => {
   if (!batchedUpdates) return origStore;
   const listeners = [];
+  let stateForUpdates;
+  const getState = () => {
+    if (stateForUpdates) return stateForUpdates;
+    return origStore.getState();
+  };
   let unsubscribe;
   const subscribe = (listener) => {
     listeners.push(listener);
     if (listeners.length === 1) {
       unsubscribe = origStore.subscribe(() => {
+        stateForUpdates = origStore.getState();
         batchedUpdates(() => {
           listeners.forEach(l => l());
         });
+        stateForUpdates = null;
       });
     }
     return () => {
@@ -56,6 +63,7 @@ const patchReduxStore = (origStore) => {
   };
   return {
     ...origStore,
+    getState,
     subscribe,
   };
 };

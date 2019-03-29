@@ -40,6 +40,13 @@ var useForceUpdate = function useForceUpdate() {
 var patchReduxStore = function patchReduxStore(origStore) {
   if (!_batchedUpdates.batchedUpdates) return origStore;
   var listeners = [];
+  var stateForUpdates;
+
+  var getState = function getState() {
+    if (stateForUpdates) return stateForUpdates;
+    return origStore.getState();
+  };
+
   var unsubscribe;
 
   var subscribe = function subscribe(listener) {
@@ -47,11 +54,13 @@ var patchReduxStore = function patchReduxStore(origStore) {
 
     if (listeners.length === 1) {
       unsubscribe = origStore.subscribe(function () {
+        stateForUpdates = origStore.getState();
         (0, _batchedUpdates.batchedUpdates)(function () {
           listeners.forEach(function (l) {
             return l();
           });
         });
+        stateForUpdates = null;
       });
     }
 
@@ -66,6 +75,7 @@ var patchReduxStore = function patchReduxStore(origStore) {
   };
 
   return _objectSpread({}, origStore, {
+    getState: getState,
     subscribe: subscribe
   });
 }; // exports
