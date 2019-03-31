@@ -8,7 +8,7 @@ import {
   ReduxProvider,
   useReduxDispatch,
   useReduxState,
-} from 'react-hooks-easy-redux';
+} from 'reactive-react-redux';
 
 const initialState = {
   counter: 0,

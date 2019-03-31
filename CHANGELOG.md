@@ -1,8 +1,13 @@
 # Change Log
 
 ## [Unreleased]
+## [1.7.0] - 2019-04-01
 ### Added
 - Implement useReduxStateMapped
+### Changed
+- Rename project
+  - Old "react-hooks-easy-redux"
+  - New "reactive-react-redux"
 
 ## [1.6.0] - 2019-03-25
 ### Changed

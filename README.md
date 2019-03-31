@@ -1,10 +1,10 @@
-# react-hooks-easy-redux
+# reactive-react-redux
 
-[![Build Status](https://travis-ci.com/dai-shi/react-hooks-easy-redux.svg?branch=master)](https://travis-ci.com/dai-shi/react-hooks-easy-redux)
-[![npm version](https://badge.fury.io/js/react-hooks-easy-redux.svg)](https://badge.fury.io/js/react-hooks-easy-redux)
-[![bundle size](https://badgen.net/bundlephobia/minzip/react-hooks-easy-redux)](https://bundlephobia.com/result?p=react-hooks-easy-redux)
+[![Build Status](https://travis-ci.com/dai-shi/reactive-react-redux.svg?branch=master)](https://travis-ci.com/dai-shi/reactive-react-redux)
+[![npm version](https://badge.fury.io/js/reactive-react-redux.svg)](https://badge.fury.io/js/reactive-react-redux)
+[![bundle size](https://badgen.net/bundlephobia/minzip/reactive-react-redux)](https://bundlephobia.com/result?p=reactive-react-redux)
 
-Easy React bindings for Redux with Hooks API
+React Redux binding with React Hooks and Proxy
 
 ## Introduction
 
@@ -29,7 +29,7 @@ Only if it detects changes in the state, it re-renders components.
 ## Install
 
 ```bash
-npm install react-hooks-easy-redux
+npm install reactive-react-redux
 ```
 
 ## Usage
@@ -41,7 +41,7 @@ import {
   ReduxProvider,
   useReduxDispatch,
   useReduxState,
-} from 'react-hooks-easy-redux';
+} from 'reactive-react-redux';
 
 const initialState = {
   counter: 0,
@@ -112,15 +112,15 @@ PORT=8080 npm run examples:minimal
 and open <http://localhost:8080> in your web browser.
 
 You can also try them in codesandbox.io:
-[01](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/01_minimal)
-[02](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/02_typescript)
-[03](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/03_deep)
-[04](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/04_immer)
-[05](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/05_localstate)
-[06](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/06_memoization)
-[07](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/07_multistore)
-[08](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/08_dynamic)
-[09](https://codesandbox.io/s/github/dai-shi/react-hooks-easy-redux/tree/master/examples/09_thunk)
+[01](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/01_minimal)
+[02](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/02_typescript)
+[03](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/03_deep)
+[04](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/04_immer)
+[05](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/05_localstate)
+[06](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/06_memoization)
+[07](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/07_multistore)
+[08](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/08_dynamic)
+[09](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/09_thunk)
 
 ## Blogs
 
