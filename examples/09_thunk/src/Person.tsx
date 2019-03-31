@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { useReduxDispatch, useReduxState } from 'react-hooks-easy-redux';
+import { useReduxDispatch, useReduxState } from 'reactive-react-redux';
 
 import { Action, State } from './state';
 
