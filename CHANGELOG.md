@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Implement useReduxStateMapped
 
 ## [1.6.0] - 2019-03-25
 ### Changed

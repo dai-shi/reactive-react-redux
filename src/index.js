@@ -13,6 +13,8 @@ import {
   proxyCompare,
   collectValuables,
 } from 'proxyequal';
+import shallowequal from 'shallowequal';
+
 import { batchedUpdates } from './batchedUpdates';
 
 // global context
@@ -118,6 +120,41 @@ export const useReduxState = () => {
     return unsubscribe;
   }, [store, forceUpdate]);
   return trapped.state;
+};
+
+export const useReduxStateMapped = (mapState) => {
+  const forceUpdate = useForceUpdate();
+  // store&state
+  const store = useContext(ReduxStoreContext);
+  const state = store.getState();
+  // mapped
+  const mapped = mapState(state);
+  // update refs
+  const lastMapState = useRef(null);
+  const lastMapped = useRef(null);
+  useEffect(() => {
+    lastMapState.current = mapState;
+    lastMapped.current = mapped;
+  });
+  // subscription
+  useEffect(() => {
+    const callback = () => {
+      let changed;
+      try {
+        changed = !shallowequal(lastMapped.current, lastMapState.current(store.getState()));
+      } catch (e) {
+        changed = true; // props are likely to be updated
+      }
+      if (changed) {
+        forceUpdate();
+      }
+    };
+    // run once in case the state is already changed
+    callback();
+    const unsubscribe = store.subscribe(callback);
+    return unsubscribe;
+  }, [store, forceUpdate]);
+  return mapped;
 };
 
 export const useReduxStateSimple = () => {
