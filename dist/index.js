@@ -3,13 +3,17 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.useReduxStateSimple = exports.useReduxState = exports.useReduxDispatch = exports.ReduxProvider = void 0;
+exports.useReduxStateSimple = exports.useReduxStateMapped = exports.useReduxState = exports.useReduxDispatch = exports.ReduxProvider = void 0;
 
 var _react = require("react");
 
 var _proxyequal = require("proxyequal");
 
+var _shallowequal = _interopRequireDefault(require("shallowequal"));
+
 var _batchedUpdates = require("./batchedUpdates");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -136,6 +140,46 @@ var useReduxState = function useReduxState() {
 };
 
 exports.useReduxState = useReduxState;
+
+var useReduxStateMapped = function useReduxStateMapped(mapState) {
+  var forceUpdate = useForceUpdate(); // store&state
+
+  var store = (0, _react.useContext)(ReduxStoreContext);
+  var state = store.getState(); // mapped
+
+  var mapped = mapState(state); // update refs
+
+  var lastMapState = (0, _react.useRef)(null);
+  var lastMapped = (0, _react.useRef)(null);
+  (0, _react.useEffect)(function () {
+    lastMapState.current = mapState;
+    lastMapped.current = mapped;
+  }); // subscription
+
+  (0, _react.useEffect)(function () {
+    var callback = function callback() {
+      var changed;
+
+      try {
+        changed = !(0, _shallowequal.default)(lastMapped.current, lastMapState.current(store.getState()));
+      } catch (e) {
+        changed = true; // props are likely to be updated
+      }
+
+      if (changed) {
+        forceUpdate();
+      }
+    }; // run once in case the state is already changed
+
+
+    callback();
+    var unsubscribe = store.subscribe(callback);
+    return unsubscribe;
+  }, [store, forceUpdate]);
+  return mapped;
+};
+
+exports.useReduxStateMapped = useReduxStateMapped;
 
 var useReduxStateSimple = function useReduxStateSimple() {
   var forceUpdate = useForceUpdate();
