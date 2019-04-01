@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Improve useReduxStateMapped with proxyequal
+
 ## [1.7.0] - 2019-04-01
 ### Added
 - Implement useReduxStateMapped (experimental/unstable/undocumented)

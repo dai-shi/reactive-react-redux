@@ -131,30 +131,43 @@ export const useReduxState = () => {
     callback();
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
-  }, [store, forceUpdate, lastProxyfied]);
+  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
   return proxyfiedState;
 };
 
 export const useReduxStateMapped = (mapState) => {
   const forceUpdate = useForceUpdate();
-  // store&state
+  // redux store
   const store = useContext(ReduxStoreContext);
+  // redux state
   const state = store.getState();
+  // proxyfied
+  const { proxyfiedState, lastProxyfied } = useProxyfied(state);
   // mapped
-  const mapped = mapState(state);
-  // update refs
-  const lastMapState = useRef(null);
+  const mapped = mapState(proxyfiedState);
+  // update ref
   const lastMapped = useRef(null);
   useEffect(() => {
-    lastMapState.current = mapState;
-    lastMapped.current = mapped;
+    lastMapped.current = {
+      mapped,
+      mapState,
+    };
   });
   // subscription
   useEffect(() => {
     const callback = () => {
-      let changed;
+      let changed = !proxyCompare(
+        lastProxyfied.current.state,
+        store.getState(),
+        lastProxyfied.current.affected,
+      );
+      drainDifference();
+      if (!changed) return; // no state parts interested are changed.
       try {
-        changed = !shallowequal(lastMapped.current, lastMapState.current(store.getState()));
+        changed = !shallowequal(
+          lastMapped.current.mapped,
+          lastMapped.current.mapState(store.getState()),
+        );
       } catch (e) {
         changed = true; // props are likely to be updated
       }
@@ -166,7 +179,7 @@ export const useReduxStateMapped = (mapState) => {
     callback();
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
-  }, [store, forceUpdate]);
+  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
   return mapped;
 };
 
@@ -203,6 +216,6 @@ export const useReduxStateSimple = () => {
       used.current = {};
     };
     return cleanup;
-  }, [store, forceUpdate]);
+  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
   return new Proxy(state, handler);
 };
