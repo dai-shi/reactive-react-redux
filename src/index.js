@@ -34,7 +34,35 @@ const ReduxStoreContext = createContext(warningObject);
 const forcedReducer = state => !state;
 const useForceUpdate = () => useReducer(forcedReducer, false)[1];
 
+const useProxyfied = (state) => {
+  // cache
+  const proxyMap = useRef(new WeakMap());
+  const trappedMap = useRef(new WeakMap());
+  // trapped
+  let trapped;
+  if (trappedMap.current.has(state)) {
+    trapped = trappedMap.current.get(state);
+    trapped.reset();
+  } else {
+    trapped = proxyState(state, null, proxyMap.current);
+    trappedMap.current.set(state, trapped);
+  }
+  // update ref
+  const lastProxyfied = useRef(null);
+  useEffect(() => {
+    lastProxyfied.current = {
+      state,
+      affected: collectValuables(trapped.affected),
+    };
+  });
+  return {
+    proxyfiedState: trapped.state,
+    lastProxyfied,
+  };
+};
+
 // patch store with batchedUpdates
+
 const patchReduxStore = (origStore) => {
   if (!batchedUpdates) return origStore;
   const listeners = [];
@@ -80,34 +108,19 @@ export const useReduxDispatch = () => {
 
 export const useReduxState = () => {
   const forceUpdate = useForceUpdate();
-  // store&state
+  // redux store
   const store = useContext(ReduxStoreContext);
+  // redux state
   const state = store.getState();
-  // trapped
-  const proxyMap = useRef(new WeakMap());
-  const trappedMap = useRef(new WeakMap());
-  let trapped;
-  if (trappedMap.current.has(state)) {
-    trapped = trappedMap.current.get(state);
-    trapped.reset();
-  } else {
-    trapped = proxyState(state, null, proxyMap.current);
-    trappedMap.current.set(state, trapped);
-  }
-  // update refs
-  const lastState = useRef(null);
-  const lastAffected = useRef(null);
-  useEffect(() => {
-    lastState.current = state;
-    lastAffected.current = collectValuables(trapped.affected);
-  });
+  // proxyfied
+  const { proxyfiedState, lastProxyfied } = useProxyfied(state);
   // subscription
   useEffect(() => {
     const callback = () => {
       const changed = !proxyCompare(
-        lastState.current,
+        lastProxyfied.current.state,
         store.getState(),
-        lastAffected.current,
+        lastProxyfied.current.affected,
       );
       drainDifference();
       if (changed) {
@@ -118,8 +131,8 @@ export const useReduxState = () => {
     callback();
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
-  }, [store, forceUpdate]);
-  return trapped.state;
+  }, [store, forceUpdate, lastProxyfied]);
+  return proxyfiedState;
 };
 
 export const useReduxStateMapped = (mapState) => {
