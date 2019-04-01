@@ -3,7 +3,7 @@
 ## [Unreleased]
 ## [1.7.0] - 2019-04-01
 ### Added
-- Implement useReduxStateMapped
+- Implement useReduxStateMapped (experimental/unstable/undocumented)
 ### Changed
 - Rename project
   - Old "react-hooks-easy-redux"
