@@ -9,15 +9,13 @@ var _react = require("react");
 
 var _proxyequal = require("proxyequal");
 
-var _shallowequal = _interopRequireDefault(require("shallowequal"));
-
 var _batchedUpdates = require("./batchedUpdates");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // global context
 var warningObject = {
@@ -30,7 +28,19 @@ var warningObject = {
   }
 
 };
-var ReduxStoreContext = (0, _react.createContext)(warningObject); // helper hooks
+var ReduxStoreContext = (0, _react.createContext)(warningObject); // utils
+
+var shallowEqualDeproxify = function shallowEqualDeproxify(a, b) {
+  if (a === b) return true;
+  if (_typeof(a) !== 'object' || _typeof(b) !== 'object') return false;
+  var aKeys = Object.keys(a);
+  var bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  return aKeys.every(function (key) {
+    return (0, _proxyequal.deproxify)(a[key]) === (0, _proxyequal.deproxify)(b[key]);
+  });
+}; // helper hooks
+
 
 var forcedReducer = function forcedReducer(state) {
   return !state;
@@ -186,7 +196,7 @@ var useReduxStateMapped = function useReduxStateMapped(mapState) {
       if (!changed) return; // no state parts interested are changed.
 
       try {
-        changed = !(0, _shallowequal.default)(lastMapped.current.mapped, lastMapped.current.mapState(store.getState()));
+        changed = !shallowEqualDeproxify(lastMapped.current.mapped, lastMapped.current.mapState(store.getState()));
       } catch (e) {
         changed = true; // props are likely to be updated
       }

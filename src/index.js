@@ -12,8 +12,8 @@ import {
   proxyState,
   proxyCompare,
   collectValuables,
+  deproxify,
 } from 'proxyequal';
-import shallowequal from 'shallowequal';
 
 import { batchedUpdates } from './batchedUpdates';
 
@@ -28,6 +28,17 @@ const warningObject = {
   },
 };
 const ReduxStoreContext = createContext(warningObject);
+
+// utils
+
+const shallowEqualDeproxify = (a, b) => {
+  if (a === b) return true;
+  if (typeof a !== 'object' || typeof b !== 'object') return false;
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  return aKeys.every(key => deproxify(a[key]) === deproxify(b[key]));
+};
 
 // helper hooks
 
@@ -164,7 +175,7 @@ export const useReduxStateMapped = (mapState) => {
       drainDifference();
       if (!changed) return; // no state parts interested are changed.
       try {
-        changed = !shallowequal(
+        changed = !shallowEqualDeproxify(
           lastMapped.current.mapped,
           lastMapped.current.mapState(store.getState()),
         );
