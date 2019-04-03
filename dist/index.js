@@ -3,13 +3,21 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.useReduxStateSimple = exports.useReduxStateMapped = exports.useReduxState = exports.useReduxDispatch = exports.ReduxProvider = void 0;
+exports.useReduxStateSimple = exports.useReduxSelectors = exports.useReduxState = exports.useReduxDispatch = exports.ReduxProvider = void 0;
 
 var _react = require("react");
 
 var _proxyequal = require("proxyequal");
 
 var _batchedUpdates = require("./batchedUpdates");
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
@@ -30,15 +38,21 @@ var warningObject = {
 };
 var ReduxStoreContext = (0, _react.createContext)(warningObject); // utils
 
-var shallowEqualDeproxify = function shallowEqualDeproxify(a, b) {
-  if (a === b) return true;
-  if (_typeof(a) !== 'object' || _typeof(b) !== 'object') return false;
-  var aKeys = Object.keys(a);
-  var bKeys = Object.keys(b);
-  if (aKeys.length !== bKeys.length) return false;
-  return aKeys.every(function (key) {
-    return (0, _proxyequal.deproxify)(a[key]) === (0, _proxyequal.deproxify)(b[key]);
-  });
+var createMap = function createMap(keys, create) {
+  // "Map" here means JavaScript Object not JavaScript Map.
+  var obj = {};
+
+  for (var i = 0; i < keys.length; i += 1) {
+    var key = keys[i];
+    obj[key] = create(key);
+  }
+
+  return obj;
+}; // XXX should we do like shouldInstrument?
+
+
+var canTrap = function canTrap(state) {
+  return _typeof(state) === 'object';
 }; // helper hooks
 
 
@@ -50,32 +64,44 @@ var useForceUpdate = function useForceUpdate() {
   return (0, _react.useReducer)(forcedReducer, false)[1];
 };
 
-var useProxyfied = function useProxyfied(state) {
-  // cache
-  var proxyMap = (0, _react.useRef)(new WeakMap());
-  var trappedMap = (0, _react.useRef)(new WeakMap()); // trapped
+var useProxyfied = function useProxyfied(stateMap, cache) {
+  // keys
+  var keys = Object.keys(stateMap); // trapped
 
-  var trapped;
-
-  if (trappedMap.current.has(state)) {
-    trapped = trappedMap.current.get(state);
-    trapped.reset();
-  } else {
-    trapped = (0, _proxyequal.proxyState)(state, null, proxyMap.current);
-    trappedMap.current.set(state, trapped);
-  } // update ref
-
-
-  var lastProxyfied = (0, _react.useRef)(null);
-  (0, _react.useEffect)(function () {
-    lastProxyfied.current = {
+  var trappedMap = createMap(keys, function (key) {
+    var state = stateMap[key];
+    if (!canTrap(state)) return {
       state: state,
-      affected: (0, _proxyequal.collectValuables)(trapped.affected)
-    };
+      affected: ['.*']
+    }; // for primitives
+
+    var trapped;
+
+    if (cache && cache.current.trapped.has(state)) {
+      trapped = cache.current.trapped.get(state);
+      trapped.reset();
+    } else {
+      trapped = (0, _proxyequal.proxyState)(state, null, cache && cache.current.proxy);
+      if (cache) cache.current.trapped.set(state, trapped);
+    }
+
+    return trapped;
+  }); // update ref
+
+  var lastMap = (0, _react.useRef)(null);
+  (0, _react.useEffect)(function () {
+    lastMap.current = createMap(keys, function (key) {
+      return {
+        state: stateMap[key],
+        affected: (0, _proxyequal.collectValuables)(trappedMap[key].affected)
+      };
+    });
   });
   return {
-    proxyfiedState: trapped.state,
-    lastProxyfied: lastProxyfied
+    stateMap: createMap(keys, function (key) {
+      return trappedMap[key].state;
+    }),
+    lastMap: lastMap
   };
 }; // patch store with batchedUpdates
 
@@ -139,16 +165,23 @@ var useReduxState = function useReduxState() {
 
   var store = (0, _react.useContext)(ReduxStoreContext); // redux state
 
-  var state = store.getState(); // proxyfied
+  var state = store.getState(); // cache
 
-  var _useProxyfied = useProxyfied(state),
-      proxyfiedState = _useProxyfied.proxyfiedState,
-      lastProxyfied = _useProxyfied.lastProxyfied; // subscription
+  var cache = (0, _react.useRef)({
+    proxy: new WeakMap(),
+    trapped: new WeakMap()
+  }); // proxyfied (only SINGLE key)
+
+  var _useProxyfied = useProxyfied({
+    SINGLE: state
+  }, cache),
+      stateMap = _useProxyfied.stateMap,
+      lastMap = _useProxyfied.lastMap; // subscription
 
 
   (0, _react.useEffect)(function () {
     var callback = function callback() {
-      var changed = !(0, _proxyequal.proxyCompare)(lastProxyfied.current.state, store.getState(), lastProxyfied.current.affected);
+      var changed = !(0, _proxyequal.proxyCompare)(lastMap.current.SINGLE.state, store.getState(), lastMap.current.SINGLE.affected);
       (0, _proxyequal.drainDifference)();
 
       if (changed) {
@@ -162,44 +195,52 @@ var useReduxState = function useReduxState() {
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return proxyfiedState;
+  return stateMap.SINGLE;
 };
 
 exports.useReduxState = useReduxState;
 
-var useReduxStateMapped = function useReduxStateMapped(mapState) {
+var useReduxSelectors = function useReduxSelectors(selectorMap) {
   var forceUpdate = useForceUpdate(); // redux store
 
   var store = (0, _react.useContext)(ReduxStoreContext); // redux state
 
-  var state = store.getState(); // proxyfied
+  var state = store.getState(); // keys
 
-  var _useProxyfied2 = useProxyfied(state),
-      proxyfiedState = _useProxyfied2.proxyfiedState,
-      lastProxyfied = _useProxyfied2.lastProxyfied; // mapped
+  var keys = Object.keys(selectorMap); // proxyfied
+
+  var _useProxyfied2 = useProxyfied(createMap(keys, function () {
+    return state;
+  })),
+      stateMap = _useProxyfied2.stateMap,
+      lastMap = _useProxyfied2.lastMap; // mapped
 
 
-  var mapped = mapState(proxyfiedState); // update ref
+  var _useProxyfied3 = useProxyfied(createMap(keys, function (key) {
+    return selectorMap[key](stateMap[key]);
+  })),
+      mapped = _useProxyfied3.stateMap,
+      lastMapped = _useProxyfied3.lastMap; // update ref
 
-  var lastMapped = (0, _react.useRef)(null);
+
+  var lastState = (0, _react.useRef)(null);
   (0, _react.useEffect)(function () {
-    lastMapped.current = {
-      mapped: mapped,
-      mapState: mapState
+    var affected = [];
+    keys.forEach(function (key) {
+      if (lastMapped.current[key].affected.length) {
+        affected.push.apply(affected, _toConsumableArray(lastMap.current[key].affected));
+      }
+    });
+    lastState.current = {
+      state: state,
+      affected: (0, _proxyequal.collectValuables)(affected)
     };
   }); // subscription
 
   (0, _react.useEffect)(function () {
     var callback = function callback() {
-      var changed = !(0, _proxyequal.proxyCompare)(lastProxyfied.current.state, store.getState(), lastProxyfied.current.affected);
+      var changed = !(0, _proxyequal.proxyCompare)(lastState.current.state, store.getState(), lastState.current.affected);
       (0, _proxyequal.drainDifference)();
-      if (!changed) return; // no state parts interested are changed.
-
-      try {
-        changed = !shallowEqualDeproxify(lastMapped.current.mapped, lastMapped.current.mapState(store.getState()));
-      } catch (e) {
-        changed = true; // props are likely to be updated
-      }
 
       if (changed) {
         forceUpdate();
@@ -215,7 +256,7 @@ var useReduxStateMapped = function useReduxStateMapped(mapState) {
   return mapped;
 };
 
-exports.useReduxStateMapped = useReduxStateMapped;
+exports.useReduxSelectors = useReduxSelectors;
 
 var useReduxStateSimple = function useReduxStateSimple() {
   var forceUpdate = useForceUpdate();

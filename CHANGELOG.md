@@ -1,6 +1,10 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- New useReduxSelectors
+### Changed
+- Removed useReduxStateMapped
 
 ## [1.8.0] - 2019-04-02
 ### Changed

@@ -20,6 +20,6 @@ export const useReduxDispatch: <A extends Action>() => Dispatch<A>;
 
 export const useReduxState: <S>() => S;
 
-export const useReduxStateMapped: <S, M>(mapState: (state: S) => M) => M;
+export const useReduxSelectors: <S, M>(selectors: { [K in keyof M]: (state: S) => M[K] }) => M;
 
 export const useReduxStateSimple: <S extends {}>() => S;

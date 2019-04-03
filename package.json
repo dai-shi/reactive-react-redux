@@ -28,7 +28,8 @@
     "examples:memoization": "DIR=06_memoization webpack-dev-server",
     "examples:multistore": "DIR=07_multistore webpack-dev-server",
     "examples:dynamic": "DIR=08_dynamic webpack-dev-server",
-    "examples:thunk": "DIR=09_thunk webpack-dev-server"
+    "examples:thunk": "DIR=09_thunk webpack-dev-server",
+    "examples:selectors": "DIR=10_selectors webpack-dev-server"
   },
   "keywords": [
     "react",
