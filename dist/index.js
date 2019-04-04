@@ -48,10 +48,10 @@ var createMap = function createMap(keys, create) {
   }
 
   return obj;
-}; // XXX should we do like shouldInstrument?
-
+};
 
 var canTrap = function canTrap(state) {
+  // XXX should we do like shouldInstrument?
   return _typeof(state) === 'object';
 }; // helper hooks
 
