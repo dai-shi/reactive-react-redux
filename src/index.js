@@ -40,8 +40,10 @@ const createMap = (keys, create) => {
   return obj;
 };
 
-// XXX should we do like shouldInstrument?
-const canTrap = state => typeof state === 'object';
+const canTrap = (state) => {
+  // XXX should we do like shouldInstrument?
+  return typeof state === 'object';
+};
 
 // helper hooks
 
