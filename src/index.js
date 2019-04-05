@@ -168,13 +168,23 @@ export const useReduxSelectors = (selectorMap) => {
   const state = store.getState();
   // keys
   const keys = Object.keys(selectorMap);
+  // cache
+  const cacheRef = useRef({
+    proxyfied: new WeakMap(),
+  });
   // proxyfied
-  const proxyfiedMap = useMemo(
-    () => createMap(keys, () => createProxyfied(state)),
-    // XXX this relies on Object.keys/Object.values keeping the order.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [state, ...keys, ...Object.values(selectorMap)],
-  );
+  const proxyfiedMap = createMap(keys, (key) => {
+    const selector = selectorMap[key];
+    if (cacheRef.current.proxyfied.has(selector)) {
+      const cached = cacheRef.current.proxyfied.get(selector);
+      delete cached.trappedState; // we don't track this time.
+      cached.originalState = state;
+      return cached;
+    }
+    const proxyfied = createProxyfied(state);
+    cacheRef.current.proxyfied.set(selector, proxyfied);
+    return proxyfied;
+  });
   // mapped
   const mapped = createMap(keys, (key) => {
     const proxyfied = proxyfiedMap[key];
@@ -189,7 +199,6 @@ export const useReduxSelectors = (selectorMap) => {
       if (mapped[key].affected.length) {
         affected.push(...proxyfiedMap[key].affected);
       }
-      delete proxyfiedMap[key].trappedState; // we don't track next time.
     });
     lastProxyfied.current = {
       originalState: state,

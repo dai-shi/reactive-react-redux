@@ -197,15 +197,27 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
 
   var state = store.getState(); // keys
 
-  var keys = Object.keys(selectorMap); // proxyfied
+  var keys = Object.keys(selectorMap); // cache
 
-  var proxyfiedMap = (0, _react.useMemo)(function () {
-    return createMap(keys, function () {
-      return createProxyfied(state);
-    });
-  }, // XXX this relies on Object.keys/Object.values keeping the order.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  [state].concat(_toConsumableArray(keys), _toConsumableArray(Object.values(selectorMap)))); // mapped
+  var cacheRef = (0, _react.useRef)({
+    proxyfied: new WeakMap()
+  }); // proxyfied
+
+  var proxyfiedMap = createMap(keys, function (key) {
+    var selector = selectorMap[key];
+
+    if (cacheRef.current.proxyfied.has(selector)) {
+      var cached = cacheRef.current.proxyfied.get(selector);
+      delete cached.trappedState; // we don't track this time.
+
+      cached.originalState = state;
+      return cached;
+    }
+
+    var proxyfied = createProxyfied(state);
+    cacheRef.current.proxyfied.set(selector, proxyfied);
+    return proxyfied;
+  }); // mapped
 
   var mapped = createMap(keys, function (key) {
     var proxyfied = proxyfiedMap[key];
@@ -220,8 +232,6 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
       if (mapped[key].affected.length) {
         affected.push.apply(affected, _toConsumableArray(proxyfiedMap[key].affected));
       }
-
-      delete proxyfiedMap[key].trappedState; // we don't track next time.
     });
     lastProxyfied.current = {
       originalState: state,
