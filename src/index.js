@@ -45,7 +45,7 @@ const canTrap = (state) => {
   return typeof state === 'object';
 };
 
-const createProxyfied = (state, cacheRef) => {
+const createProxyfied = (state, cache) => {
   if (!canTrap(state)) { // for primitives
     return {
       originalState: state,
@@ -54,12 +54,12 @@ const createProxyfied = (state, cacheRef) => {
   }
   // trapped
   let trapped;
-  if (cacheRef && cacheRef.current.trapped.has(state)) {
-    trapped = cacheRef.current.trapped.get(state);
+  if (cache && cache.trapped.has(state)) {
+    trapped = cache.trapped.get(state);
     trapped.reset();
   } else {
-    trapped = proxyState(state, null, cacheRef && cacheRef.current.proxy);
-    if (cacheRef) cacheRef.current.trapped.set(state, trapped);
+    trapped = proxyState(state, null, cache && cache.proxy);
+    if (cache) cache.trapped.set(state, trapped);
   }
   return {
     originalState: state,
@@ -130,7 +130,7 @@ export const useReduxState = () => {
     trapped: new WeakMap(),
   });
   // proxyfied
-  const proxyfied = createProxyfied(state, cacheRef);
+  const proxyfied = createProxyfied(state, cacheRef.current);
   // ref
   const lastProxyfied = useRef(null);
   useEffect(() => {
