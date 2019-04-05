@@ -1,11 +1,11 @@
 {
-  "name": "react-hooks-easy-redux-example",
+  "name": "reactive-react-redux-example",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "react": "latest",
     "react-dom": "latest",
-    "react-hooks-easy-redux": "latest",
+    "reactive-react-redux": "latest",
     "react-scripts": "^2.1.1",
     "redux": "^4.0.1"
   },

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { useReduxDispatch, useReduxState } from 'react-hooks-easy-redux';
+import { useReduxDispatch, useReduxState } from 'reactive-react-redux';
 
 import { Action, State } from './state';
 

@@ -31,7 +31,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
-      'react-hooks-easy-redux': __dirname,
+      'reactive-react-redux': __dirname,
     },
   },
   devServer: {

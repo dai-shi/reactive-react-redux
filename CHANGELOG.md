@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [1.8.0] - 2019-04-02
+### Changed
+- Improve useReduxStateMapped with proxyequal
+
+## [1.7.0] - 2019-04-01
+### Added
+- Implement useReduxStateMapped (experimental/unstable/undocumented)
+### Changed
+- Rename project
+  - Old "react-hooks-easy-redux"
+  - New "reactive-react-redux"
+
 ## [1.6.0] - 2019-03-25
 ### Changed
 - Memoize patched store with batchedUpdates

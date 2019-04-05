@@ -1,11 +1,11 @@
 {
-  "name": "react-hooks-easy-redux",
-  "description": "Easy React bindings for Redux with Hooks API",
-  "version": "1.6.0",
+  "name": "reactive-react-redux",
+  "description": "React Redux binding with React Hooks and Proxy",
+  "version": "1.8.0",
   "author": "Daishi Kato",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dai-shi/react-hooks-easy-redux.git"
+    "url": "https://github.com/dai-shi/reactive-react-redux.git"
   },
   "main": "./dist/index.js",
   "module": "./src/index.js",

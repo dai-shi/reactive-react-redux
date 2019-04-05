@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import reduxThunk from 'redux-thunk';
 
-import { ReduxProvider } from 'react-hooks-easy-redux';
+import { ReduxProvider } from 'reactive-react-redux';
 
 import { reducer } from './state';
 
