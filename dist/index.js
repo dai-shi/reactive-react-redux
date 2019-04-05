@@ -60,9 +60,8 @@ var createProxyfied = function createProxyfied(state, cacheRef) {
     // for primitives
     return {
       originalState: state,
-      trappedState: state,
-      // actually not trapped
-      affected: ['.*']
+      affected: ['.*'] // to mark it already
+
     };
   } // trapped
 
@@ -200,12 +199,17 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
 
   var keys = Object.keys(selectorMap); // proxyfied
 
-  var proxyfiedMap = createMap(keys, function () {
-    return createProxyfied(state);
-  }); // mapped
+  var proxyfiedMap = (0, _react.useMemo)(function () {
+    return createMap(keys, function () {
+      return createProxyfied(state);
+    });
+  }, // XXX this relies on Object.keys/Object.values keeping the order.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [state].concat(_toConsumableArray(keys), _toConsumableArray(Object.values(selectorMap)))); // mapped
 
   var mapped = createMap(keys, function (key) {
-    var partialState = selectorMap[key](proxyfiedMap[key].trappedState);
+    var proxyfied = proxyfiedMap[key];
+    var partialState = selectorMap[key](proxyfied.trappedState || proxyfied.originalState);
     return createProxyfied(partialState);
   }); // update ref
 
@@ -216,6 +220,8 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
       if (mapped[key].affected.length) {
         affected.push.apply(affected, _toConsumableArray(proxyfiedMap[key].affected));
       }
+
+      delete proxyfiedMap[key].trappedState; // we don't track next time.
     });
     lastProxyfied.current = {
       originalState: state,
@@ -240,7 +246,7 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return createMap(keys, function (key) {
-    return mapped[key].trappedState;
+    return mapped[key].trappedState || mapped[key].originalState;
   });
 };
 

@@ -4,7 +4,7 @@ import { useReduxDispatch, useReduxSelectors } from 'reactive-react-redux';
 
 import { Action, State } from './state';
 
-const { useState } = React;
+const { useState, useCallback } = React;
 
 type PersonNameType = {
   first: { name: string };
@@ -14,8 +14,8 @@ type PersonNameType = {
 const PersonName = () => {
   const [mode, setMode] = useState('first');
   const { first, last } = useReduxSelectors<State, PersonNameType>({
-    first: state => ({ name: state.person.firstName }),
-    last: state => ({ name: state.person.lastName }),
+    first: useCallback(state => ({ name: state.person.firstName }), []),
+    last: useCallback(state => ({ name: state.person.lastName }), []),
   });
   const dispatch = useReduxDispatch<Action>();
   return (
