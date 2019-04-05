@@ -45,41 +45,34 @@ const canTrap = (state) => {
   return typeof state === 'object';
 };
 
+const createProxyfied = (state, cacheRef) => {
+  if (!canTrap(state)) { // for primitives
+    return {
+      originalState: state,
+      trappedState: state, // actually not trapped
+      affected: ['.*'],
+    };
+  }
+  // trapped
+  let trapped;
+  if (cacheRef && cacheRef.current.trapped.has(state)) {
+    trapped = cacheRef.current.trapped.get(state);
+    trapped.reset();
+  } else {
+    trapped = proxyState(state, null, cacheRef && cacheRef.current.proxy);
+    if (cacheRef) cacheRef.current.trapped.set(state, trapped);
+  }
+  return {
+    originalState: state,
+    trappedState: trapped.state,
+    affected: trapped.affected, // mutable array
+  };
+};
+
 // helper hooks
 
 const forcedReducer = state => !state;
 const useForceUpdate = () => useReducer(forcedReducer, false)[1];
-
-const useProxyfied = (stateMap, cache) => {
-  // keys
-  const keys = Object.keys(stateMap);
-  // trapped
-  const trappedMap = createMap(keys, (key) => {
-    const state = stateMap[key];
-    if (!canTrap(state)) return { state, affected: ['.*'] }; // for primitives
-    let trapped;
-    if (cache && cache.current.trapped.has(state)) {
-      trapped = cache.current.trapped.get(state);
-      trapped.reset();
-    } else {
-      trapped = proxyState(state, null, cache && cache.current.proxy);
-      if (cache) cache.current.trapped.set(state, trapped);
-    }
-    return trapped;
-  });
-  // update ref
-  const lastMap = useRef(null);
-  useEffect(() => {
-    lastMap.current = createMap(keys, key => ({
-      state: stateMap[key],
-      affected: collectValuables(trappedMap[key].affected),
-    }));
-  });
-  return {
-    stateMap: createMap(keys, key => trappedMap[key].state),
-    lastMap,
-  };
-};
 
 // patch store with batchedUpdates
 
@@ -133,19 +126,27 @@ export const useReduxState = () => {
   // redux state
   const state = store.getState();
   // cache
-  const cache = useRef({
+  const cacheRef = useRef({
     proxy: new WeakMap(),
     trapped: new WeakMap(),
   });
-  // proxyfied (only SINGLE key)
-  const { stateMap, lastMap } = useProxyfied({ SINGLE: state }, cache);
+  // proxyfied
+  const proxyfied = createProxyfied(state, cacheRef);
+  // ref
+  const lastProxyfied = useRef(null);
+  useEffect(() => {
+    lastProxyfied.current = {
+      ...proxyfied,
+      affected: collectValuables(proxyfied.affected),
+    };
+  });
   // subscription
   useEffect(() => {
     const callback = () => {
       const changed = !proxyCompare(
-        lastMap.current.SINGLE.state,
+        lastProxyfied.current.originalState,
         store.getState(),
-        lastMap.current.SINGLE.affected,
+        lastProxyfied.current.affected,
       );
       drainDifference();
       if (changed) {
@@ -157,7 +158,7 @@ export const useReduxState = () => {
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-  return stateMap.SINGLE;
+  return proxyfied.trappedState;
 };
 
 export const useReduxSelectors = (selectorMap) => {
@@ -169,23 +170,23 @@ export const useReduxSelectors = (selectorMap) => {
   // keys
   const keys = Object.keys(selectorMap);
   // proxyfied
-  const { stateMap, lastMap } = useProxyfied(createMap(keys, () => state));
+  const proxyfiedMap = createMap(keys, () => createProxyfied(state));
   // mapped
-  const {
-    stateMap: mapped,
-    lastMap: lastMapped,
-  } = useProxyfied(createMap(keys, key => selectorMap[key](stateMap[key])));
+  const mapped = createMap(keys, (key) => {
+    const partialState = selectorMap[key](proxyfiedMap[key].trappedState);
+    return createProxyfied(partialState);
+  });
   // update ref
-  const lastState = useRef(null);
+  const lastProxyfied = useRef(null);
   useEffect(() => {
     const affected = [];
     keys.forEach((key) => {
-      if (lastMapped.current[key].affected.length) {
-        affected.push(...lastMap.current[key].affected);
+      if (mapped[key].affected.length) {
+        affected.push(...proxyfiedMap[key].affected);
       }
     });
-    lastState.current = {
-      state,
+    lastProxyfied.current = {
+      originalState: state,
       affected: collectValuables(affected),
     };
   });
@@ -193,9 +194,9 @@ export const useReduxSelectors = (selectorMap) => {
   useEffect(() => {
     const callback = () => {
       const changed = !proxyCompare(
-        lastState.current.state,
+        lastProxyfied.current.originalState,
         store.getState(),
-        lastState.current.affected,
+        lastProxyfied.current.affected,
       );
       drainDifference();
       if (changed) {
@@ -207,7 +208,7 @@ export const useReduxSelectors = (selectorMap) => {
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-  return mapped;
+  return createMap(keys, key => mapped[key].trappedState);
 };
 
 export const useReduxStateSimple = () => {
