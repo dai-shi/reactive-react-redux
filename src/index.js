@@ -100,9 +100,17 @@ const patchReduxStore = (origStore) => {
             runBatchedUpdates();
           }
         };
+        // if batchedUpdates is sync
         batchedUpdates(() => {
           listeners.forEach(l => l());
-        }, onFinishRendering);
+        });
+        onFinishRendering();
+        // if batchedUpdates is async
+        /*
+        batchedUpdates(() => {
+          listeners.forEach(l => l());
+        }, null, onFinishRendering);
+        */
       };
       unsubscribe = origStore.subscribe(runBatchedUpdates);
     }

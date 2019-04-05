@@ -113,13 +113,21 @@ var patchReduxStore = function patchReduxStore(origStore) {
             pending = false;
             runBatchedUpdates();
           }
-        };
+        }; // if batchedUpdates is sync
+
 
         (0, _batchedUpdates.batchedUpdates)(function () {
           listeners.forEach(function (l) {
             return l();
           });
-        }, onFinishRendering);
+        });
+        onFinishRendering(); // if batchedUpdates is async
+
+        /*
+        batchedUpdates(() => {
+          listeners.forEach(l => l());
+        }, null, onFinishRendering);
+        */
       };
 
       unsubscribe = origStore.subscribe(runBatchedUpdates);
