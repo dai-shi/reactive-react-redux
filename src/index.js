@@ -3,6 +3,7 @@ import {
   createElement,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useReducer,
   useRef,
@@ -48,7 +49,7 @@ const useProxyfied = (state) => {
   }
   // update ref
   const lastProxyfied = useRef(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     lastProxyfied.current = {
       state,
       affected: collectValuables(trapped.affected),
@@ -116,13 +117,15 @@ export const useReduxState = () => {
   // subscription
   useEffect(() => {
     const callback = () => {
+      const nextState = store.getState();
       const changed = !proxyCompare(
         lastProxyfied.current.state,
-        store.getState(),
+        nextState,
         lastProxyfied.current.affected,
       );
       drainDifference();
       if (changed) {
+        lastProxyfied.current.state = nextState;
         forceUpdate();
       }
     };
@@ -146,7 +149,7 @@ export const useReduxStateSimple = () => {
   }), []);
   const state = store.getState();
   const lastState = useRef(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     lastState.current = state;
   });
   useEffect(() => {

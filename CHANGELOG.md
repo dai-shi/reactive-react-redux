@@ -3,6 +3,8 @@
 ## [Unreleased]
 ### Removed
 - Remove experimental useReduxStateMapped
+### Changed
+- useLayoutEffect and keep latest state after update (see #20)
 
 ## [1.8.0] - 2019-04-02
 ### Changed
