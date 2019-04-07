@@ -98,11 +98,11 @@ var createProxyfied = function createProxyfied(state, cache) {
 
 
 var forcedReducer = function forcedReducer(state) {
-  return !state;
+  return state + 1;
 };
 
 var useForceUpdate = function useForceUpdate() {
-  return (0, _react.useReducer)(forcedReducer, false)[1];
+  return (0, _react.useReducer)(forcedReducer, 0)[1];
 }; // patch store with batchedUpdates
 
 

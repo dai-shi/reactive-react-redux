@@ -5,6 +5,7 @@
 - Remove experimental useReduxStateMapped
 ### Changed
 - useLayoutEffect and keep latest state after update (see #20)
+- useForceUpdate uses counter instead of boolean (see #20)
 ### Added
 - New useReduxSelectors
 

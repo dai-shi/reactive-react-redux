@@ -74,8 +74,8 @@ const createProxyfied = (state, cache) => {
 
 // helper hooks
 
-const forcedReducer = state => !state;
-const useForceUpdate = () => useReducer(forcedReducer, false)[1];
+const forcedReducer = state => state + 1;
+const useForceUpdate = () => useReducer(forcedReducer, 0)[1];
 
 // patch store with batchedUpdates
 
