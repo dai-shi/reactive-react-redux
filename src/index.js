@@ -12,7 +12,6 @@ import {
   proxyState,
   proxyCompare,
   collectValuables,
-  deproxify,
 } from 'proxyequal';
 
 import { batchedUpdates } from './batchedUpdates';
@@ -28,17 +27,6 @@ const warningObject = {
   },
 };
 const ReduxStoreContext = createContext(warningObject);
-
-// utils
-
-const shallowEqualDeproxify = (a, b) => {
-  if (a === b) return true;
-  if (typeof a !== 'object' || typeof b !== 'object') return false;
-  const aKeys = Object.keys(a);
-  const bKeys = Object.keys(b);
-  if (aKeys.length !== bKeys.length) return false;
-  return aKeys.every(key => deproxify(a[key]) === deproxify(b[key]));
-};
 
 // helper hooks
 
@@ -144,54 +132,6 @@ export const useReduxState = () => {
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
   return proxyfiedState;
-};
-
-export const useReduxStateMapped = (mapState) => {
-  const forceUpdate = useForceUpdate();
-  // redux store
-  const store = useContext(ReduxStoreContext);
-  // redux state
-  const state = store.getState();
-  // proxyfied
-  const { proxyfiedState, lastProxyfied } = useProxyfied(state);
-  // mapped
-  const mapped = mapState(proxyfiedState);
-  // update ref
-  const lastMapped = useRef(null);
-  useEffect(() => {
-    lastMapped.current = {
-      mapped,
-      mapState,
-    };
-  });
-  // subscription
-  useEffect(() => {
-    const callback = () => {
-      let changed = !proxyCompare(
-        lastProxyfied.current.state,
-        store.getState(),
-        lastProxyfied.current.affected,
-      );
-      drainDifference();
-      if (!changed) return; // no state parts interested are changed.
-      try {
-        changed = !shallowEqualDeproxify(
-          lastMapped.current.mapped,
-          lastMapped.current.mapState(store.getState()),
-        );
-      } catch (e) {
-        changed = true; // props are likely to be updated
-      }
-      if (changed) {
-        forceUpdate();
-      }
-    };
-    // run once in case the state is already changed
-    callback();
-    const unsubscribe = store.subscribe(callback);
-    return unsubscribe;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-  return mapped;
 };
 
 export const useReduxStateSimple = () => {

@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Removed
+- Remove experimental useReduxStateMapped
 
 ## [1.8.0] - 2019-04-02
 ### Changed
