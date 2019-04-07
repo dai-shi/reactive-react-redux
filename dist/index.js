@@ -222,24 +222,28 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
     var selector = selectorMap[key];
 
     if (!cacheRef.current.selectors.has(selector)) {
-      cacheRef.current.selectors.set(selector, new WeakMap());
+      cacheRef.current.selectors.set(selector, {
+        proxy: new WeakMap(),
+        trapped: new WeakMap(),
+        partialProxyfied: new WeakMap()
+      });
     }
 
     var cache = cacheRef.current.selectors.get(selector);
 
-    if (cache.has(state)) {
-      var _partialProxyfied = cache.get(state);
+    if (cache.partialProxyfied.has(state)) {
+      var _partialProxyfied = cache.partialProxyfied.get(state);
 
       _partialProxyfied.resetAffected();
 
       return _partialProxyfied;
     }
 
-    var proxyfied = createProxyfied(state);
-    var partialState = selectorMap[key](proxyfied.trappedState);
-    var partialProxyfied = createProxyfied(partialState);
+    var proxyfied = createProxyfied(state, cache);
+    var partialState = selector(proxyfied.trappedState);
+    var partialProxyfied = createProxyfied(partialState, cache);
     partialProxyfied.proxyfied = proxyfied;
-    cache.set(state, partialProxyfied);
+    cache.partialProxyfied.set(state, partialProxyfied);
     return partialProxyfied;
   }); // update ref
 

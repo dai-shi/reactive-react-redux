@@ -182,19 +182,23 @@ export const useReduxSelectors = (selectorMap) => {
   const mapped = createMap(keys, (key) => {
     const selector = selectorMap[key];
     if (!cacheRef.current.selectors.has(selector)) {
-      cacheRef.current.selectors.set(selector, new WeakMap());
+      cacheRef.current.selectors.set(selector, {
+        proxy: new WeakMap(),
+        trapped: new WeakMap(),
+        partialProxyfied: new WeakMap(),
+      });
     }
     const cache = cacheRef.current.selectors.get(selector);
-    if (cache.has(state)) {
-      const partialProxyfied = cache.get(state);
+    if (cache.partialProxyfied.has(state)) {
+      const partialProxyfied = cache.partialProxyfied.get(state);
       partialProxyfied.resetAffected();
       return partialProxyfied;
     }
-    const proxyfied = createProxyfied(state);
-    const partialState = selectorMap[key](proxyfied.trappedState);
-    const partialProxyfied = createProxyfied(partialState);
+    const proxyfied = createProxyfied(state, cache);
+    const partialState = selector(proxyfied.trappedState);
+    const partialProxyfied = createProxyfied(partialState, cache);
     partialProxyfied.proxyfied = proxyfied;
-    cache.set(state, partialProxyfied);
+    cache.partialProxyfied.set(state, partialProxyfied);
     return partialProxyfied;
   });
   // update ref
