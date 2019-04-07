@@ -145,13 +145,13 @@ export const useReduxState = () => {
     const callback = () => {
       const nextState = store.getState();
       const changed = !proxyCompare(
-        lastProxyfied.current.state,
+        lastProxyfied.current.originalState,
         nextState,
         lastProxyfied.current.affected,
       );
       drainDifference();
       if (changed) {
-        lastProxyfied.current.state = nextState;
+        lastProxyfied.current.originalState = nextState;
         forceUpdate();
       }
     };
@@ -211,13 +211,15 @@ export const useReduxSelectors = (selectorMap) => {
   // subscription
   useEffect(() => {
     const callback = () => {
+      const nextState = store.getState();
       const changed = !proxyCompare(
         lastProxyfied.current.originalState,
-        store.getState(),
+        nextState,
         lastProxyfied.current.affected,
       );
       drainDifference();
       if (changed) {
+        lastProxyfied.current.originalState = nextState;
         forceUpdate();
       }
     };
