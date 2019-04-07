@@ -29,11 +29,11 @@ var warningObject = {
 var ReduxStoreContext = (0, _react.createContext)(warningObject); // helper hooks
 
 var forcedReducer = function forcedReducer(state) {
-  return !state;
+  return state + 1;
 };
 
 var useForceUpdate = function useForceUpdate() {
-  return (0, _react.useReducer)(forcedReducer, false)[1];
+  return (0, _react.useReducer)(forcedReducer, 0)[1];
 };
 
 var useProxyfied = function useProxyfied(state) {
