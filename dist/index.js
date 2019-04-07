@@ -219,7 +219,7 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
   }); // mapped
 
   var mapped = createMap(keys, function (key) {
-    var selector = selectorMap(key);
+    var selector = selectorMap[key];
 
     if (!cacheRef.current.selectors.has(selector)) {
       cacheRef.current.selectors.set(selector, new WeakMap());

@@ -180,7 +180,7 @@ export const useReduxSelectors = (selectorMap) => {
   });
   // mapped
   const mapped = createMap(keys, (key) => {
-    const selector = selectorMap(key);
+    const selector = selectorMap[key];
     if (!cacheRef.current.selectors.has(selector)) {
       cacheRef.current.selectors.set(selector, new WeakMap());
     }
