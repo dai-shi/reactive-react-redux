@@ -55,7 +55,7 @@ var canTrap = function canTrap(state) {
   return _typeof(state) === 'object';
 };
 
-var createProxyfied = function createProxyfied(state, cacheRef) {
+var createProxyfied = function createProxyfied(state, cache) {
   if (!canTrap(state)) {
     // for primitives
     return {
@@ -68,12 +68,12 @@ var createProxyfied = function createProxyfied(state, cacheRef) {
 
   var trapped;
 
-  if (cacheRef && cacheRef.current.trapped.has(state)) {
-    trapped = cacheRef.current.trapped.get(state);
+  if (cache && cache.trapped.has(state)) {
+    trapped = cache.trapped.get(state);
     trapped.reset();
   } else {
-    trapped = (0, _proxyequal.proxyState)(state, null, cacheRef && cacheRef.current.proxy);
-    if (cacheRef) cacheRef.current.trapped.set(state, trapped);
+    trapped = (0, _proxyequal.proxyState)(state, null, cache && cache.proxy);
+    if (cache) cache.trapped.set(state, trapped);
   }
 
   return {
@@ -160,10 +160,10 @@ var useReduxState = function useReduxState() {
     trapped: new WeakMap()
   }); // proxyfied
 
-  var proxyfied = createProxyfied(state, cacheRef); // ref
+  var proxyfied = createProxyfied(state, cacheRef.current); // ref
 
   var lastProxyfied = (0, _react.useRef)(null);
-  (0, _react.useEffect)(function () {
+  (0, _react.useLayoutEffect)(function () {
     lastProxyfied.current = _objectSpread({}, proxyfied, {
       affected: (0, _proxyequal.collectValuables)(proxyfied.affected)
     });
@@ -171,10 +171,12 @@ var useReduxState = function useReduxState() {
 
   (0, _react.useEffect)(function () {
     var callback = function callback() {
-      var changed = !(0, _proxyequal.proxyCompare)(lastProxyfied.current.originalState, store.getState(), lastProxyfied.current.affected);
+      var nextState = store.getState();
+      var changed = !(0, _proxyequal.proxyCompare)(lastProxyfied.current.state, nextState, lastProxyfied.current.affected);
       (0, _proxyequal.drainDifference)();
 
       if (changed) {
+        lastProxyfied.current.state = nextState;
         forceUpdate();
       }
     }; // run once in case the state is already changed
@@ -226,7 +228,7 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
   }); // update ref
 
   var lastProxyfied = (0, _react.useRef)(null);
-  (0, _react.useEffect)(function () {
+  (0, _react.useLayoutEffect)(function () {
     var affected = [];
     keys.forEach(function (key) {
       if (mapped[key].affected.length) {
@@ -276,7 +278,7 @@ var useReduxStateSimple = function useReduxStateSimple() {
   }, []);
   var state = store.getState();
   var lastState = (0, _react.useRef)(null);
-  (0, _react.useEffect)(function () {
+  (0, _react.useLayoutEffect)(function () {
     lastState.current = state;
   });
   (0, _react.useEffect)(function () {
