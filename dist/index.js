@@ -56,7 +56,7 @@ var useProxyfied = function useProxyfied(state) {
   (0, _react.useLayoutEffect)(function () {
     lastProxyfied.current = {
       state: state,
-      affected: (0, _proxyequal.collectValuables)(trapped.affected)
+      affected: trapped.affected
     };
   });
   return {
@@ -135,8 +135,7 @@ var useReduxState = function useReduxState() {
   (0, _react.useEffect)(function () {
     var callback = function callback() {
       var nextState = store.getState();
-      var changed = !(0, _proxyequal.proxyCompare)(lastProxyfied.current.state, nextState, lastProxyfied.current.affected);
-      (0, _proxyequal.drainDifference)();
+      var changed = !(0, _proxyequal.proxyEqual)(lastProxyfied.current.state, nextState, lastProxyfied.current.affected);
 
       if (changed) {
         lastProxyfied.current.state = nextState;

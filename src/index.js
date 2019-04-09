@@ -9,10 +9,8 @@ import {
   useRef,
 } from 'react';
 import {
-  drainDifference,
   proxyState,
-  proxyCompare,
-  collectValuables,
+  proxyEqual,
 } from 'proxyequal';
 
 import { batchedUpdates } from './batchedUpdates';
@@ -52,7 +50,7 @@ const useProxyfied = (state) => {
   useLayoutEffect(() => {
     lastProxyfied.current = {
       state,
-      affected: collectValuables(trapped.affected),
+      affected: trapped.affected,
     };
   });
   return {
@@ -118,12 +116,11 @@ export const useReduxState = () => {
   useEffect(() => {
     const callback = () => {
       const nextState = store.getState();
-      const changed = !proxyCompare(
+      const changed = !proxyEqual(
         lastProxyfied.current.state,
         nextState,
         lastProxyfied.current.affected,
       );
-      drainDifference();
       if (changed) {
         lastProxyfied.current.state = nextState;
         forceUpdate();
