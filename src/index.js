@@ -13,6 +13,8 @@ import {
   proxyState,
   proxyCompare,
   collectValuables,
+  isProxyfied,
+  deproxify,
 } from 'proxyequal';
 
 import { batchedUpdates } from './batchedUpdates';
@@ -40,14 +42,10 @@ const createMap = (keys, create) => {
   }
   return obj;
 };
-
-const canTrap = (state) => {
-  // XXX should we do like shouldInstrument?
-  return typeof state === 'object';
-};
+const shouldProxy = state => typeof state === 'object';
 
 const createProxyfied = (state, cache) => {
-  if (!canTrap(state)) { // for primitives
+  if (!shouldProxy(state)) { // for primitives
     return {
       originalState: state,
       trappedState: state, // actually not trapped
@@ -70,6 +68,20 @@ const createProxyfied = (state, cache) => {
     getAffected: () => trapped.affected,
     resetAffected: () => trapped.reset(),
   };
+};
+
+const deproxifyResult = (object) => {
+  if (typeof object !== 'object') return object;
+  if (isProxyfied(object)) return deproxify(object);
+  const result = Array.isArray(object) ? [] : {};
+  let altered = false;
+  Object.key(object).forEach((key) => {
+    result[key] = deproxify(object[key]);
+    if (object[key] !== result[key]) {
+      altered = true;
+    }
+  });
+  return altered ? result : object;
 };
 
 // helper hooks
@@ -195,7 +207,8 @@ export const useReduxSelectors = (selectorMap) => {
       return partialProxyfied;
     }
     const proxyfied = createProxyfied(state, cache);
-    const partialState = selector(proxyfied.trappedState);
+    const partialState = deproxifyResult(selector(proxyfied.trappedState));
+    // if we had `createShallowProxyfied, it should perform much better
     const partialProxyfied = createProxyfied(partialState, cache);
     partialProxyfied.proxyfied = proxyfied;
     cache.partialProxyfied.set(state, partialProxyfied);
