@@ -179,26 +179,25 @@ export const useReduxSelectors = (selectorMap) => {
   // mapped
   const mapped = createMap(keys, (key) => {
     const selector = selectorMap[key];
-    if (!cacheRef.current.selectors.has(selector)) {
-      cacheRef.current.selectors.set(selector, {
-        proxy: new WeakMap(),
-        trapped: new WeakMap(),
-        partialProxyfied: new WeakMap(),
-      });
+    if (cacheRef.current.selectors.has(selector)) {
+      const partialProxyfied = cacheRef.current.selectors.get(selector);
+      const { proxyfied } = partialProxyfied;
+      const shouldRerunSelector = !proxyCompare(
+        proxyfied.originalState,
+        state,
+        proxyfied.affected,
+      );
+      if (!shouldRerunSelector) {
+        partialProxyfied.resetAffected();
+        return partialProxyfied;
+      }
     }
-    const cache = cacheRef.current.selectors.get(selector);
-    if (cache.partialProxyfied.has(state)) {
-      const partialProxyfied = cache.partialProxyfied.get(state);
-      partialProxyfied.resetAffected();
-      return partialProxyfied;
-    }
-    const proxyfied = createProxyfied(state, cache);
+    const proxyfied = createProxyfied(state);
     const partialState = selector(proxyfied.trappedState);
     proxyfied.seal(); // do not track any more
     // if we had `createShallowProxyfied, it should perform much better
-    const partialProxyfied = createProxyfied(partialState, cache);
+    const partialProxyfied = createProxyfied(partialState);
     partialProxyfied.proxyfied = proxyfied;
-    cache.partialProxyfied.set(state, partialProxyfied);
     return partialProxyfied;
   });
   // update ref
@@ -206,8 +205,16 @@ export const useReduxSelectors = (selectorMap) => {
   useLayoutEffect(() => {
     const affected = [];
     keys.forEach((key) => {
-      if (mapped[key].getAffected().length) {
-        affected.push(...mapped[key].proxyfied.getAffected());
+      const selector = selectorMap[key];
+      const partialProxyfied = mapped[key];
+      cacheRef.current.selectors.set(selector, partialProxyfied);
+      if (!partialProxyfied.proxyfied.affected) {
+        partialProxyfied.proxyfied.affected = collectValuables(
+          partialProxyfied.proxyfied.getAffected(),
+        );
+      }
+      if (partialProxyfied.getAffected().length) {
+        affected.push(...partialProxyfied.proxyfied.affected);
       }
     });
     lastProxyfied.current = {
