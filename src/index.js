@@ -13,8 +13,6 @@ import {
   proxyState,
   proxyCompare,
   collectValuables,
-  isProxyfied,
-  deproxify,
 } from 'proxyequal';
 
 import { batchedUpdates } from './batchedUpdates';
@@ -51,6 +49,7 @@ const createProxyfied = (state, cache) => {
       trappedState: state, // actually not trapped
       getAffected: () => ['.*'], // to already mark it
       resetAffected: () => null, // void
+      seal: () => null, // void
     };
   }
   // trapped
@@ -67,21 +66,8 @@ const createProxyfied = (state, cache) => {
     trappedState: trapped.state,
     getAffected: () => trapped.affected,
     resetAffected: () => trapped.reset(),
+    seal: () => trapped.seal(),
   };
-};
-
-const deproxifyResult = (object) => {
-  if (typeof object !== 'object') return object;
-  if (isProxyfied(object)) return deproxify(object);
-  const result = Array.isArray(object) ? [] : {};
-  let altered = false;
-  Object.key(object).forEach((key) => {
-    result[key] = deproxify(object[key]);
-    if (object[key] !== result[key]) {
-      altered = true;
-    }
-  });
-  return altered ? result : object;
 };
 
 // helper hooks
@@ -207,7 +193,8 @@ export const useReduxSelectors = (selectorMap) => {
       return partialProxyfied;
     }
     const proxyfied = createProxyfied(state, cache);
-    const partialState = deproxifyResult(selector(proxyfied.trappedState));
+    const partialState = selector(proxyfied.trappedState);
+    proxyfied.seal(); // do not track any more
     // if we had `createShallowProxyfied, it should perform much better
     const partialProxyfied = createProxyfied(partialState, cache);
     partialProxyfied.proxyfied = proxyfied;
