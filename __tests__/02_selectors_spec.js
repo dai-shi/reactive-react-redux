@@ -12,7 +12,7 @@ import {
 describe('selectors spec', () => {
   afterEach(cleanup);
 
-  it('should re-render on update', () => {
+  it('should re-render with no false negatives', () => {
     const initialState = {
       counter1: 0,
       counter2: 0,
@@ -32,6 +32,7 @@ describe('selectors spec', () => {
       numOfRenders1 += 1;
       const { c1 } = useReduxSelectors({
         c1: useCallback(state => ({ value: state.counter1 }), []),
+        c2: useCallback(state => ({ value: state.counter2 }), []),
       });
       const dispatch = useReduxDispatch();
       return (
@@ -45,6 +46,7 @@ describe('selectors spec', () => {
     const Counter2 = () => {
       numOfRenders2 += 1;
       const { c2 } = useReduxSelectors({
+        c1: useCallback(state => ({ value: state.counter1 }), []),
         c2: useCallback(state => ({ value: state.counter2 }), []),
       });
       const dispatch = useReduxDispatch();

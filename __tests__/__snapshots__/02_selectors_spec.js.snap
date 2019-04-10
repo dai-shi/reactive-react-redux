@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`selectors spec should re-render on update 1`] = `
+exports[`selectors spec should re-render with no false negatives 1`] = `
 <div>
   <div>
     <span>
@@ -25,7 +25,7 @@ exports[`selectors spec should re-render on update 1`] = `
 </div>
 `;
 
-exports[`selectors spec should re-render on update 2`] = `
+exports[`selectors spec should re-render with no false negatives 2`] = `
 <div>
   <div>
     <span>
