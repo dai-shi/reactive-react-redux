@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`selectors spec should re-render on update 1`] = `
+<div>
+  <div>
+    <span>
+      0
+    </span>
+    <button
+      type="button"
+    >
+      inc1
+    </button>
+  </div>
+  <div>
+    <span>
+      0
+    </span>
+    <button
+      type="button"
+    >
+      inc2
+    </button>
+  </div>
+</div>
+`;
+
+exports[`selectors spec should re-render on update 2`] = `
+<div>
+  <div>
+    <span>
+      1
+    </span>
+    <button
+      type="button"
+    >
+      inc1
+    </button>
+  </div>
+  <div>
+    <span>
+      0
+    </span>
+    <button
+      type="button"
+    >
+      inc2
+    </button>
+  </div>
+</div>
+`;
