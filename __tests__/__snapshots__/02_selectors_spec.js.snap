@@ -49,3 +49,28 @@ exports[`selectors spec should re-render with no false negatives 2`] = `
   </div>
 </div>
 `;
+
+exports[`selectors spec should re-render with no false positives 1`] = `
+<div>
+  <div>
+    <span>
+      not big
+    </span>
+    <button
+      type="button"
+    >
+      inc1
+    </button>
+  </div>
+  <div>
+    <span>
+      not big
+    </span>
+    <button
+      type="button"
+    >
+      inc1
+    </button>
+  </div>
+</div>
+`;
