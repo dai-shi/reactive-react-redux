@@ -31,13 +31,13 @@ describe('selectors spec', () => {
     const Counter1 = () => {
       numOfRenders1 += 1;
       const { c1 } = useReduxSelectors({
-        c1: useCallback(state => ({ value: state.counter1 }), []),
-        c2: useCallback(state => ({ value: state.counter2 }), []),
+        c1: useCallback(state => state.counter1, []),
+        c2: useCallback(state => state.counter2, []),
       });
       const dispatch = useReduxDispatch();
       return (
         <div>
-          <span>{c1.value}</span>
+          <span>{c1}</span>
           <button type="button" onClick={() => dispatch({ type: 'increment1' })}>inc1</button>
         </div>
       );
@@ -46,13 +46,13 @@ describe('selectors spec', () => {
     const Counter2 = () => {
       numOfRenders2 += 1;
       const { c2 } = useReduxSelectors({
-        c1: useCallback(state => ({ value: state.counter1 }), []),
-        c2: useCallback(state => ({ value: state.counter2 }), []),
+        c1: useCallback(state => state.counter1, []),
+        c2: useCallback(state => state.counter2, []),
       });
       const dispatch = useReduxDispatch();
       return (
         <div>
-          <span>{c2.value}</span>
+          <span>{c2}</span>
           <button type="button" onClick={() => dispatch({ type: 'increment2' })}>inc2</button>
         </div>
       );
@@ -93,14 +93,14 @@ describe('selectors spec', () => {
     let numOfRenders1 = 0;
     const Counter1 = () => {
       numOfRenders1 += 1;
-      const { c1 } = useReduxSelectors({
-        c1: useCallback(state => ({ isBig: state.counter1 > 2 }), []),
-        c2: useCallback(state => ({ isBig: state.counter2 > 2 }), []),
+      const { isBig1 } = useReduxSelectors({
+        isBig1: useCallback(state => state.counter1 > 2, []),
+        isBig2: useCallback(state => state.counter2 > 2, []),
       });
       const dispatch = useReduxDispatch();
       return (
         <div>
-          <span>{c1.isBig ? 'big' : 'not big'}</span>
+          <span>{isBig1 ? 'big' : 'not big'}</span>
           <button type="button" onClick={() => dispatch({ type: 'increment1' })}>inc1</button>
         </div>
       );
@@ -122,6 +122,6 @@ describe('selectors spec', () => {
     expect(numOfRenders1).toBe(4);
     fireEvent.click(getByText('inc1'));
     expect(numOfRenders1).toBe(8);
-    // expect(container).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 });

@@ -41,17 +41,15 @@ const createMap = (keys, create) => {
 
 const shouldProxy = state => typeof state === 'object';
 
-const createProxyfied = (state, cache) => {
-  if (!shouldProxy(state)) { // for primitives
-    return {
-      originalState: state,
-      trappedState: state, // actually not trapped
-      getAffected: () => ['.*'], // to already mark it
-      resetAffected: () => null, // void
+const createTrapped = (state, cache) => {
+  if (!shouldProxy(state)) {
+    return { // emulate trapped for primitives
+      state, // actually not trapped
+      affected: ['.*'], // already mark it as used
+      reset: () => null, // void
       seal: () => null, // void
     };
   }
-  // trapped
   let trapped;
   if (cache && cache.trapped.has(state)) {
     trapped = cache.trapped.get(state);
@@ -60,12 +58,34 @@ const createProxyfied = (state, cache) => {
     trapped = proxyState(state, null, cache && cache.proxy);
     if (cache) cache.trapped.set(state, trapped);
   }
+  return trapped;
+};
+
+// track state usage in selector, and only rerun if necessary
+const runSelector = (state, selector, lastResult) => {
+  if (lastResult) {
+    const {
+      state: lastState,
+      selector: lastSelector,
+      innerTrapped: lastInnerTrapped,
+    } = lastResult;
+    const shouldRerunSelector = selector !== lastSelector || !proxyEqual(
+      lastState,
+      state,
+      lastInnerTrapped.affected,
+    );
+    if (!shouldRerunSelector) {
+      return lastResult;
+    }
+  }
+  const innerTrapped = createTrapped(state);
+  const value = selector(innerTrapped.state);
+  innerTrapped.seal(); // do not track any more
   return {
-    originalState: state,
-    trappedState: trapped.state,
-    getAffected: () => trapped.affected,
-    resetAffected: () => trapped.reset(),
-    seal: () => trapped.seal(),
+    state,
+    selector,
+    innerTrapped,
+    value,
   };
 };
 
@@ -130,14 +150,14 @@ export const useReduxState = () => {
     proxy: new WeakMap(),
     trapped: new WeakMap(),
   });
-  // proxyfied
-  const proxyfied = createProxyfied(state, cacheRef.current);
+  // trapped
+  const trapped = createTrapped(state, cacheRef.current);
   // ref
-  const lastProxyfied = useRef(null);
+  const lastTracked = useRef(null);
   useLayoutEffect(() => {
-    lastProxyfied.current = {
-      originalState: proxyfied.originalState,
-      affected: proxyfied.getAffected(),
+    lastTracked.current = {
+      state,
+      affected: trapped.affected,
     };
   });
   // subscription
@@ -145,12 +165,12 @@ export const useReduxState = () => {
     const callback = () => {
       const nextState = store.getState();
       const changed = !proxyEqual(
-        lastProxyfied.current.originalState,
+        lastTracked.current.state,
         nextState,
-        lastProxyfied.current.affected,
+        lastTracked.current.affected,
       );
       if (changed) {
-        lastProxyfied.current.originalState = nextState;
+        lastTracked.current.state = nextState;
         forceUpdate();
       }
     };
@@ -159,7 +179,7 @@ export const useReduxState = () => {
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-  return proxyfied.trappedState;
+  return trapped.state;
 };
 
 export const useReduxSelectors = (selectorMap) => {
@@ -170,65 +190,51 @@ export const useReduxSelectors = (selectorMap) => {
   const state = store.getState();
   // keys
   const keys = Object.keys(selectorMap);
-  // cache
-  const cacheRef = useRef({
-    selectors: new WeakMap(),
-  });
-  // mapped
+  // lastMapped (ref)
+  const lastMapped = useRef({});
+  // mapped result
   const mapped = createMap(keys, (key) => {
     const selector = selectorMap[key];
-    if (cacheRef.current.selectors.has(selector)) {
-      const partialProxyfied = cacheRef.current.selectors.get(selector);
-      const { proxyfied } = partialProxyfied;
-      const shouldRerunSelector = !proxyEqual(
-        proxyfied.originalState,
-        state,
-        proxyfied.affected,
-      );
-      if (!shouldRerunSelector) {
-        partialProxyfied.resetAffected();
-        return partialProxyfied;
-      }
-    }
-    const proxyfied = createProxyfied(state);
-    const partialState = selector(proxyfied.trappedState);
-    proxyfied.seal(); // do not track any more
-    // if we had `createShallowProxyfied, it should perform much better
-    const partialProxyfied = createProxyfied(partialState);
-    partialProxyfied.proxyfied = proxyfied;
-    return partialProxyfied;
+    const lastResult = lastMapped.current[key];
+    return runSelector(state, selector, lastResult);
   });
+  // if we had `createShallowTrapped, it should perform much better
+  const outerTrapped = createTrapped(createMap(keys, key => mapped[key].value));
   // update ref
-  const lastProxyfied = useRef(null);
+  const lastTracked = useRef(null);
   useLayoutEffect(() => {
+    lastMapped.current = mapped;
     const affected = [];
     keys.forEach((key) => {
-      const selector = selectorMap[key];
-      const partialProxyfied = mapped[key];
-      cacheRef.current.selectors.set(selector, partialProxyfied);
-      if (!partialProxyfied.proxyfied.affected) {
-        partialProxyfied.proxyfied.affected = partialProxyfied.proxyfied.getAffected();
-      }
-      if (partialProxyfied.getAffected().length) {
-        affected.push(...partialProxyfied.proxyfied.affected);
+      if (outerTrapped.affected.indexOf(`.${key}`) >= 0) {
+        const { innerTrapped } = mapped[key];
+        affected.push(...innerTrapped.affected);
       }
     });
-    lastProxyfied.current = {
-      originalState: state,
-      affected,
-    };
+    lastTracked.current = { state, affected };
   });
   // subscription
   useEffect(() => {
     const callback = () => {
       const nextState = store.getState();
-      const changed = !proxyEqual(
-        lastProxyfied.current.originalState,
+      const innerChanged = !proxyEqual(
+        lastTracked.current.state,
         nextState,
-        lastProxyfied.current.affected,
+        lastTracked.current.affected,
       );
-      if (changed) {
-        lastProxyfied.current.originalState = nextState;
+      if (!innerChanged) return;
+      let outerChanged = false;
+      const nextMapped = createMap(Object.keys(lastMapped.current), (key) => {
+        const lastResult = lastMapped.current[key];
+        const nextResult = runSelector(nextState, lastResult.selector, lastResult);
+        if (nextResult.value !== lastResult.value) {
+          outerChanged = true;
+        }
+        return nextResult;
+      });
+      if (outerChanged) {
+        lastTracked.current.state = nextState;
+        lastMapped.current = nextMapped;
         forceUpdate();
       }
     };
@@ -237,7 +243,7 @@ export const useReduxSelectors = (selectorMap) => {
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-  return createMap(keys, key => mapped[key].trappedState);
+  return outerTrapped.state;
 };
 
 export const useReduxStateSimple = () => {

@@ -7,15 +7,15 @@ import { Action, State } from './state';
 const { useState, useCallback } = React;
 
 type PersonNameType = {
-  first: { name: string };
-  last: { name: string };
+  first: string;
+  last: string;
 };
 
 const PersonName = () => {
   const [mode, setMode] = useState('first');
-  const { first, last } = useReduxSelectors<State, PersonNameType>({
-    first: useCallback(state => ({ name: state.person.firstName }), []),
-    last: useCallback(state => ({ name: state.person.lastName }), []),
+  const names = useReduxSelectors<State, PersonNameType>({
+    first: useCallback(state => state.person.firstName, []),
+    last: useCallback(state => state.person.lastName, []),
   });
   const dispatch = useReduxDispatch<Action>();
   return (
@@ -25,7 +25,7 @@ const PersonName = () => {
         <div>
           First Name:
           <input
-            value={first.name}
+            value={names.first}
             onChange={(event) => {
               const firstName = event.target.value;
               dispatch({ firstName, type: 'setFirstName' });
@@ -38,7 +38,7 @@ const PersonName = () => {
         <div>
           Last Name:
           <input
-            value={last.name}
+            value={names.last}
             onChange={(event) => {
               const lastName = event.target.value;
               dispatch({ lastName, type: 'setLastName' });
