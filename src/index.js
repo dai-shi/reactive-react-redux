@@ -9,10 +9,8 @@ import {
   useRef,
 } from 'react';
 import {
-  drainDifference,
   proxyState,
-  proxyCompare,
-  collectValuables,
+  proxyEqual,
 } from 'proxyequal';
 
 import { batchedUpdates } from './batchedUpdates';
@@ -40,6 +38,7 @@ const createMap = (keys, create) => {
   }
   return obj;
 };
+
 const shouldProxy = state => typeof state === 'object';
 
 const createProxyfied = (state, cache) => {
@@ -138,19 +137,18 @@ export const useReduxState = () => {
   useLayoutEffect(() => {
     lastProxyfied.current = {
       originalState: proxyfied.originalState,
-      affected: collectValuables(proxyfied.getAffected()),
+      affected: proxyfied.getAffected(),
     };
   });
   // subscription
   useEffect(() => {
     const callback = () => {
       const nextState = store.getState();
-      const changed = !proxyCompare(
+      const changed = !proxyEqual(
         lastProxyfied.current.originalState,
         nextState,
         lastProxyfied.current.affected,
       );
-      drainDifference();
       if (changed) {
         lastProxyfied.current.originalState = nextState;
         forceUpdate();
@@ -182,7 +180,7 @@ export const useReduxSelectors = (selectorMap) => {
     if (cacheRef.current.selectors.has(selector)) {
       const partialProxyfied = cacheRef.current.selectors.get(selector);
       const { proxyfied } = partialProxyfied;
-      const shouldRerunSelector = !proxyCompare(
+      const shouldRerunSelector = !proxyEqual(
         proxyfied.originalState,
         state,
         proxyfied.affected,
@@ -209,9 +207,7 @@ export const useReduxSelectors = (selectorMap) => {
       const partialProxyfied = mapped[key];
       cacheRef.current.selectors.set(selector, partialProxyfied);
       if (!partialProxyfied.proxyfied.affected) {
-        partialProxyfied.proxyfied.affected = collectValuables(
-          partialProxyfied.proxyfied.getAffected(),
-        );
+        partialProxyfied.proxyfied.affected = partialProxyfied.proxyfied.getAffected();
       }
       if (partialProxyfied.getAffected().length) {
         affected.push(...partialProxyfied.proxyfied.affected);
@@ -219,19 +215,18 @@ export const useReduxSelectors = (selectorMap) => {
     });
     lastProxyfied.current = {
       originalState: state,
-      affected: collectValuables(affected),
+      affected,
     };
   });
   // subscription
   useEffect(() => {
     const callback = () => {
       const nextState = store.getState();
-      const changed = !proxyCompare(
+      const changed = !proxyEqual(
         lastProxyfied.current.originalState,
         nextState,
         lastProxyfied.current.affected,
       );
-      drainDifference();
       if (changed) {
         lastProxyfied.current.originalState = nextState;
         forceUpdate();
