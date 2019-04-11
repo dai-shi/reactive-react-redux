@@ -11,7 +11,10 @@ import {
 import {
   proxyState,
   proxyEqual,
+  isProxyfied,
+  deproxify,
 } from 'proxyequal';
+import { withKnowUsage } from 'with-known-usage';
 
 import { batchedUpdates } from './batchedUpdates';
 
@@ -51,6 +54,20 @@ const createTrapped = (state, cache) => {
   return trapped;
 };
 
+const deproxifyResult = (object) => {
+  if (typeof object !== 'object') return object;
+  if (isProxyfied(object)) return deproxify(object);
+  const result = Array.isArray(object) ? [] : {};
+  let altered = false;
+  Object.key(object).forEach((key) => {
+    result[key] = deproxifyResult(object[key]);
+    if (object[key] !== result[key]) {
+      altered = true;
+    }
+  });
+  return altered ? result : object;
+};
+
 // track state usage in selector, and only rerun if necessary
 const runSelector = (state, selector, lastResult) => {
   if (lastResult) {
@@ -69,8 +86,7 @@ const runSelector = (state, selector, lastResult) => {
     }
   }
   const innerTrapped = createTrapped(state);
-  const value = selector(innerTrapped.state);
-  innerTrapped.seal(); // do not track any more
+  const value = deproxifyResult(selector(innerTrapped.state));
   return {
     state,
     selector,
@@ -202,13 +218,12 @@ export const useReduxSelectors = (selectorMap) => {
     const lastResult = lastTracked.current.mapped && lastTracked.current.mapped[key];
     return runSelector(state, selector, lastResult);
   });
-  // if we had `createShallowTrapped, it should perform much better
-  const outerTrapped = createTrapped(createMap(keys, key => mapped[key].value));
+  const outerTrapped = withKnowUsage(createMap(keys, key => mapped[key].value));
   // update ref
   useLayoutEffect(() => {
     const affectedChunks = [];
     keys.forEach((key) => {
-      if (outerTrapped.affected.indexOf(`.${key}`) >= 0) {
+      if (outerTrapped.usage.has(key)) {
         const { innerTrapped } = mapped[key];
         affectedChunks.push(innerTrapped.affected);
       }
@@ -251,7 +266,7 @@ export const useReduxSelectors = (selectorMap) => {
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-  return outerTrapped.state;
+  return outerTrapped.proxy;
 };
 
 export const useReduxStateSimple = () => {

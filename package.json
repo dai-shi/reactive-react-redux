@@ -42,7 +42,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "proxyequal": "^2.0.5"
+    "proxyequal": "^2.0.5",
+    "with-known-usage": "^1.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

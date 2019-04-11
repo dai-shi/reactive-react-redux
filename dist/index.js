@@ -9,6 +9,8 @@ var _react = require("react");
 
 var _proxyequal = require("proxyequal");
 
+var _withKnownUsage = require("with-known-usage");
+
 var _batchedUpdates = require("./batchedUpdates");
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
@@ -22,6 +24,8 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 // global context
 var warningObject = {
@@ -60,6 +64,21 @@ var createTrapped = function createTrapped(state, cache) {
   }
 
   return trapped;
+};
+
+var deproxifyResult = function deproxifyResult(object) {
+  if (_typeof(object) !== 'object') return object;
+  if ((0, _proxyequal.isProxyfied)(object)) return (0, _proxyequal.deproxify)(object);
+  var result = Array.isArray(object) ? [] : {};
+  var altered = false;
+  Object.key(object).forEach(function (key) {
+    result[key] = deproxifyResult(object[key]);
+
+    if (object[key] !== result[key]) {
+      altered = true;
+    }
+  });
+  return altered ? result : object;
 }; // track state usage in selector, and only rerun if necessary
 
 
@@ -76,9 +95,7 @@ var runSelector = function runSelector(state, selector, lastResult) {
   }
 
   var innerTrapped = createTrapped(state);
-  var value = selector(innerTrapped.state);
-  innerTrapped.seal(); // do not track any more
-
+  var value = deproxifyResult(selector(innerTrapped.state));
   return {
     state: state,
     selector: selector,
@@ -231,16 +248,15 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
     var selector = selectorMap[key];
     var lastResult = lastTracked.current.mapped && lastTracked.current.mapped[key];
     return runSelector(state, selector, lastResult);
-  }); // if we had `createShallowTrapped, it should perform much better
-
-  var outerTrapped = createTrapped(createMap(keys, function (key) {
+  });
+  var outerTrapped = (0, _withKnownUsage.withKnowUsage)(createMap(keys, function (key) {
     return mapped[key].value;
   })); // update ref
 
   (0, _react.useLayoutEffect)(function () {
     var affectedChunks = [];
     keys.forEach(function (key) {
-      if (outerTrapped.affected.indexOf(".".concat(key)) >= 0) {
+      if (outerTrapped.usage.has(key)) {
         var innerTrapped = mapped[key].innerTrapped;
         affectedChunks.push(innerTrapped.affected);
       }
@@ -284,7 +300,7 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return outerTrapped.state;
+  return outerTrapped.proxy;
 };
 
 exports.useReduxSelectors = useReduxSelectors;
