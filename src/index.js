@@ -32,7 +32,7 @@ const ReduxStoreContext = createContext(warningObject);
 const createMap = (keys, create) => {
   // "Map" here means JavaScript Object not JavaScript Map.
   const obj = {};
-  for (let i = 0; i < keys.length; i += 1) {
+  for (let i = 0; i < keys.length; ++i) {
     const key = keys[i];
     obj[key] = create(key);
   }
@@ -87,6 +87,19 @@ const runSelector = (state, selector, lastResult) => {
     innerTrapped,
     value,
   };
+};
+
+const concatAffectedChunks = (affectedChunks, last) => {
+  const len = last.affectedChunks && last.affectedChunks.length;
+  if (affectedChunks.length !== len) {
+    return [].concat(...affectedChunks);
+  }
+  for (let i = 0; i < len; ++i) {
+    if (affectedChunks[i] !== last.affectedChunks[i]) {
+      return [].concat(...affectedChunks);
+    }
+  }
+  return last.affected;
 };
 
 // helper hooks
@@ -201,17 +214,18 @@ export const useReduxSelectors = (selectorMap) => {
   // if we had `createShallowTrapped, it should perform much better
   const outerTrapped = createTrapped(createMap(keys, key => mapped[key].value));
   // update ref
-  const lastTracked = useRef(null);
+  const lastTracked = useRef({});
   useLayoutEffect(() => {
     lastMapped.current = mapped;
-    const affected = [];
+    const affectedChunks = [];
     keys.forEach((key) => {
       if (outerTrapped.affected.indexOf(`.${key}`) >= 0) {
         const { innerTrapped } = mapped[key];
-        affected.push(...innerTrapped.affected);
+        affectedChunks.push(innerTrapped.affected);
       }
     });
-    lastTracked.current = { state, affected };
+    const affected = concatAffectedChunks(affectedChunks, lastTracked.current);
+    lastTracked.current = { state, affectedChunks, affected };
   });
   // subscription
   useEffect(() => {

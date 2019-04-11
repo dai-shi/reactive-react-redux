@@ -11,6 +11,10 @@ var _proxyequal = require("proxyequal");
 
 var _batchedUpdates = require("./batchedUpdates");
 
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -18,10 +22,6 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -42,7 +42,7 @@ var createMap = function createMap(keys, create) {
   // "Map" here means JavaScript Object not JavaScript Map.
   var obj = {};
 
-  for (var i = 0; i < keys.length; i += 1) {
+  for (var i = 0; i < keys.length; ++i) {
     var key = keys[i];
     obj[key] = create(key);
   }
@@ -109,6 +109,26 @@ var runSelector = function runSelector(state, selector, lastResult) {
     innerTrapped: innerTrapped,
     value: value
   };
+};
+
+var concatAffectedChunks = function concatAffectedChunks(affectedChunks, last) {
+  var len = last.affectedChunks && last.affectedChunks.length;
+
+  if (affectedChunks.length !== len) {
+    var _ref;
+
+    return (_ref = []).concat.apply(_ref, _toConsumableArray(affectedChunks));
+  }
+
+  for (var i = 0; i < len; ++i) {
+    if (affectedChunks[i] !== last.affectedChunks[i]) {
+      var _ref2;
+
+      return (_ref2 = []).concat.apply(_ref2, _toConsumableArray(affectedChunks));
+    }
+  }
+
+  return last.affected;
 }; // helper hooks
 
 
@@ -155,9 +175,9 @@ var patchReduxStore = function patchReduxStore(origStore) {
 }; // exports
 
 
-var ReduxProvider = function ReduxProvider(_ref) {
-  var store = _ref.store,
-      children = _ref.children;
+var ReduxProvider = function ReduxProvider(_ref3) {
+  var store = _ref3.store,
+      children = _ref3.children;
   var patchedStore = (0, _react.useMemo)(function () {
     return patchReduxStore(store);
   }, [store]);
@@ -240,18 +260,20 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
     return mapped[key].value;
   })); // update ref
 
-  var lastTracked = (0, _react.useRef)(null);
+  var lastTracked = (0, _react.useRef)({});
   (0, _react.useLayoutEffect)(function () {
     lastMapped.current = mapped;
-    var affected = [];
+    var affectedChunks = [];
     keys.forEach(function (key) {
       if (outerTrapped.affected.indexOf(".".concat(key)) >= 0) {
         var innerTrapped = mapped[key].innerTrapped;
-        affected.push.apply(affected, _toConsumableArray(innerTrapped.affected));
+        affectedChunks.push(innerTrapped.affected);
       }
     });
+    var affected = concatAffectedChunks(affectedChunks, lastTracked.current);
     lastTracked.current = {
       state: state,
+      affectedChunks: affectedChunks,
       affected: affected
     };
   }); // subscription
