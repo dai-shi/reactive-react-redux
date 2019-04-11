@@ -23,8 +23,6 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 // global context
 var warningObject = {
   get dispatch() {
@@ -50,29 +48,7 @@ var createMap = function createMap(keys, create) {
   return obj;
 };
 
-var shouldProxy = function shouldProxy(state) {
-  return _typeof(state) === 'object';
-};
-
 var createTrapped = function createTrapped(state, cache) {
-  if (!shouldProxy(state)) {
-    return {
-      // emulate trapped for primitives
-      state: state,
-      // actually not trapped
-      affected: ['.*'],
-      // already mark it as used
-      reset: function reset() {
-        return null;
-      },
-      // void
-      seal: function seal() {
-        return null;
-      } // void
-
-    };
-  }
-
   var trapped;
 
   if (cache && cache.trapped.has(state)) {
@@ -109,7 +85,8 @@ var runSelector = function runSelector(state, selector, lastResult) {
     innerTrapped: innerTrapped,
     value: value
   };
-};
+}; // check if any of chunks is changed, if not we return the last one
+
 
 var concatAffectedChunks = function concatAffectedChunks(affectedChunks, last) {
   var len = last.affectedChunks && last.affectedChunks.length;
@@ -246,13 +223,13 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
 
   var state = store.getState(); // keys
 
-  var keys = Object.keys(selectorMap); // lastMapped (ref)
+  var keys = Object.keys(selectorMap); // lastTracked (ref)
 
-  var lastMapped = (0, _react.useRef)({}); // mapped result
+  var lastTracked = (0, _react.useRef)({}); // mapped result
 
   var mapped = createMap(keys, function (key) {
     var selector = selectorMap[key];
-    var lastResult = lastMapped.current[key];
+    var lastResult = lastTracked.current.mapped && lastTracked.current.mapped[key];
     return runSelector(state, selector, lastResult);
   }); // if we had `createShallowTrapped, it should perform much better
 
@@ -260,9 +237,7 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
     return mapped[key].value;
   })); // update ref
 
-  var lastTracked = (0, _react.useRef)({});
   (0, _react.useLayoutEffect)(function () {
-    lastMapped.current = mapped;
     var affectedChunks = [];
     keys.forEach(function (key) {
       if (outerTrapped.affected.indexOf(".".concat(key)) >= 0) {
@@ -273,6 +248,7 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
     var affected = concatAffectedChunks(affectedChunks, lastTracked.current);
     lastTracked.current = {
       state: state,
+      mapped: mapped,
       affectedChunks: affectedChunks,
       affected: affected
     };
@@ -284,8 +260,8 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
       var innerChanged = !(0, _proxyequal.proxyEqual)(lastTracked.current.state, nextState, lastTracked.current.affected);
       if (!innerChanged) return;
       var outerChanged = false;
-      var nextMapped = createMap(Object.keys(lastMapped.current), function (key) {
-        var lastResult = lastMapped.current[key];
+      var nextMapped = createMap(Object.keys(lastTracked.current.mapped), function (key) {
+        var lastResult = lastTracked.current.mapped[key];
         var nextResult = runSelector(nextState, lastResult.selector, lastResult);
 
         if (nextResult.value !== lastResult.value) {
@@ -297,7 +273,7 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
 
       if (outerChanged) {
         lastTracked.current.state = nextState;
-        lastMapped.current = nextMapped;
+        lastTracked.current.mapped = nextMapped;
         forceUpdate();
       }
     }; // run once in case the state is already changed

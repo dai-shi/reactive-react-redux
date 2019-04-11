@@ -39,17 +39,7 @@ const createMap = (keys, create) => {
   return obj;
 };
 
-const shouldProxy = state => typeof state === 'object';
-
 const createTrapped = (state, cache) => {
-  if (!shouldProxy(state)) {
-    return { // emulate trapped for primitives
-      state, // actually not trapped
-      affected: ['.*'], // already mark it as used
-      reset: () => null, // void
-      seal: () => null, // void
-    };
-  }
   let trapped;
   if (cache && cache.trapped.has(state)) {
     trapped = cache.trapped.get(state);
@@ -89,6 +79,7 @@ const runSelector = (state, selector, lastResult) => {
   };
 };
 
+// check if any of chunks is changed, if not we return the last one
 const concatAffectedChunks = (affectedChunks, last) => {
   const len = last.affectedChunks && last.affectedChunks.length;
   if (affectedChunks.length !== len) {
@@ -203,20 +194,18 @@ export const useReduxSelectors = (selectorMap) => {
   const state = store.getState();
   // keys
   const keys = Object.keys(selectorMap);
-  // lastMapped (ref)
-  const lastMapped = useRef({});
+  // lastTracked (ref)
+  const lastTracked = useRef({});
   // mapped result
   const mapped = createMap(keys, (key) => {
     const selector = selectorMap[key];
-    const lastResult = lastMapped.current[key];
+    const lastResult = lastTracked.current.mapped && lastTracked.current.mapped[key];
     return runSelector(state, selector, lastResult);
   });
   // if we had `createShallowTrapped, it should perform much better
   const outerTrapped = createTrapped(createMap(keys, key => mapped[key].value));
   // update ref
-  const lastTracked = useRef({});
   useLayoutEffect(() => {
-    lastMapped.current = mapped;
     const affectedChunks = [];
     keys.forEach((key) => {
       if (outerTrapped.affected.indexOf(`.${key}`) >= 0) {
@@ -225,7 +214,12 @@ export const useReduxSelectors = (selectorMap) => {
       }
     });
     const affected = concatAffectedChunks(affectedChunks, lastTracked.current);
-    lastTracked.current = { state, affectedChunks, affected };
+    lastTracked.current = {
+      state,
+      mapped,
+      affectedChunks,
+      affected,
+    };
   });
   // subscription
   useEffect(() => {
@@ -238,8 +232,8 @@ export const useReduxSelectors = (selectorMap) => {
       );
       if (!innerChanged) return;
       let outerChanged = false;
-      const nextMapped = createMap(Object.keys(lastMapped.current), (key) => {
-        const lastResult = lastMapped.current[key];
+      const nextMapped = createMap(Object.keys(lastTracked.current.mapped), (key) => {
+        const lastResult = lastTracked.current.mapped[key];
         const nextResult = runSelector(nextState, lastResult.selector, lastResult);
         if (nextResult.value !== lastResult.value) {
           outerChanged = true;
@@ -248,7 +242,7 @@ export const useReduxSelectors = (selectorMap) => {
       });
       if (outerChanged) {
         lastTracked.current.state = nextState;
-        lastMapped.current = nextMapped;
+        lastTracked.current.mapped = nextMapped;
         forceUpdate();
       }
     };
