@@ -13,22 +13,34 @@ var _provider = require("./provider");
 
 var _utils = require("./utils");
 
-var useReduxState = function useReduxState() {
-  var forceUpdate = (0, _utils.useForceUpdate)(); // redux store
-
-  var store = (0, _react.useContext)(_provider.ReduxStoreContext); // redux state
-
-  var state = store.getState(); // cache
-
+var useTrapped = function useTrapped(state) {
   var cacheRef = (0, _react.useRef)({
     proxy: new WeakMap(),
     trapped: new WeakMap()
-  }); // trapped
+  });
+  var trapped;
 
-  var trapped = (0, _utils.createTrapped)(state, cacheRef.current); // ref
+  if (cacheRef.current.trapped.has(state)) {
+    trapped = cacheRef.current.trapped.get(state);
+    trapped.reset();
+  } else {
+    trapped = (0, _proxyequal.proxyState)(state, null, cacheRef.current.proxy);
+    cacheRef.current.trapped.set(state, trapped);
+  }
+
+  return trapped;
+};
+
+var useReduxState = function useReduxState() {
+  var forceUpdate = (0, _utils.useForceUpdate)(); // redux store&state
+
+  var store = (0, _react.useContext)(_provider.ReduxStoreContext);
+  var state = store.getState(); // trapped
+
+  var trapped = useTrapped(state); // ref
 
   var lastTracked = (0, _react.useRef)(null);
-  (0, _react.useLayoutEffect)(function () {
+  (0, _utils.useIsomorphicLayoutEffect)(function () {
     lastTracked.current = {
       state: state,
       affected: trapped.affected
@@ -71,7 +83,7 @@ var useReduxStateSimple = function useReduxStateSimple() {
   }, []);
   var state = store.getState();
   var lastState = (0, _react.useRef)(null);
-  (0, _react.useLayoutEffect)(function () {
+  (0, _utils.useIsomorphicLayoutEffect)(function () {
     lastState.current = state;
   });
   (0, _react.useEffect)(function () {

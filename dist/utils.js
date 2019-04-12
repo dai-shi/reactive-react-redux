@@ -3,28 +3,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.useForceUpdate = exports.createTrapped = void 0;
+exports.useForceUpdate = exports.useIsomorphicLayoutEffect = void 0;
 
 var _react = require("react");
 
-var _proxyequal = require("proxyequal");
+var useIsomorphicLayoutEffect = typeof window !== 'undefined' ? _react.useLayoutEffect : _react.useEffect; // useForceUpdate hook
 
-var createTrapped = function createTrapped(state, cache) {
-  var trapped;
-
-  if (cache && cache.trapped.has(state)) {
-    trapped = cache.trapped.get(state);
-    trapped.reset();
-  } else {
-    trapped = (0, _proxyequal.proxyState)(state, null, cache && cache.proxy);
-    if (cache) cache.trapped.set(state, trapped);
-  }
-
-  return trapped;
-}; // useForceUpdate hook
-
-
-exports.createTrapped = createTrapped;
+exports.useIsomorphicLayoutEffect = useIsomorphicLayoutEffect;
 
 var forcedReducer = function forcedReducer(state) {
   return state + 1;

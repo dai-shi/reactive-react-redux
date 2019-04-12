@@ -1,18 +1,6 @@
-import { useReducer } from 'react';
+import { useEffect, useLayoutEffect, useReducer } from 'react';
 
-import { proxyState } from 'proxyequal';
-
-export const createTrapped = (state, cache) => {
-  let trapped;
-  if (cache && cache.trapped.has(state)) {
-    trapped = cache.trapped.get(state);
-    trapped.reset();
-  } else {
-    trapped = proxyState(state, null, cache && cache.proxy);
-    if (cache) cache.trapped.set(state, trapped);
-  }
-  return trapped;
-};
+export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 // useForceUpdate hook
 const forcedReducer = state => state + 1;

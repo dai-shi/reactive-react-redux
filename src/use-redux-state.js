@@ -1,33 +1,42 @@
 import {
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
 } from 'react';
 
-import { proxyEqual } from 'proxyequal';
+import { proxyState, proxyEqual } from 'proxyequal';
 
 import { ReduxStoreContext } from './provider';
 
-import { createTrapped, useForceUpdate } from './utils';
+import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
-export const useReduxState = () => {
-  const forceUpdate = useForceUpdate();
-  // redux store
-  const store = useContext(ReduxStoreContext);
-  // redux state
-  const state = store.getState();
-  // cache
+const useTrapped = (state) => {
   const cacheRef = useRef({
     proxy: new WeakMap(),
     trapped: new WeakMap(),
   });
+  let trapped;
+  if (cacheRef.current.trapped.has(state)) {
+    trapped = cacheRef.current.trapped.get(state);
+    trapped.reset();
+  } else {
+    trapped = proxyState(state, null, cacheRef.current.proxy);
+    cacheRef.current.trapped.set(state, trapped);
+  }
+  return trapped;
+};
+
+export const useReduxState = () => {
+  const forceUpdate = useForceUpdate();
+  // redux store&state
+  const store = useContext(ReduxStoreContext);
+  const state = store.getState();
   // trapped
-  const trapped = createTrapped(state, cacheRef.current);
+  const trapped = useTrapped(state);
   // ref
   const lastTracked = useRef(null);
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     lastTracked.current = {
       state,
       affected: trapped.affected,
@@ -67,7 +76,7 @@ export const useReduxStateSimple = () => {
   }), []);
   const state = store.getState();
   const lastState = useRef(null);
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     lastState.current = state;
   });
   useEffect(() => {
