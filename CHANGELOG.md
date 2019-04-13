@@ -7,6 +7,7 @@
 - useLayoutEffect and keep latest state after update (see #20)
 - useForceUpdate uses counter instead of boolean (see #20)
 - update proxyequal v2.0.5
+- organize code in multiple files with some improvements
 ### Added
 - New useReduxSelectors (experimental)
 
