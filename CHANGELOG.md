@@ -1,13 +1,15 @@
 # Change Log
 
 ## [Unreleased]
+
+## [2.0.0] - 2019-04-13
 ### Removed
 - Remove experimental useReduxStateMapped
 ### Changed
 - useLayoutEffect and keep latest state after update (see #20)
 - useForceUpdate uses counter instead of boolean (see #20)
-- update proxyequal v2.0.5
-- organize code in multiple files with some improvements
+- Organize code in multiple files with some improvements
+- Update dependencies
 ### Added
 - New useReduxSelectors (experimental)
 
