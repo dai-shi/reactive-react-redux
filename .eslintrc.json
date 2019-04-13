@@ -30,7 +30,9 @@
     "import/prefer-default-export": "off",
     "import/no-unresolved": ["error", { "ignore": ["reactive-react-redux"] }],
     "no-param-reassign": "off",
-    "default-case": "off"
+    "default-case": "off",
+    "arrow-body-style": "off",
+    "no-plusplus": "off"
   },
   "overrides": [{
     "files": ["__tests__/**/*"],

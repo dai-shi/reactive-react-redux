@@ -28,7 +28,8 @@
     "examples:memoization": "DIR=06_memoization webpack-dev-server",
     "examples:multistore": "DIR=07_multistore webpack-dev-server",
     "examples:dynamic": "DIR=08_dynamic webpack-dev-server",
-    "examples:thunk": "DIR=09_thunk webpack-dev-server"
+    "examples:thunk": "DIR=09_thunk webpack-dev-server",
+    "examples:selectors": "DIR=10_selectors webpack-dev-server"
   },
   "keywords": [
     "react",
@@ -41,7 +42,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "proxyequal": "^2.0.5"
+    "memoize-state": "^2.0.6",
+    "proxyequal": "^2.0.5",
+    "with-known-usage": "^1.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

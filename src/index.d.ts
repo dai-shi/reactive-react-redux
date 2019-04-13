@@ -18,6 +18,10 @@ export const ReduxProvider: ReduxProviderType;
 
 export const useReduxDispatch: <A extends Action>() => Dispatch<A>;
 
-export const useReduxState: <S>() => S;
+export const useReduxState: <S extends {}>() => S;
+
+export const useReduxSelectors: <S extends {}, M extends {}>(
+  selectors: { [K in keyof M]: (state: S) => M[K] },
+) => M;
 
 export const useReduxStateSimple: <S extends {}>() => S;
