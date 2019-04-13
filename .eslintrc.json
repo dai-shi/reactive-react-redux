@@ -32,7 +32,8 @@
     "no-param-reassign": "off",
     "default-case": "off",
     "arrow-body-style": "off",
-    "no-plusplus": "off"
+    "no-plusplus": "off",
+    "import/no-useless-path-segments": 0
   },
   "overrides": [{
     "files": ["__tests__/**/*"],
