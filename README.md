@@ -100,6 +100,37 @@ const App = () => (
 );
 ```
 
+## Advanced Usage
+
+<details>
+<summary>Experimental useReduxSelectors</summary>
+
+```javascript
+import React, { useCallback } from 'react';
+import { useReduxSelectors } from 'reactive-react-redux';
+
+const globalSelectors = {
+  firstName: state => state.person.first,
+  lastName: state => state.person.last,
+};
+
+const Person = () => {
+  const { firstName } = useReduxSelectors(globalSelectors);
+  return <div>{firstName}</div>;
+  // this component will only be rendered when `state.person.first` changed.
+};
+
+const Person2 = ({ threshold }) => {
+  const { firstName, isYoung } = useReduxSelectors({
+    ...globalSelectors,
+    isYoung: useCallback(state => (state.person.age < threshold), [threshold]),
+  });
+  return <div>{firstName}{isYoung && '(young)'}</div>;
+};
+```
+
+</details>
+
 ## Examples
 
 The [examples](examples) folder contains working examples.
@@ -121,6 +152,7 @@ You can also try them in codesandbox.io:
 [07](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/07_multistore)
 [08](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/08_dynamic)
 [09](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/09_thunk)
+[10](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/10_selectors)
 
 ## Blogs
 
