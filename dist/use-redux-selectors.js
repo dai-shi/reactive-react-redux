@@ -15,7 +15,7 @@ var _provider = require("./provider");
 
 var _utils = require("./utils");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var createMap = function createMap(keys, create) {
   // "Map" here means JavaScript Object not JavaScript Map.
@@ -37,7 +37,7 @@ var memoizeSelector = function memoizeSelector(selector) {
   }
 
   var memoized = {
-    fn: (0, _memoizeState.default)(selector),
+    fn: (0, _memoizeState["default"])(selector),
     results: new WeakMap()
   };
   memoizedSelectorCache.set(selector, memoized);
