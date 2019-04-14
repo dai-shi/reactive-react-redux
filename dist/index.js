@@ -36,8 +36,8 @@ Object.defineProperty(exports, "useReduxSelectors", {
 
 var _provider = require("./provider");
 
-var _useReduxDispatch = require("./use-redux-dispatch");
+var _useReduxDispatch = require("./useReduxDispatch");
 
-var _useReduxState = require("./use-redux-state");
+var _useReduxState = require("./useReduxState");
 
-var _useReduxSelectors = require("./use-redux-selectors");
+var _useReduxSelectors = require("./useReduxSelectors");
