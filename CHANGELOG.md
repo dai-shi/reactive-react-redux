@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [2.0.1] - 2019-04-15
 ### Changed
 - Rename src file names to be more consistent
 
