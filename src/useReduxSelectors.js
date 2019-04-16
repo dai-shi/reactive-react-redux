@@ -65,19 +65,24 @@ export const useReduxSelectors = (selectorMap) => {
   // subscription
   useEffect(() => {
     const callback = () => {
-      const nextState = store.getState();
-      let changed = false;
-      const nextMapped = createMap(lastTracked.current.keys, (key) => {
-        const lastResult = lastTracked.current.mapped[key];
-        if (!lastTracked.current.trapped.usage.has(key)) return lastResult;
-        const nextResult = runSelector(nextState, lastResult.selector);
-        if (nextResult.value !== lastResult.value) {
-          changed = true;
+      try {
+        const nextState = store.getState();
+        let changed = false;
+        const nextMapped = createMap(lastTracked.current.keys, (key) => {
+          const lastResult = lastTracked.current.mapped[key];
+          if (!lastTracked.current.trapped.usage.has(key)) return lastResult;
+          const nextResult = runSelector(nextState, lastResult.selector);
+          if (nextResult.value !== lastResult.value) {
+            changed = true;
+          }
+          return nextResult;
+        });
+        if (changed) {
+          lastTracked.current.mapped = nextMapped;
+          forceUpdate();
         }
-        return nextResult;
-      });
-      if (changed) {
-        lastTracked.current.mapped = nextMapped;
+      } catch (e) {
+        // detect erorr (probably stale props)
         forceUpdate();
       }
     };
