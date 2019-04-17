@@ -15,19 +15,43 @@ export const ReduxStoreContext = createContext(warningObject);
 
 // patch store with batchedUpdates
 const patchReduxStore = (origStore) => {
-  if (!batchedUpdates) return origStore;
+  const safeBatchedUpdates = batchedUpdates || (f => f());
   const listeners = [];
+  // proof of concept: heuristically reorder listeners to mimic top-down
+  const fingerprints = [];
+  const registerFingerprint = (fingerprint) => {
+    const index = fingerprints.indexOf(fingerprint);
+    if (index < 0) fingerprints.push(fingerprint);
+  };
+  const unregisterFingerprint = (fingerprint) => {
+    const index = fingerprints.indexOf(fingerprint);
+    if (index >= 0) fingerprints.splice(index, 1);
+  };
+  const sortListeners = () => {
+    listeners.sort((a, b) => {
+      const ia = fingerprints.indexOf(a.fingerprint);
+      const ib = fingerprints.indexOf(b.fingerprint);
+      return ia - ib;
+    });
+  };
   let unsubscribe;
   const subscribe = (listener) => {
     listeners.push(listener);
     if (listeners.length === 1) {
       unsubscribe = origStore.subscribe(() => {
-        batchedUpdates(() => {
+        if (fingerprints.length) {
+          sortListeners();
+          // we can't use batchedUpdates because we need to render each time
           listeners.forEach(l => l());
-        });
+        } else {
+          safeBatchedUpdates(() => {
+            listeners.forEach(l => l());
+          });
+        }
       });
     }
     return () => {
+      unregisterFingerprint(listener.fingerprint);
       const index = listeners.indexOf(listener);
       listeners.splice(index, 1);
       if (listeners.length === 0) {
@@ -38,6 +62,7 @@ const patchReduxStore = (origStore) => {
   return {
     ...origStore,
     subscribe,
+    registerFingerprint,
   };
 };
 

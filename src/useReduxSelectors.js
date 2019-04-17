@@ -62,6 +62,9 @@ export const useReduxSelectors = (selectorMap) => {
   useIsomorphicLayoutEffect(() => {
     lastTracked.current = { keys, mapped, trapped };
   });
+  // fingerprint
+  const fingerprint = useRef(Symbol('fingerprint'));
+  store.registerFingerprint(fingerprint.current);
   // subscription
   useEffect(() => {
     const callback = () => {
@@ -86,6 +89,7 @@ export const useReduxSelectors = (selectorMap) => {
         forceUpdate();
       }
     };
+    callback.fingerprint = fingerprint.current;
     // run once in case the state is already changed
     callback();
     const unsubscribe = store.subscribe(callback);
