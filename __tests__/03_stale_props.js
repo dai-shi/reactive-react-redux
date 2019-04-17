@@ -5,7 +5,6 @@ import { render, cleanup } from 'react-testing-library';
 
 import {
   ReduxProvider,
-  useReduxState,
   useReduxSelectors,
 } from '../src/index';
 
@@ -13,8 +12,11 @@ describe('stale props spec', () => {
   afterEach(cleanup);
 
   it('ignores transient errors in selector (e.g. due to stale props)', () => {
+    const globalSelectors = {
+      count: state => state.count,
+    };
     const Parent = () => {
-      const { count } = useReduxState();
+      const { count } = useReduxSelectors(globalSelectors);
       return <Child parentCount={count} />;
     };
 
@@ -46,8 +48,11 @@ describe('stale props spec', () => {
   it('ensures consistency of state and props in selector', () => {
     let selectorSawInconsistencies = false;
 
+    const globalSelectors = {
+      count: state => state.count,
+    };
     const Parent = () => {
-      const { count } = useReduxState();
+      const { count } = useReduxSelectors(globalSelectors);
       return <Child parentCount={count} />;
     };
 
