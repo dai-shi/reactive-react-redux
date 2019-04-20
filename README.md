@@ -14,8 +14,8 @@ auto-detecting state usage with Proxy.
 
 The official React bindings for Redux is `react-redux`.
 While its `connect` is fine tuned for performance,
-writing a proper `mapStateToProps` function is sometimes
-difficult for beginners.
+writing a proper `mapStateToProps` function is sometimes difficult,
+and improper `mapStateToProps` can easily lead performance issues.
 This library eliminates writing `mapStateToProps` at all.
 
 ## How it works
@@ -24,7 +24,7 @@ A hook `useReduxState` returns the entire Redux state object,
 but it keeps track of which properties of the object are used
 in rendering. When the state is updated, this hook checks
 whether used properties are changed.
-Only if it detects changes in the state, it re-renders components.
+Only if it detects changes in the state, it triggers re-rendering.
 
 ## Install
 
@@ -117,7 +117,7 @@ const globalSelectors = {
 const Person = () => {
   const { firstName } = useReduxSelectors(globalSelectors);
   return <div>{firstName}</div>;
-  // this component will only be rendered when `state.person.first` changed.
+  // this component will only render when `state.person.first` changed.
 };
 
 const Person2 = ({ threshold }) => {
@@ -159,3 +159,4 @@ You can also try them in codesandbox.io:
 - [A deadly simple React bindings library for Redux with Hooks API](https://medium.com/@dai_shi/a-deadly-simple-react-bindings-library-for-redux-with-hooks-api-822295857282)
 - [Developing React custom hooks for Redux without react-redux](https://medium.com/@dai_shi/developing-react-custom-hooks-for-redux-without-react-redux-483a90de0c71)
 - [Integrating React and Redux, with Hooks and Proxies](https://frontarm.com/daishi-kato/redux-custom-hooks/)
+- [New React Redux coding style with hooks without selectors](https://medium.com/@dai_shi/new-react-redux-coding-style-with-hooks-without-selectors-5055d59ab753)
