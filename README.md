@@ -117,7 +117,7 @@ const globalSelectors = {
 const Person = () => {
   const { firstName } = useReduxSelectors(globalSelectors);
   return <div>{firstName}</div>;
-  // this component will only render when `state.person.first` changed.
+  // this component will only render when `state.person.first` is changed.
 };
 
 const Person2 = ({ threshold }) => {
