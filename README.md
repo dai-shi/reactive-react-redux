@@ -160,3 +160,4 @@ You can also try them in codesandbox.io:
 - [Developing React custom hooks for Redux without react-redux](https://medium.com/@dai_shi/developing-react-custom-hooks-for-redux-without-react-redux-483a90de0c71)
 - [Integrating React and Redux, with Hooks and Proxies](https://frontarm.com/daishi-kato/redux-custom-hooks/)
 - [New React Redux coding style with hooks without selectors](https://medium.com/@dai_shi/new-react-redux-coding-style-with-hooks-without-selectors-5055d59ab753)
+- [Benchmark alpha-released hooks API in React Redux with alternatives](https://medium.com/@dai_shi/benchmark-alpha-released-hooks-api-in-react-redux-with-alternatives-25bef8b840ae)
