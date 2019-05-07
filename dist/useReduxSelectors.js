@@ -86,22 +86,27 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
 
   (0, _react.useEffect)(function () {
     var callback = function callback() {
-      var nextState = store.getState();
-      var changed = false;
-      var nextMapped = createMap(lastTracked.current.keys, function (key) {
-        var lastResult = lastTracked.current.mapped[key];
-        if (!lastTracked.current.trapped.usage.has(key)) return lastResult;
-        var nextResult = runSelector(nextState, lastResult.selector);
+      try {
+        var nextState = store.getState();
+        var changed = false;
+        var nextMapped = createMap(lastTracked.current.keys, function (key) {
+          var lastResult = lastTracked.current.mapped[key];
+          if (!lastTracked.current.trapped.usage.has(key)) return lastResult;
+          var nextResult = runSelector(nextState, lastResult.selector);
 
-        if (nextResult.value !== lastResult.value) {
-          changed = true;
+          if (nextResult.value !== lastResult.value) {
+            changed = true;
+          }
+
+          return nextResult;
+        });
+
+        if (changed) {
+          lastTracked.current.mapped = nextMapped;
+          forceUpdate();
         }
-
-        return nextResult;
-      });
-
-      if (changed) {
-        lastTracked.current.mapped = nextMapped;
+      } catch (e) {
+        // detect erorr (probably stale props)
         forceUpdate();
       }
     }; // run once in case the state is already changed

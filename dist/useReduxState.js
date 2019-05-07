@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.useReduxStateSimple = exports.useReduxState = void 0;
+exports.useReduxStateSimple = exports.useReduxState = exports.useReduxStateRich = void 0;
 
 var _react = require("react");
 
@@ -31,7 +31,7 @@ var useTrapped = function useTrapped(state) {
   return trapped;
 };
 
-var useReduxState = function useReduxState() {
+var useReduxStateRich = function useReduxStateRich() {
   var forceUpdate = (0, _utils.useForceUpdate)(); // redux store&state
 
   var store = (0, _react.useContext)(_provider.ReduxStoreContext);
@@ -65,6 +65,40 @@ var useReduxState = function useReduxState() {
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return trapped.state;
+};
+
+exports.useReduxStateRich = useReduxStateRich;
+
+var useReduxState = function useReduxState() {
+  var forceUpdate = (0, _utils.useForceUpdate)();
+  var store = (0, _react.useContext)(_provider.ReduxStoreContext);
+  var state = store.getState();
+  var affected = new WeakMap();
+  var lastTracked = (0, _react.useRef)(null);
+  (0, _utils.useIsomorphicLayoutEffect)(function () {
+    lastTracked.current = {
+      state: state,
+      affected: affected
+    };
+  });
+  (0, _react.useEffect)(function () {
+    var callback = function callback() {
+      var nextState = store.getState();
+      var changed = (0, _utils.isDeepChanged)(lastTracked.current.state, nextState, lastTracked.current.affected);
+
+      if (changed) {
+        lastTracked.current.state = nextState;
+        forceUpdate();
+      }
+    }; // run once in case the state is already changed
+
+
+    callback();
+    var unsubscribe = store.subscribe(callback);
+    return unsubscribe;
+  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (0, _utils.createDeepProxy)(state, affected);
 };
 
 exports.useReduxState = useReduxState;
