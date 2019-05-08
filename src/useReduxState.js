@@ -76,7 +76,11 @@ export const useReduxState = () => {
   const affected = new WeakMap();
   const lastTracked = useRef(null);
   useIsomorphicLayoutEffect(() => {
-    lastTracked.current = { state, affected };
+    lastTracked.current = {
+      state,
+      affected,
+      cache: new WeakMap(),
+    };
   });
   useEffect(() => {
     const callback = () => {
@@ -85,6 +89,7 @@ export const useReduxState = () => {
         lastTracked.current.state,
         nextState,
         lastTracked.current.affected,
+        lastTracked.current.cache,
       );
       if (changed) {
         lastTracked.current.state = nextState;

@@ -27,14 +27,14 @@ var createDeepProxy = function createDeepProxy(obj, affected) {
   var proxyMap = {};
   var handler = {
     get: function get(target, key) {
-      if (!affected.has(obj)) {
-        affected.set(obj, [key]);
+      if (!affected.has(target)) {
+        affected.set(target, [key]);
       } else {
-        var used = affected.get(obj);
+        var used = affected.get(target);
         if (!used.includes(key)) used.push(key);
       }
 
-      var val = obj[key];
+      var val = target[key];
 
       if (_typeof(val) !== 'object') {
         return val;
@@ -51,27 +51,29 @@ var createDeepProxy = function createDeepProxy(obj, affected) {
 };
 
 exports.createDeepProxy = createDeepProxy;
-var deepChangedCache = new WeakMap();
 
-var isDeepChanged = function isDeepChanged(origObj, nextObj, affected) {
+var isDeepChanged = function isDeepChanged(origObj, nextObj, affected, cache) {
+  var depth = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
   if (origObj === nextObj) return false;
   if (_typeof(origObj) !== 'object') return true;
   if (_typeof(nextObj) !== 'object') return true;
-  if (!affected.has(origObj)) return false; // is this safe???
 
-  if (deepChangedCache.has(affected)) {
-    var hit = deepChangedCache.get(affected);
+  if (!affected.has(origObj)) {
+    return depth !== 0; // false for root object, but true for others
+  }
 
-    if (hit.origObj === origObj && hit.nextObj === nextObj) {
+  if (cache.has(origObj)) {
+    var hit = cache.get(origObj);
+
+    if (hit.nextObj === nextObj) {
       return hit.changed;
     }
   }
 
   var changed = affected.get(origObj).some(function (key) {
-    return isDeepChanged(origObj[key], nextObj[key], affected);
+    return isDeepChanged(origObj[key], nextObj[key], affected, cache, depth + 1);
   });
-  deepChangedCache.set(affected, {
-    origObj: origObj,
+  cache.set(origObj, {
     nextObj: nextObj,
     changed: changed
   });

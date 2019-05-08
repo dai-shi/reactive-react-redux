@@ -78,13 +78,14 @@ var useReduxState = function useReduxState() {
   (0, _utils.useIsomorphicLayoutEffect)(function () {
     lastTracked.current = {
       state: state,
-      affected: affected
+      affected: affected,
+      cache: new WeakMap()
     };
   });
   (0, _react.useEffect)(function () {
     var callback = function callback() {
       var nextState = store.getState();
-      var changed = (0, _utils.isDeepChanged)(lastTracked.current.state, nextState, lastTracked.current.affected);
+      var changed = (0, _utils.isDeepChanged)(lastTracked.current.state, nextState, lastTracked.current.affected, lastTracked.current.cache);
 
       if (changed) {
         lastTracked.current.state = nextState;
