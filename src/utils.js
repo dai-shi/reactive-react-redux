@@ -6,44 +6,65 @@ export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayo
 const forcedReducer = state => state + 1;
 export const useForceUpdate = () => useReducer(forcedReducer, 0)[1];
 
-export const createDeepProxy = (obj, affected) => {
-  const proxyMap = {};
-  const handler = {
-    get: (target, key) => {
-      if (!affected.has(target)) {
-        affected.set(target, [key]);
-      } else {
-        const used = affected.get(target);
-        if (!used.includes(key)) used.push(key);
-      }
-      const val = target[key];
-      if (typeof val !== 'object') {
-        return val;
-      }
-      if (!proxyMap[key]) {
-        proxyMap[key] = createDeepProxy(val, affected);
-      }
-      return proxyMap[key];
-    },
-  };
-  return new Proxy(obj, handler);
+// -------------------------------------------------------
+// deep proxy
+// -------------------------------------------------------
+
+const proxyAttributes = new WeakMap();
+
+const proxyHandler = {
+  get: (target, key, proxy) => {
+    const { affected, proxyCache } = proxyAttributes.get(proxy);
+    if (!affected.has(target)) {
+      affected.set(target, [key]);
+    } else {
+      const used = affected.get(target);
+      if (!used.includes(key)) used.push(key);
+    }
+    const val = target[key];
+    if (typeof val !== 'object') {
+      return val;
+    }
+    // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
+    return createDeepProxy(val, affected, proxyCache);
+  },
 };
 
-export const isDeepChanged = (origObj, nextObj, affected, cache, depth = 0) => {
+export const createDeepProxy = (obj, affected, proxyCache) => {
+  let proxy;
+  if (proxyCache && proxyCache.has(obj)) {
+    proxy = proxyCache.get(obj);
+  } else {
+    proxy = new Proxy(obj, proxyHandler);
+    if (proxyCache) {
+      proxyCache.set(obj, proxy);
+    }
+  }
+  proxyAttributes.set(proxy, { affected, proxyCache });
+  return proxy;
+};
+
+export const isDeepChanged = (
+  origObj,
+  nextObj,
+  affected,
+  cache,
+  assumeChangedIfNotAffected = false,
+) => {
   if (origObj === nextObj) return false;
   if (typeof origObj !== 'object') return true;
   if (typeof nextObj !== 'object') return true;
-  if (!affected.has(origObj)) {
-    return depth !== 0; // false for root object, but true for others
-  }
-  if (cache.has(origObj)) {
+  if (!affected.has(origObj)) return assumeChangedIfNotAffected;
+  if (cache) {
     const hit = cache.get(origObj);
-    if (hit.nextObj === nextObj) {
+    if (hit && hit.nextObj === nextObj) {
       return hit.changed;
     }
   }
   const changed = affected.get(origObj)
-    .some(key => isDeepChanged(origObj[key], nextObj[key], affected, cache, depth + 1));
-  cache.set(origObj, { nextObj, changed });
+    .some(key => isDeepChanged(origObj[key], nextObj[key], affected, cache, true));
+  if (cache) {
+    cache.set(origObj, { nextObj, changed });
+  }
   return changed;
 };
