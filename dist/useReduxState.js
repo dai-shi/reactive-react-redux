@@ -70,22 +70,31 @@ var useReduxStateRich = function useReduxStateRich() {
 exports.useReduxStateRich = useReduxStateRich;
 
 var useReduxState = function useReduxState() {
+  var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var forceUpdate = (0, _utils.useForceUpdate)();
   var store = (0, _react.useContext)(_provider.ReduxStoreContext);
   var state = store.getState();
   var affected = new WeakMap();
+  var proxyCache = (0, _react.useRef)(new WeakMap());
   var lastTracked = (0, _react.useRef)(null);
   (0, _utils.useIsomorphicLayoutEffect)(function () {
     lastTracked.current = {
       state: state,
       affected: affected,
-      cache: new WeakMap()
+      cache: new WeakMap(),
+
+      /* eslint-disable no-nested-ternary, indent, @typescript-eslint/indent */
+      assumeChangedIfNotAffected: opts.unstable_forceUpdateForStateChange ? true : opts.unstable_ignoreIntermediateObjectUsage ? false :
+      /* default */
+      null
+      /* eslint-enable no-nested-ternary, indent, @typescript-eslint/indent */
+
     };
   });
   (0, _react.useEffect)(function () {
     var callback = function callback() {
       var nextState = store.getState();
-      var changed = (0, _utils.isDeepChanged)(lastTracked.current.state, nextState, lastTracked.current.affected, lastTracked.current.cache);
+      var changed = (0, _utils.isDeepChanged)(lastTracked.current.state, nextState, lastTracked.current.affected, lastTracked.current.cache, lastTracked.current.assumeChangedIfNotAffected);
 
       if (changed) {
         lastTracked.current.state = nextState;
@@ -99,7 +108,7 @@ var useReduxState = function useReduxState() {
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return (0, _utils.createDeepProxy)(state, affected);
+  return (0, _utils.createDeepProxy)(state, affected, proxyCache.current);
 };
 
 exports.useReduxState = useReduxState;

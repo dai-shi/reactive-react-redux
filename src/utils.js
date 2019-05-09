@@ -49,20 +49,25 @@ export const isDeepChanged = (
   nextObj,
   affected,
   cache,
-  assumeChangedIfNotAffected = false,
+  assumeChangedIfNotAffected,
 ) => {
   if (origObj === nextObj) return false;
   if (typeof origObj !== 'object') return true;
   if (typeof nextObj !== 'object') return true;
-  if (!affected.has(origObj)) return assumeChangedIfNotAffected;
+  if (!affected.has(origObj)) return !!assumeChangedIfNotAffected;
   if (cache) {
     const hit = cache.get(origObj);
     if (hit && hit.nextObj === nextObj) {
       return hit.changed;
     }
   }
-  const changed = affected.get(origObj)
-    .some(key => isDeepChanged(origObj[key], nextObj[key], affected, cache, true));
+  const changed = affected.get(origObj).some(key => isDeepChanged(
+    origObj[key],
+    nextObj[key],
+    affected,
+    cache,
+    assumeChangedIfNotAffected !== false,
+  ));
   if (cache) {
     cache.set(origObj, { nextObj, changed });
   }

@@ -69,7 +69,7 @@ export const useReduxStateRich = () => {
   return trapped.state;
 };
 
-export const useReduxState = () => {
+export const useReduxState = (opts = {}) => {
   const forceUpdate = useForceUpdate();
   const store = useContext(ReduxStoreContext);
   const state = store.getState();
@@ -81,6 +81,12 @@ export const useReduxState = () => {
       state,
       affected,
       cache: new WeakMap(),
+      /* eslint-disable no-nested-ternary, indent, @typescript-eslint/indent */
+      assumeChangedIfNotAffected:
+        opts.unstable_forceUpdateForStateChange ? true
+      : opts.unstable_ignoreIntermediateObjectUsage ? false
+      : /* default */ null,
+      /* eslint-enable no-nested-ternary, indent, @typescript-eslint/indent */
     };
   });
   useEffect(() => {
@@ -91,6 +97,7 @@ export const useReduxState = () => {
         nextState,
         lastTracked.current.affected,
         lastTracked.current.cache,
+        lastTracked.current.assumeChangedIfNotAffected,
       );
       if (changed) {
         lastTracked.current.state = nextState;
