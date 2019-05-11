@@ -170,35 +170,51 @@ describe('special objects spec', () => {
     s1.self = s1;
     const a1 = new WeakMap();
     const p1 = createDeepProxy(s1, a1, proxyCache);
-    noop(p1.a);
     const c1 = new WeakMap();
-    expect(isDeepChanged(s1, s1, a1, c1)).toBe(false);
+    noop(p1.self.a);
     expect(isDeepChanged(s1, s1, a1, c1)).toBe(false);
     expect(isDeepChanged(s1, { a: 'a', self: s1 }, a1, c1)).toBe(false);
-    expect(isDeepChanged(s1, { a: 'a2', self: s1 }, a1, c1)).toBe(true);
-    const s2 = { a: 'a2' };
+    const s2 = { a: 'a' };
+    s2.self = s2;
+    expect(isDeepChanged(s1, s2, a1, c1)).toBe(false);
+    const s3 = { a: 'a2' };
+    s3.self = s3;
+    expect(isDeepChanged(s1, s3, a1, c1)).toBe(true);
+  });
+
+  it('object with cycles 2', () => {
+    const proxyCache = new WeakMap();
+    const s1 = { a: 'a' };
+    s1.self = s1;
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1, proxyCache);
+    const c1 = new WeakMap();
+    noop(p1.self);
+    expect(isDeepChanged(s1, s1, a1, c1)).toBe(false);
+    expect(isDeepChanged(s1, { a: 'a', self: s1 }, a1, c1)).toBe(false);
+    const s2 = { a: 'a' };
     s2.self = s2;
     expect(isDeepChanged(s1, s2, a1, c1)).toBe(true);
+    const s3 = { a: 'a2' };
+    s3.self = s3;
+    expect(isDeepChanged(s1, s3, a1, c1)).toBe(true);
   });
 
   it('frozen object', () => {
     const proxyCache = new WeakMap();
-    const s1 = { a: 'a' };
+    const s1 = { a: { b: 'b' } };
     Object.freeze(s1);
     const a1 = new WeakMap();
     const p1 = createDeepProxy(s1, a1, proxyCache);
-    noop(p1.a);
-    const c1 = new WeakMap();
-    expect(isDeepChanged(s1, s1, a1, c1)).toBe(false);
-    expect(isDeepChanged(s1, s1, a1, c1)).toBe(false);
-    expect(isDeepChanged(s1, { a: 'a2' }, a1, c1)).toBe(true);
-    const s2 = { a: 'a2' };
-    Object.freeze(s1);
-    expect(isDeepChanged(s1, s2, a1, c1)).toBe(true);
+    noop(p1.a.b);
+    expect(isDeepChanged(s1, s1, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: { b: 'b' } }, a1)).toBe(true); // we can't track frozen object
   });
 });
 
 describe('builtin objects spec', () => {
+  // we can't track builtin objects
+
   it('boolean', () => {
     /* eslint-disable no-new-wrappers */
     const proxyCache = new WeakMap();

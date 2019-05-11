@@ -31,6 +31,9 @@ const createProxyHandler = () => ({
     if (proto !== Object.prototype && proto !== Array.prototype) {
       return val;
     }
+    if (Object.isFrozen(target)) {
+      return val;
+    }
     // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
     return createDeepProxy(val, this.affected, this.proxyCache);
   },
@@ -88,19 +91,29 @@ export const isDeepChanged = (
     if (hit && hit.nextObj === nextObj) {
       return hit.changed;
     }
+    // for object with cycles (changed is `undefined`)
+    cache.set(origObj, { nextObj });
   }
-  const changed = affected.get(origObj).some((key) => {
+  let changed = null;
+  const used = affected.get(origObj);
+  for (let i = 0; i < used.length; ++i) {
+    const key = used[i];
+    let c;
     if (key === OWN_KEYS_SYMBOL) {
-      return isOwnKeysChanged(origObj, nextObj);
+      c = isOwnKeysChanged(origObj, nextObj);
+    } else {
+      c = isDeepChanged(
+        origObj[key],
+        nextObj[key],
+        affected,
+        cache,
+        assumeChangedIfNotAffected !== false,
+      );
     }
-    return isDeepChanged(
-      origObj[key],
-      nextObj[key],
-      affected,
-      cache,
-      assumeChangedIfNotAffected !== false,
-    );
-  });
+    if (typeof c === 'boolean') changed = c;
+    if (changed) break;
+  }
+  if (changed === null) changed = !!assumeChangedIfNotAffected;
   if (cache) {
     cache.set(origObj, { nextObj, changed });
   }
