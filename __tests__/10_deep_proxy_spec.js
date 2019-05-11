@@ -184,20 +184,17 @@ describe('special objects spec', () => {
 
   it('object with cycles 2', () => {
     const proxyCache = new WeakMap();
-    const s1 = { a: 'a' };
+    const s1 = { a: { b: 'b' } };
     s1.self = s1;
     const a1 = new WeakMap();
     const p1 = createDeepProxy(s1, a1, proxyCache);
     const c1 = new WeakMap();
-    noop(p1.self);
+    noop(p1.self.a);
     expect(isDeepChanged(s1, s1, a1, c1)).toBe(false);
-    expect(isDeepChanged(s1, { a: 'a', self: s1 }, a1, c1)).toBe(false);
-    const s2 = { a: 'a' };
+    expect(isDeepChanged(s1, { a: s1.a, self: s1 }, a1, c1)).toBe(false);
+    const s2 = { a: { b: 'b' } };
     s2.self = s2;
     expect(isDeepChanged(s1, s2, a1, c1)).toBe(true);
-    const s3 = { a: 'a2' };
-    s3.self = s3;
-    expect(isDeepChanged(s1, s3, a1, c1)).toBe(true);
   });
 
   it('frozen object', () => {
