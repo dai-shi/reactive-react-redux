@@ -14,11 +14,11 @@ const OWN_KEYS_SYMBOL = Symbol('OWN_KEYS');
 
 const createProxyHandler = () => ({
   recordUsage(target, key) {
-    if (!this.affected.has(target)) {
+    const used = this.affected.get(target);
+    if (!used) {
       this.affected.set(target, [key]);
-    } else {
-      const used = this.affected.get(target);
-      if (!used.includes(key)) used.push(key);
+    } else if (!used.includes(key)) {
+      used.push(key);
     }
   },
   get(target, key) {
@@ -52,20 +52,17 @@ const createProxyHandler = () => ({
 });
 
 export const createDeepProxy = (obj, affected, proxyCache) => {
-  let proxyHandler;
-  let proxy;
-  if (proxyCache && proxyCache.has(obj)) {
-    [proxyHandler, proxy] = proxyCache.get(obj);
-  } else {
+  let proxyHandler = proxyCache && proxyCache.get(obj);
+  if (!proxyHandler) {
     proxyHandler = createProxyHandler();
-    proxy = new Proxy(obj, proxyHandler);
+    proxyHandler.proxy = new Proxy(obj, proxyHandler);
     if (proxyCache) {
-      proxyCache.set(obj, [proxyHandler, proxy]);
+      proxyCache.set(obj, proxyHandler);
     }
   }
   proxyHandler.affected = affected;
   proxyHandler.proxyCache = proxyCache;
-  return proxy;
+  return proxyHandler.proxy;
 };
 
 const isOwnKeysChanged = (origObj, nextObj) => {
@@ -85,7 +82,8 @@ export const isDeepChanged = (
   if (origObj === nextObj) return false;
   if (typeof origObj !== 'object') return true;
   if (typeof nextObj !== 'object') return true;
-  if (!affected.has(origObj)) return !!assumeChangedIfNotAffected;
+  const used = affected.get(origObj);
+  if (!used) return !!assumeChangedIfNotAffected;
   if (cache) {
     const hit = cache.get(origObj);
     if (hit && hit.nextObj === nextObj) {
@@ -95,21 +93,16 @@ export const isDeepChanged = (
     cache.set(origObj, { nextObj });
   }
   let changed = null;
-  const used = affected.get(origObj);
   for (let i = 0; i < used.length; ++i) {
     const key = used[i];
-    let c;
-    if (key === OWN_KEYS_SYMBOL) {
-      c = isOwnKeysChanged(origObj, nextObj);
-    } else {
-      c = isDeepChanged(
+    const c = key === OWN_KEYS_SYMBOL ? isOwnKeysChanged(origObj, nextObj)
+      : isDeepChanged(
         origObj[key],
         nextObj[key],
         affected,
         cache,
         assumeChangedIfNotAffected !== false,
       );
-    }
     if (typeof c === 'boolean') changed = c;
     if (changed) break;
   }

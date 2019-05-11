@@ -7,14 +7,6 @@ exports.isDeepChanged = exports.createDeepProxy = exports.useForceUpdate = expor
 
 var _react = require("react");
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 var useIsomorphicLayoutEffect = typeof window !== 'undefined' ? _react.useLayoutEffect : _react.useEffect; // useForceUpdate hook
@@ -38,11 +30,12 @@ var OWN_KEYS_SYMBOL = Symbol('OWN_KEYS');
 var createProxyHandler = function createProxyHandler() {
   return {
     recordUsage: function recordUsage(target, key) {
-      if (!this.affected.has(target)) {
+      var used = this.affected.get(target);
+
+      if (!used) {
         this.affected.set(target, [key]);
-      } else {
-        var used = this.affected.get(target);
-        if (!used.includes(key)) used.push(key);
+      } else if (!used.includes(key)) {
+        used.push(key);
       }
     },
     get: function get(target, key) {
@@ -82,28 +75,20 @@ var createProxyHandler = function createProxyHandler() {
 };
 
 var createDeepProxy = function createDeepProxy(obj, affected, proxyCache) {
-  var proxyHandler;
-  var proxy;
+  var proxyHandler = proxyCache && proxyCache.get(obj);
 
-  if (proxyCache && proxyCache.has(obj)) {
-    var _proxyCache$get = proxyCache.get(obj);
-
-    var _proxyCache$get2 = _slicedToArray(_proxyCache$get, 2);
-
-    proxyHandler = _proxyCache$get2[0];
-    proxy = _proxyCache$get2[1];
-  } else {
+  if (!proxyHandler) {
     proxyHandler = createProxyHandler();
-    proxy = new Proxy(obj, proxyHandler);
+    proxyHandler.proxy = new Proxy(obj, proxyHandler);
 
     if (proxyCache) {
-      proxyCache.set(obj, [proxyHandler, proxy]);
+      proxyCache.set(obj, proxyHandler);
     }
   }
 
   proxyHandler.affected = affected;
   proxyHandler.proxyCache = proxyCache;
-  return proxy;
+  return proxyHandler.proxy;
 };
 
 exports.createDeepProxy = createDeepProxy;
@@ -120,7 +105,8 @@ var isDeepChanged = function isDeepChanged(origObj, nextObj, affected, cache, as
   if (origObj === nextObj) return false;
   if (_typeof(origObj) !== 'object') return true;
   if (_typeof(nextObj) !== 'object') return true;
-  if (!affected.has(origObj)) return !!assumeChangedIfNotAffected;
+  var used = affected.get(origObj);
+  if (!used) return !!assumeChangedIfNotAffected;
 
   if (cache) {
     var hit = cache.get(origObj);
@@ -136,18 +122,10 @@ var isDeepChanged = function isDeepChanged(origObj, nextObj, affected, cache, as
   }
 
   var changed = null;
-  var used = affected.get(origObj);
 
   for (var i = 0; i < used.length; ++i) {
     var key = used[i];
-    var c = void 0;
-
-    if (key === OWN_KEYS_SYMBOL) {
-      c = isOwnKeysChanged(origObj, nextObj);
-    } else {
-      c = isDeepChanged(origObj[key], nextObj[key], affected, cache, assumeChangedIfNotAffected !== false);
-    }
-
+    var c = key === OWN_KEYS_SYMBOL ? isOwnKeysChanged(origObj, nextObj) : isDeepChanged(origObj[key], nextObj[key], affected, cache, assumeChangedIfNotAffected !== false);
     if (typeof c === 'boolean') changed = c;
     if (changed) break;
   }
