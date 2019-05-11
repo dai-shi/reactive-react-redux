@@ -125,7 +125,7 @@ describe('array spec', () => {
   });
 });
 
-describe('ownKeys spec', () => {
+describe('keys spec', () => {
   it('object keys', () => {
     const s1 = { a: { b: 'b' }, c: 'c' };
     const a1 = new WeakMap();
@@ -136,8 +136,128 @@ describe('ownKeys spec', () => {
     expect(isDeepChanged(s1, { a: s1.a }, a1)).toBe(true);
     expect(isDeepChanged(s1, { a: s1.a, c: 'c', d: 'd' }, a1)).toBe(true);
   });
+
+  it('for-in', () => {
+    const s1 = { a: { b: 'b' }, c: 'c' };
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1);
+    // eslint-disable-next-line no-restricted-syntax, guard-for-in
+    for (const k in p1) {
+      noop(k);
+    }
+    expect(isDeepChanged(s1, { a: s1.a, c: 'c' }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: { b: 'b' }, c: 'c' }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: s1.a }, a1)).toBe(true);
+    expect(isDeepChanged(s1, { a: s1.a, c: 'c', d: 'd' }, a1)).toBe(true);
+  });
+
+  it('single in operator', () => {
+    const s1 = { a: { b: 'b' }, c: 'c' };
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1);
+    noop('a' in p1);
+    expect(isDeepChanged(s1, { a: s1.a, c: 'c' }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: s1.a }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { c: 'c', d: 'd' }, a1)).toBe(true);
+  });
 });
 
-// TODO in operator
-// TODO cycles
-// TODO builtins, frozen objects
+
+describe('special objects spec', () => {
+  it('object with cycles', () => {
+    const proxyCache = new WeakMap();
+    const s1 = { a: 'a' };
+    s1.self = s1;
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1, proxyCache);
+    noop(p1.a);
+    const c1 = new WeakMap();
+    expect(isDeepChanged(s1, s1, a1, c1)).toBe(false);
+    expect(isDeepChanged(s1, s1, a1, c1)).toBe(false);
+    expect(isDeepChanged(s1, { a: 'a', self: s1 }, a1, c1)).toBe(false);
+    expect(isDeepChanged(s1, { a: 'a2', self: s1 }, a1, c1)).toBe(true);
+    const s2 = { a: 'a2' };
+    s2.self = s2;
+    expect(isDeepChanged(s1, s2, a1, c1)).toBe(true);
+  });
+
+  it('frozen object', () => {
+    const proxyCache = new WeakMap();
+    const s1 = { a: 'a' };
+    Object.freeze(s1);
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1, proxyCache);
+    noop(p1.a);
+    const c1 = new WeakMap();
+    expect(isDeepChanged(s1, s1, a1, c1)).toBe(false);
+    expect(isDeepChanged(s1, s1, a1, c1)).toBe(false);
+    expect(isDeepChanged(s1, { a: 'a2' }, a1, c1)).toBe(true);
+    const s2 = { a: 'a2' };
+    Object.freeze(s1);
+    expect(isDeepChanged(s1, s2, a1, c1)).toBe(true);
+  });
+});
+
+describe('builtin objects spec', () => {
+  it('boolean', () => {
+    /* eslint-disable no-new-wrappers */
+    const proxyCache = new WeakMap();
+    const s1 = { a: new Boolean(false) };
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1, proxyCache);
+    noop(p1.a.valueOf());
+    expect(isDeepChanged(s1, s1, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: new Boolean(false) }, a1)).toBe(true);
+    /* eslint-enable no-new-wrappers */
+  });
+
+  it('error', () => {
+    const proxyCache = new WeakMap();
+    const s1 = { a: new Error('e') };
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1, proxyCache);
+    noop(p1.a.message);
+    expect(isDeepChanged(s1, s1, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: new Error('e') }, a1)).toBe(true);
+  });
+
+  it('date', () => {
+    const proxyCache = new WeakMap();
+    const s1 = { a: new Date('2019-05-11T12:22:29.293Z') };
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1, proxyCache);
+    noop(p1.a.getTime());
+    expect(isDeepChanged(s1, s1, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: new Date('2019-05-11T12:22:29.293Z') }, a1)).toBe(true);
+  });
+
+  it('regexp', () => {
+    const proxyCache = new WeakMap();
+    const s1 = { a: /a/ };
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1, proxyCache);
+    noop(p1.a.test('a'));
+    expect(isDeepChanged(s1, s1, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: /a/ }, a1)).toBe(true);
+  });
+
+  it('map', () => {
+    const proxyCache = new WeakMap();
+    const s1 = { a: new Map() };
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1, proxyCache);
+    noop(p1.a.entries());
+    expect(isDeepChanged(s1, s1, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: new Map() }, a1)).toBe(true);
+  });
+
+  it('typed array', () => {
+    const proxyCache = new WeakMap();
+    const s1 = { a: Int8Array.from([1]) };
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1, proxyCache);
+    noop(p1.a[0]);
+    expect(isDeepChanged(s1, s1, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: Int8Array.from([1]) }, a1)).toBe(true);
+  });
+});

@@ -27,8 +27,20 @@ const createProxyHandler = () => ({
     if (typeof val !== 'object') {
       return val;
     }
+    const proto = Object.getPrototypeOf(val);
+    if (proto !== Object.prototype && proto !== Array.prototype) {
+      return val;
+    }
     // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
     return createDeepProxy(val, this.affected, this.proxyCache);
+  },
+  has(target, key) {
+    // LIMITATION:
+    // We simply record the same as get.
+    // This means { a: {} } and { a: {} } is detected as changed,
+    // if 'a' in obj is handled.
+    this.recordUsage(target, key);
+    return key in target;
   },
   ownKeys(target) {
     this.recordUsage(target, OWN_KEYS_SYMBOL);
