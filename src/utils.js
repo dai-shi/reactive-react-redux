@@ -10,38 +10,54 @@ export const useForceUpdate = () => useReducer(forcedReducer, 0)[1];
 // deep proxy
 // -------------------------------------------------------
 
-const proxyAttributes = new WeakMap();
+const OWN_KEYS_SYMBOL = Symbol('OWN_KEYS');
 
-const proxyHandler = {
-  get: (target, key, proxy) => {
-    const { affected, proxyCache } = proxyAttributes.get(proxy);
-    if (!affected.has(target)) {
-      affected.set(target, [key]);
+const createProxyHandler = () => ({
+  recordUsage(target, key) {
+    if (!this.affected.has(target)) {
+      this.affected.set(target, [key]);
     } else {
-      const used = affected.get(target);
+      const used = this.affected.get(target);
       if (!used.includes(key)) used.push(key);
     }
+  },
+  get(target, key) {
+    this.recordUsage(target, key);
     const val = target[key];
     if (typeof val !== 'object') {
       return val;
     }
     // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
-    return createDeepProxy(val, affected, proxyCache);
+    return createDeepProxy(val, this.affected, this.proxyCache);
   },
-};
+  ownKeys(target) {
+    this.recordUsage(target, OWN_KEYS_SYMBOL);
+    return Reflect.ownKeys(target);
+  },
+});
 
 export const createDeepProxy = (obj, affected, proxyCache) => {
+  let proxyHandler;
   let proxy;
   if (proxyCache && proxyCache.has(obj)) {
-    proxy = proxyCache.get(obj);
+    [proxyHandler, proxy] = proxyCache.get(obj);
   } else {
+    proxyHandler = createProxyHandler();
     proxy = new Proxy(obj, proxyHandler);
     if (proxyCache) {
-      proxyCache.set(obj, proxy);
+      proxyCache.set(obj, [proxyHandler, proxy]);
     }
   }
-  proxyAttributes.set(proxy, { affected, proxyCache });
+  proxyHandler.affected = affected;
+  proxyHandler.proxyCache = proxyCache;
   return proxy;
+};
+
+const isOwnKeysChanged = (origObj, nextObj) => {
+  const origKeys = Reflect.ownKeys(origObj);
+  const nextKeys = Reflect.ownKeys(nextObj);
+  return origKeys.length !== nextKeys.length
+    || origKeys.some((k, i) => k !== nextKeys[i]);
 };
 
 export const isDeepChanged = (
@@ -61,13 +77,18 @@ export const isDeepChanged = (
       return hit.changed;
     }
   }
-  const changed = affected.get(origObj).some(key => isDeepChanged(
-    origObj[key],
-    nextObj[key],
-    affected,
-    cache,
-    assumeChangedIfNotAffected !== false,
-  ));
+  const changed = affected.get(origObj).some((key) => {
+    if (key === OWN_KEYS_SYMBOL) {
+      return isOwnKeysChanged(origObj, nextObj);
+    }
+    return isDeepChanged(
+      origObj[key],
+      nextObj[key],
+      affected,
+      cache,
+      assumeChangedIfNotAffected !== false,
+    );
+  });
   if (cache) {
     cache.set(origObj, { nextObj, changed });
   }

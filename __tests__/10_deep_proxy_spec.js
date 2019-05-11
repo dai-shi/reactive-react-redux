@@ -8,12 +8,9 @@ describe('shallow object spec', () => {
     const a1 = new WeakMap();
     const p1 = createDeepProxy(s1, a1);
     noop(p1);
-    const s2 = { a: 'a', b: 'b' };
-    expect(isDeepChanged(s1, s2, a1)).toBe(false);
-    const s3 = { a: 'a2', b: 'b' };
-    expect(isDeepChanged(s1, s3, a1)).toBe(false);
-    const s4 = { a: 'a', b: 'b2' };
-    expect(isDeepChanged(s1, s4, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: 'a', b: 'b' }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: 'a2', b: 'b' }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: 'a', b: 'b2' }, a1)).toBe(false);
   });
 
   it('one property access', () => {
@@ -21,12 +18,9 @@ describe('shallow object spec', () => {
     const a1 = new WeakMap();
     const p1 = createDeepProxy(s1, a1);
     noop(p1.a);
-    const s2 = { a: 'a', b: 'b' };
-    expect(isDeepChanged(s1, s2, a1)).toBe(false);
-    const s3 = { a: 'a2', b: 'b' };
-    expect(isDeepChanged(s1, s3, a1)).toBe(true);
-    const s4 = { a: 'a', b: 'b2' };
-    expect(isDeepChanged(s1, s4, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: 'a', b: 'b' }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: 'a2', b: 'b' }, a1)).toBe(true);
+    expect(isDeepChanged(s1, { a: 'a', b: 'b2' }, a1)).toBe(false);
   });
 });
 
@@ -36,12 +30,9 @@ describe('deep object spec', () => {
     const a1 = new WeakMap();
     const p1 = createDeepProxy(s1, a1);
     noop(p1.a);
-    const s2 = { a: s1.a }; // to keep reference
-    expect(isDeepChanged(s1, s2, a1)).toBe(false);
-    const s3 = { a: { b: 'b2', c: 'c' } };
-    expect(isDeepChanged(s1, s3, a1)).toBe(true);
-    const s4 = { a: { b: 'b', c: 'c2' } };
-    expect(isDeepChanged(s1, s4, a1)).toBe(true);
+    expect(isDeepChanged(s1, { a: s1.a }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: { b: 'b2', c: 'c' } }, a1)).toBe(true);
+    expect(isDeepChanged(s1, { a: { b: 'b', c: 'c2' } }, a1)).toBe(true);
   });
 
   it('leaf property access', () => {
@@ -49,12 +40,9 @@ describe('deep object spec', () => {
     const a1 = new WeakMap();
     const p1 = createDeepProxy(s1, a1);
     noop(p1.a.b);
-    const s2 = { a: s1.a }; // to keep reference
-    expect(isDeepChanged(s1, s2, a1)).toBe(false);
-    const s3 = { a: { b: 'b2', c: 'c' } };
-    expect(isDeepChanged(s1, s3, a1)).toBe(true);
-    const s4 = { a: { b: 'b', c: 'c2' } };
-    expect(isDeepChanged(s1, s4, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: s1.a }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: { b: 'b2', c: 'c' } }, a1)).toBe(true);
+    expect(isDeepChanged(s1, { a: { b: 'b', c: 'c2' } }, a1)).toBe(false);
   });
 });
 
@@ -99,6 +87,57 @@ describe('reference equality spec', () => {
   });
 });
 
-// TODO symbol property
+describe('array spec', () => {
+  it('length', () => {
+    const s1 = [1, 2, 3];
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1);
+    noop(p1.length);
+    expect(isDeepChanged(s1, [1, 2, 3], a1)).toBe(false);
+    expect(isDeepChanged(s1, [1, 2, 3, 4], a1)).toBe(true);
+    expect(isDeepChanged(s1, [1, 2], a1)).toBe(true);
+    expect(isDeepChanged(s1, [1, 2, 4], a1)).toBe(false);
+  });
+
+  it('forEach', () => {
+    const s1 = [1, 2, 3];
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1);
+    p1.forEach(noop);
+    expect(isDeepChanged(s1, [1, 2, 3], a1)).toBe(false);
+    expect(isDeepChanged(s1, [1, 2, 3, 4], a1)).toBe(true);
+    expect(isDeepChanged(s1, [1, 2], a1)).toBe(true);
+    expect(isDeepChanged(s1, [1, 2, 4], a1)).toBe(true);
+  });
+
+  it('for-of', () => {
+    const s1 = [1, 2, 3];
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const x of p1) {
+      noop(x);
+    }
+    expect(isDeepChanged(s1, [1, 2, 3], a1)).toBe(false);
+    expect(isDeepChanged(s1, [1, 2, 3, 4], a1)).toBe(true);
+    expect(isDeepChanged(s1, [1, 2], a1)).toBe(true);
+    expect(isDeepChanged(s1, [1, 2, 4], a1)).toBe(true);
+  });
+});
+
+describe('ownKeys spec', () => {
+  it('object keys', () => {
+    const s1 = { a: { b: 'b' }, c: 'c' };
+    const a1 = new WeakMap();
+    const p1 = createDeepProxy(s1, a1);
+    noop(Object.keys(p1));
+    expect(isDeepChanged(s1, { a: s1.a, c: 'c' }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: { b: 'b' }, c: 'c' }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: s1.a }, a1)).toBe(true);
+    expect(isDeepChanged(s1, { a: s1.a, c: 'c', d: 'd' }, a1)).toBe(true);
+  });
+});
+
+// TODO in operator
 // TODO cycles
 // TODO builtins, frozen objects
