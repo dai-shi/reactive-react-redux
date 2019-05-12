@@ -93,6 +93,7 @@ export const isDeepChanged = (
     cache.set(origObj, { nextObj });
   }
   let changed = null;
+  // eslint-disable-next-line no-restricted-syntax
   for (const key of used) {
     const c = key === OWN_KEYS_SYMBOL ? isOwnKeysChanged(origObj, nextObj)
       : isDeepChanged(
