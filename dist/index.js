@@ -21,6 +21,12 @@ Object.defineProperty(exports, "useReduxState", {
     return _useReduxState.useReduxState;
   }
 });
+Object.defineProperty(exports, "useReduxStateRich", {
+  enumerable: true,
+  get: function get() {
+    return _useReduxState.useReduxStateRich;
+  }
+});
 Object.defineProperty(exports, "useReduxStateSimple", {
   enumerable: true,
   get: function get() {

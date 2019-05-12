@@ -33,10 +33,11 @@ var createProxyHandler = function createProxyHandler() {
       var used = this.affected.get(target);
 
       if (!used) {
-        this.affected.set(target, [key]);
-      } else if (!used.includes(key)) {
-        used.push(key);
+        used = new Set();
+        this.affected.set(target, used);
       }
+
+      used.add(key);
     },
     get: function get(target, key) {
       this.recordUsage(target, key);
@@ -121,13 +122,32 @@ var isDeepChanged = function isDeepChanged(origObj, nextObj, affected, cache, as
     });
   }
 
-  var changed = null;
+  var changed = null; // eslint-disable-next-line no-restricted-syntax
 
-  for (var i = 0; i < used.length; ++i) {
-    var key = used[i];
-    var c = key === OWN_KEYS_SYMBOL ? isOwnKeysChanged(origObj, nextObj) : isDeepChanged(origObj[key], nextObj[key], affected, cache, assumeChangedIfNotAffected !== false);
-    if (typeof c === 'boolean') changed = c;
-    if (changed) break;
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = used[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var key = _step.value;
+      var c = key === OWN_KEYS_SYMBOL ? isOwnKeysChanged(origObj, nextObj) : isDeepChanged(origObj[key], nextObj[key], affected, cache, assumeChangedIfNotAffected !== false);
+      if (typeof c === 'boolean') changed = c;
+      if (changed) break;
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+        _iterator["return"]();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
   }
 
   if (changed === null) changed = !!assumeChangedIfNotAffected;
