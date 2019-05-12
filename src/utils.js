@@ -14,12 +14,12 @@ const OWN_KEYS_SYMBOL = Symbol('OWN_KEYS');
 
 const createProxyHandler = () => ({
   recordUsage(target, key) {
-    const used = this.affected.get(target);
+    let used = this.affected.get(target);
     if (!used) {
-      this.affected.set(target, [key]);
-    } else if (!used.includes(key)) {
-      used.push(key);
+      used = new Set();
+      this.affected.set(target, used);
     }
+    used.add(key);
   },
   get(target, key) {
     this.recordUsage(target, key);
@@ -93,8 +93,7 @@ export const isDeepChanged = (
     cache.set(origObj, { nextObj });
   }
   let changed = null;
-  for (let i = 0; i < used.length; ++i) {
-    const key = used[i];
+  for (const key of used) {
     const c = key === OWN_KEYS_SYMBOL ? isOwnKeysChanged(origObj, nextObj)
       : isDeepChanged(
         origObj[key],
