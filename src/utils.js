@@ -24,7 +24,7 @@ const createProxyHandler = () => ({
   get(target, key) {
     this.recordUsage(target, key);
     const val = target[key];
-    if (typeof val !== 'object') {
+    if (typeof val !== 'object' || val === null) {
       return val;
     }
     const proto = Object.getPrototypeOf(val);
@@ -80,8 +80,8 @@ export const isDeepChanged = (
   assumeChangedIfNotAffected,
 ) => {
   if (origObj === nextObj) return false;
-  if (typeof origObj !== 'object') return true;
-  if (typeof nextObj !== 'object') return true;
+  if (typeof origObj !== 'object' || origObj === null) return true;
+  if (typeof nextObj !== 'object' || nextObj === null) return true;
   const used = affected.get(origObj);
   if (!used) return !!assumeChangedIfNotAffected;
   if (cache) {
