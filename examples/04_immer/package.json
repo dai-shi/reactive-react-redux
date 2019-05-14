@@ -5,7 +5,7 @@
   "dependencies": {
     "@types/react": "^16.7.6",
     "@types/react-dom": "^16.0.9",
-    "immer": "^2.0.0",
+    "immer": "^3.1.1",
     "react": "latest",
     "react-dom": "latest",
     "reactive-react-redux": "latest",
