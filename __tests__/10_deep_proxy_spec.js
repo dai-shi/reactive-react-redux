@@ -205,7 +205,8 @@ describe('special objects spec', () => {
     const p1 = createDeepProxy(s1, a1, proxyCache);
     noop(p1.a.b);
     expect(isDeepChanged(s1, s1, a1)).toBe(false);
-    expect(isDeepChanged(s1, { a: { b: 'b' } }, a1)).toBe(true); // we can't track frozen object
+    expect(isDeepChanged(s1, { a: { b: 'b' } }, a1)).toBe(false);
+    expect(isDeepChanged(s1, { a: { b: 'b2' } }, a1)).toBe(true);
   });
 });
 

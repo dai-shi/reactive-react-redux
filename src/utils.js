@@ -22,46 +22,50 @@ const isPlainObject = (obj) => {
   }
 };
 
+// copy obj if frozen
+const unfreeze = (obj) => {
+  if (!Object.isFrozen(obj)) return obj;
+  if (Array.isArray(obj)) {
+    return Array.from(obj);
+  }
+  return Object.assign({}, obj);
+};
+
 const createProxyHandler = () => ({
-  recordUsage(target, key) {
-    let used = this.affected.get(target);
+  recordUsage(key) {
+    let used = this.affected.get(this.originalObj);
     if (!used) {
       used = new Set();
-      this.affected.set(target, used);
+      this.affected.set(this.originalObj, used);
     }
     used.add(key);
   },
   get(target, key) {
-    this.recordUsage(target, key);
-    const val = target[key];
-    if (!isPlainObject(val)) {
-      return val;
-    }
-    if (Object.isFrozen(target)) {
-      return val;
-    }
+    this.recordUsage(key);
     // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
-    return createDeepProxy(val, this.affected, this.proxyCache);
+    return createDeepProxy(target[key], this.affected, this.proxyCache);
   },
   has(target, key) {
     // LIMITATION:
     // We simply record the same as get.
     // This means { a: {} } and { a: {} } is detected as changed,
     // if 'a' in obj is handled.
-    this.recordUsage(target, key);
+    this.recordUsage(key);
     return key in target;
   },
   ownKeys(target) {
-    this.recordUsage(target, OWN_KEYS_SYMBOL);
+    this.recordUsage(OWN_KEYS_SYMBOL);
     return Reflect.ownKeys(target);
   },
 });
 
 export const createDeepProxy = (obj, affected, proxyCache) => {
+  if (!isPlainObject(obj)) return obj;
   let proxyHandler = proxyCache && proxyCache.get(obj);
   if (!proxyHandler) {
     proxyHandler = createProxyHandler();
-    proxyHandler.proxy = new Proxy(obj, proxyHandler);
+    proxyHandler.proxy = new Proxy(unfreeze(obj), proxyHandler);
+    proxyHandler.originalObj = obj;
     if (proxyCache) {
       proxyCache.set(obj, proxyHandler);
     }
