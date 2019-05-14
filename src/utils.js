@@ -12,6 +12,16 @@ export const useForceUpdate = () => useReducer(forcedReducer, 0)[1];
 
 const OWN_KEYS_SYMBOL = Symbol('OWN_KEYS');
 
+// check if obj is a plain object or an array
+const isPlainObject = (obj) => {
+  try {
+    const proto = Object.getPrototypeOf(obj);
+    return proto === Object.prototype || proto === Array.prototype;
+  } catch (e) {
+    return false;
+  }
+};
+
 const createProxyHandler = () => ({
   recordUsage(target, key) {
     let used = this.affected.get(target);
@@ -24,11 +34,7 @@ const createProxyHandler = () => ({
   get(target, key) {
     this.recordUsage(target, key);
     const val = target[key];
-    if (typeof val !== 'object' || val === null) {
-      return val;
-    }
-    const proto = Object.getPrototypeOf(val);
-    if (proto !== Object.prototype && proto !== Array.prototype) {
+    if (!isPlainObject(val)) {
       return val;
     }
     if (Object.isFrozen(target)) {
