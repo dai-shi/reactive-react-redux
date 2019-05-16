@@ -74,7 +74,6 @@ export const useReduxState = (opts = {}) => {
   const store = useContext(ReduxStoreContext);
   const state = store.getState();
   const affected = new WeakMap();
-  const proxyCache = useRef(new WeakMap());
   const lastTracked = useRef(null);
   useIsomorphicLayoutEffect(() => {
     lastTracked.current = {
@@ -109,6 +108,7 @@ export const useReduxState = (opts = {}) => {
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
+  const proxyCache = useRef(new WeakMap()); // per-hook proxyCache
   return createDeepProxy(state, affected, proxyCache.current);
 };
 
