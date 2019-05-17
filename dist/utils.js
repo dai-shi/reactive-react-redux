@@ -25,62 +25,68 @@ var useForceUpdate = function useForceUpdate() {
 
 
 exports.useForceUpdate = useForceUpdate;
-var OWN_KEYS_SYMBOL = Symbol('OWN_KEYS');
+var OWN_KEYS_SYMBOL = Symbol('OWN_KEYS'); // check if obj is a plain object or an array
+
+var isPlainObject = function isPlainObject(obj) {
+  try {
+    var proto = Object.getPrototypeOf(obj);
+    return proto === Object.prototype || proto === Array.prototype;
+  } catch (e) {
+    return false;
+  }
+}; // copy obj if frozen
+
+
+var unfreeze = function unfreeze(obj) {
+  if (!Object.isFrozen(obj)) return obj;
+
+  if (Array.isArray(obj)) {
+    return Array.from(obj);
+  }
+
+  return Object.assign({}, obj);
+};
 
 var createProxyHandler = function createProxyHandler() {
   return {
-    recordUsage: function recordUsage(target, key) {
-      var used = this.affected.get(target);
+    recordUsage: function recordUsage(key) {
+      var used = this.affected.get(this.originalObj);
 
       if (!used) {
         used = new Set();
-        this.affected.set(target, used);
+        this.affected.set(this.originalObj, used);
       }
 
       used.add(key);
     },
     get: function get(target, key) {
-      this.recordUsage(target, key);
-      var val = target[key];
+      this.recordUsage(key); // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
 
-      if (_typeof(val) !== 'object') {
-        return val;
-      }
-
-      var proto = Object.getPrototypeOf(val);
-
-      if (proto !== Object.prototype && proto !== Array.prototype) {
-        return val;
-      }
-
-      if (Object.isFrozen(target)) {
-        return val;
-      } // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
-
-
-      return createDeepProxy(val, this.affected, this.proxyCache);
+      return createDeepProxy(target[key], this.affected, this.proxyCache);
     },
     has: function has(target, key) {
       // LIMITATION:
       // We simply record the same as get.
       // This means { a: {} } and { a: {} } is detected as changed,
       // if 'a' in obj is handled.
-      this.recordUsage(target, key);
+      this.recordUsage(key);
       return key in target;
     },
     ownKeys: function ownKeys(target) {
-      this.recordUsage(target, OWN_KEYS_SYMBOL);
+      this.recordUsage(OWN_KEYS_SYMBOL);
       return Reflect.ownKeys(target);
     }
   };
 };
 
 var createDeepProxy = function createDeepProxy(obj, affected, proxyCache) {
+  if (!isPlainObject(obj)) return obj;
   var proxyHandler = proxyCache && proxyCache.get(obj);
 
   if (!proxyHandler) {
     proxyHandler = createProxyHandler();
-    proxyHandler.proxy = new Proxy(obj, proxyHandler);
+    proxyHandler.proxy = new Proxy(unfreeze(obj), proxyHandler);
+    proxyHandler.originalObj = obj;
 
     if (proxyCache) {
       proxyCache.set(obj, proxyHandler);
@@ -104,8 +110,8 @@ var isOwnKeysChanged = function isOwnKeysChanged(origObj, nextObj) {
 
 var isDeepChanged = function isDeepChanged(origObj, nextObj, affected, cache, assumeChangedIfNotAffected) {
   if (origObj === nextObj) return false;
-  if (_typeof(origObj) !== 'object') return true;
-  if (_typeof(nextObj) !== 'object') return true;
+  if (_typeof(origObj) !== 'object' || origObj === null) return true;
+  if (_typeof(nextObj) !== 'object' || nextObj === null) return true;
   var used = affected.get(origObj);
   if (!used) return !!assumeChangedIfNotAffected;
 

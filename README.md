@@ -179,6 +179,15 @@ const bar = state.bar;
 // it won't trigger re-render if only state.foo is changed.
 ```
 
+### Proxied state shouldn't be used outside of render
+
+```javascript
+const state = useReduxState();
+const dispatch = useReduxDispatch();
+dispatch({ type: 'FOO', value: state.foo }); // This may lead unexpected behaviour if state.foo is an object
+dispatch({ type: 'FOO', value: state.fooStr }); // This is OK if state.fooStr is a string
+```
+
 ## Blogs
 
 - [A deadly simple React bindings library for Redux with Hooks API](https://medium.com/@dai_shi/a-deadly-simple-react-bindings-library-for-redux-with-hooks-api-822295857282)
