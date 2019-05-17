@@ -24,4 +24,5 @@ export const useReduxSelectors: <S extends {}, M extends {}>(
   selectors: { [K in keyof M]: (state: S) => M[K] },
 ) => M;
 
+export const useReduxStateRich: <S extends {}>() => S;
 export const useReduxStateSimple: <S extends {}>() => S;

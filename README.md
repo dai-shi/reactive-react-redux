@@ -154,6 +154,31 @@ You can also try them in codesandbox.io:
 [09](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/09_thunk)
 [10](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/10_selectors)
 
+## Limitations
+
+By relying on Proxy,
+there are some false negatives (failure to trigger re-renders)
+and some false positives (extra re-renders) in edge cases.
+
+### Proxied states are referentially equal only in per-hook basis
+
+```javascript
+const state1 = useReduxState();
+const state2 = useReduxState();
+// state1 and state2 is referentially not equal
+// even if the underlying redux state is referentially equal.
+```
+
+### An object referential change doesn't trigger re-render if at least one object property is accessed in previous render
+
+```javascript
+const state = useReduxState();
+const foo = useMemo(() => state.foo, [state]);
+const bar = state.bar;
+// if state.foo is not evaluated in render,
+// it won't trigger re-render if only state.foo is changed.
+```
+
 ## Blogs
 
 - [A deadly simple React bindings library for Redux with Hooks API](https://medium.com/@dai_shi/a-deadly-simple-react-bindings-library-for-redux-with-hooks-api-822295857282)

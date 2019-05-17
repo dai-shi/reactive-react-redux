@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- New deep proxy instead or proxyequal
 
 ## [2.0.1] - 2019-04-15
 ### Changed

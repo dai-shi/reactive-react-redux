@@ -113,14 +113,14 @@ describe('selectors spec', () => {
         </ReduxProvider>
       </StrictMode>
     );
-    const { getByText, container } = render(<App />);
+    const { getAllByText, container } = render(<App />);
     expect(numOfRenders1).toBe(4); // doubled because of StrictMode
     expect(container).toMatchSnapshot();
-    fireEvent.click(getByText('inc1'));
+    fireEvent.click(getAllByText('inc1')[0]);
     expect(numOfRenders1).toBe(4);
-    fireEvent.click(getByText('inc1'));
+    fireEvent.click(getAllByText('inc1')[0]);
     expect(numOfRenders1).toBe(4);
-    fireEvent.click(getByText('inc1'));
+    fireEvent.click(getAllByText('inc1')[0]);
     expect(numOfRenders1).toBe(8);
     expect(container).toMatchSnapshot();
   });
