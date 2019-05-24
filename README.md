@@ -190,8 +190,8 @@ dispatch({ type: 'FOO', value: state.fooStr }); // This is OK if state.fooStr is
 
 ## Blogs
 
-- [A deadly simple React bindings library for Redux with Hooks API](https://medium.com/@dai_shi/a-deadly-simple-react-bindings-library-for-redux-with-hooks-api-822295857282)
-- [Developing React custom hooks for Redux without react-redux](https://medium.com/@dai_shi/developing-react-custom-hooks-for-redux-without-react-redux-483a90de0c71)
+- [A deadly simple React bindings library for Redux with Hooks API](https://blog.axlight.com/posts/a-deadly-simple-react-bindings-library-for-redux-with-hooks-api/)
+- [Developing React custom hooks for Redux without react-redux](https://blog.axlight.com/posts/developing-react-custom-hooks-for-redux-without-react-redux/)
 - [Integrating React and Redux, with Hooks and Proxies](https://frontarm.com/daishi-kato/redux-custom-hooks/)
-- [New React Redux coding style with hooks without selectors](https://medium.com/@dai_shi/new-react-redux-coding-style-with-hooks-without-selectors-5055d59ab753)
-- [Benchmark alpha-released hooks API in React Redux with alternatives](https://medium.com/@dai_shi/benchmark-alpha-released-hooks-api-in-react-redux-with-alternatives-25bef8b840ae)
+- [New React Redux coding style with hooks without selectors](https://blog.axlight.com/posts/new-react-redux-coding-style-with-hooks-without-selectors/)
+- [Benchmark alpha-released hooks API in React Redux with alternatives](https://blog.axlight.com/posts/benchmark-alpha-released-hooks-api-in-react-redux-with-alternatives/)
