@@ -154,6 +154,12 @@ You can also try them in codesandbox.io:
 [09](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/09_thunk)
 [10](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/10_selectors)
 
+## Benchmarks
+
+![benchmark1](https://user-images.githubusercontent.com/490574/57962675-f3711900-7954-11e9-8868-61336628423b.png | height=200)
+
+See [#3](https://github.com/dai-shi/reactive-react-redux/issues/3#issuecomment-493636993) for full result.
+
 ## Limitations
 
 By relying on Proxy,
