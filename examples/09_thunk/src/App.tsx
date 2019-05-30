@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { StrictMode } from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import reduxThunk from 'redux-thunk';
 
@@ -9,15 +10,10 @@ import { reducer } from './state';
 import Counter from './Counter';
 import Person from './Person';
 
-const {
-  // @ts-ignore
-  unstable_ConcurrentMode: ConcurrentMode,
-} = React;
-
 const store = createStore(reducer, applyMiddleware(reduxThunk));
 
 const App = () => (
-  <ConcurrentMode>
+  <StrictMode>
     <ReduxProvider store={store}>
       <h1>Counter</h1>
       <Counter />
@@ -26,7 +22,7 @@ const App = () => (
       <Person />
       <Person />
     </ReduxProvider>
-  </ConcurrentMode>
+  </StrictMode>
 );
 
 export default App;

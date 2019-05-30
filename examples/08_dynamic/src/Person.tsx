@@ -1,10 +1,9 @@
 import * as React from 'react';
+import { useState } from 'react';
 
 import { useReduxDispatch, useReduxState } from 'reactive-react-redux';
 
 import { Action, State } from './state';
-
-const { useState } = React;
 
 const Person = () => {
   const [mode, setMode] = useState('first');

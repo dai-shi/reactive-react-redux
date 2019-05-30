@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, StrictMode } from 'react';
 import { createStore } from 'redux';
 
 import { ReduxProvider } from 'reactive-react-redux';
@@ -8,19 +9,13 @@ import { reducer } from './state';
 import Counter from './Counter';
 import Person from './Person';
 
-const {
-  useState,
-  // @ts-ignore
-  unstable_ConcurrentMode: ConcurrentMode,
-} = React;
-
 const store1 = createStore(reducer);
 const store2 = createStore(reducer);
 
 const App = () => {
   const [store, setStore] = useState(store1);
   return (
-    <ConcurrentMode>
+    <StrictMode>
       <div>
         <button type="button" onClick={() => setStore(store1)}>store1</button>
         <button type="button" onClick={() => setStore(store2)}>store2</button>
@@ -33,7 +28,7 @@ const App = () => {
           <Person />
         </ReduxProvider>
       </div>
-    </ConcurrentMode>
+    </StrictMode>
   );
 };
 

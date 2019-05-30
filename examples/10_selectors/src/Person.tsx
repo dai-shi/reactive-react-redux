@@ -1,10 +1,9 @@
 import * as React from 'react';
+import { useState, useCallback } from 'react';
 
 import { useReduxDispatch, useReduxSelectors } from 'reactive-react-redux';
 
 import { Action, State } from './state';
-
-const { useState, useCallback } = React;
 
 type PersonNameType = {
   first: string;

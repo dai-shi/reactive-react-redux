@@ -33,7 +33,8 @@
     "default-case": "off",
     "arrow-body-style": "off",
     "no-plusplus": "off",
-    "import/no-useless-path-segments": 0
+    "import/no-useless-path-segments": 0,
+    "import/no-duplicates": "off"
   },
   "overrides": [{
     "files": ["__tests__/**/*"],

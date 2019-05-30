@@ -1,10 +1,9 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 
 import { useReduxDispatch, useReduxState } from 'reactive-react-redux';
 
 import { Action, State } from './state';
-
-const { useMemo } = React;
 
 const TextBox: React.SFC<{ text: string }> = ({ text }) => {
   // eslint-disable-next-line no-console
