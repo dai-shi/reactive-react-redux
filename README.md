@@ -171,11 +171,11 @@ and some false positives (extra re-renders) in edge cases.
 ```javascript
 const state1 = useReduxState();
 const state2 = useReduxState();
-// state1 and state2 is referentially not equal
+// state1 and state2 is not referentially equal
 // even if the underlying redux state is referentially equal.
 ```
 
-### An object referential change doesn't trigger re-render if at least one object property is accessed in previous render
+### An object referential change doesn't trigger re-render if an property of the object is accessed in previous render
 
 ```javascript
 const state = useReduxState();
@@ -201,3 +201,4 @@ dispatch({ type: 'FOO', value: state.fooStr }); // This is OK if state.fooStr is
 - [Integrating React and Redux, with Hooks and Proxies](https://frontarm.com/daishi-kato/redux-custom-hooks/)
 - [New React Redux coding style with hooks without selectors](https://blog.axlight.com/posts/new-react-redux-coding-style-with-hooks-without-selectors/)
 - [Benchmark alpha-released hooks API in React Redux with alternatives](https://blog.axlight.com/posts/benchmark-alpha-released-hooks-api-in-react-redux-with-alternatives/)
+- [Four patterns for global state with React hooks: Context or Redux](https://blog.axlight.com/posts/four-patterns-for-global-state-with-react-hooks-context-or-redux/)
