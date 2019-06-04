@@ -157,9 +157,9 @@ You can also try them in codesandbox.io:
 
 ## Benchmarks
 
-<img src="https://user-images.githubusercontent.com/490574/57962675-f3711900-7954-11e9-8868-61336628423b.png" width="250" alt="benchmark result" /><img src="https://user-images.githubusercontent.com/490574/57962676-f409af80-7954-11e9-809f-772e4bc9fa59.png" width="250" alt="benchmark result" /><img src="https://user-images.githubusercontent.com/490574/57962677-f409af80-7954-11e9-8efd-e9e44a11c0ec.png" width="250" alt="benchmark result" />
+![benchmark result](https://user-images.githubusercontent.com/490574/58372012-3bde9700-7f52-11e9-9a54-0e3f78bce38a.png)
 
-See [#3](https://github.com/dai-shi/reactive-react-redux/issues/3#issuecomment-493636993) for details.
+See [#3](https://github.com/dai-shi/reactive-react-redux/issues/3#issuecomment-495929564) for details.
 
 ## Limitations
 
