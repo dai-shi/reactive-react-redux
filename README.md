@@ -22,9 +22,9 @@ This library eliminates writing `mapStateToProps` at all.
 
 A hook `useReduxState` returns the entire Redux state object,
 but it keeps track of which properties of the object are used
-in rendering. When the state is updated, this hook checks
+in render. When the state is updated, this hook checks
 whether used properties are changed.
-Only if it detects changes in the state, it triggers re-rendering.
+Only if it detects changes in the state, it triggers re-render.
 
 ## Install
 
