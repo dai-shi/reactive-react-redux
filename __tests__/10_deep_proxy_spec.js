@@ -1,4 +1,4 @@
-import { createDeepProxy, isDeepChanged } from '../src/utils';
+import { createDeepProxy, isDeepChanged } from '../src/deepProxy';
 
 const noop = () => {};
 

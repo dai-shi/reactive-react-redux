@@ -4,40 +4,55 @@ import {
   useRef,
 } from 'react';
 
+import { proxyState, proxyEqual } from 'proxyequal';
+
 import { ReduxStoreContext } from './provider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
-import { createDeepProxy, isDeepChanged } from './deepProxy';
+// -------------------------------------------------------
+// rich version based on proxyequal
+// -------------------------------------------------------
 
-export const useReduxState = (opts = {}) => {
+const useTrapped = (state) => {
+  const cacheRef = useRef({
+    proxy: new WeakMap(),
+    trapped: new WeakMap(),
+  });
+  let trapped;
+  if (cacheRef.current.trapped.has(state)) {
+    trapped = cacheRef.current.trapped.get(state);
+    trapped.reset();
+  } else {
+    trapped = proxyState(state, null, cacheRef.current.proxy);
+    cacheRef.current.trapped.set(state, trapped);
+  }
+  return trapped;
+};
+
+export const useReduxStateRich = () => {
   const forceUpdate = useForceUpdate();
+  // redux store&state
   const store = useContext(ReduxStoreContext);
   const state = store.getState();
-  const affected = new WeakMap();
+  // trapped
+  const trapped = useTrapped(state);
+  // ref
   const lastTracked = useRef(null);
   useIsomorphicLayoutEffect(() => {
     lastTracked.current = {
       state,
-      affected,
-      cache: new WeakMap(),
-      /* eslint-disable no-nested-ternary, indent, @typescript-eslint/indent */
-      assumeChangedIfNotAffected:
-        opts.unstable_forceUpdateForStateChange ? true
-      : opts.unstable_ignoreIntermediateObjectUsage ? false
-      : /* default */ null,
-      /* eslint-enable no-nested-ternary, indent, @typescript-eslint/indent */
+      affected: trapped.affected,
     };
   });
+  // subscription
   useEffect(() => {
     const callback = () => {
       const nextState = store.getState();
-      const changed = isDeepChanged(
+      const changed = !proxyEqual(
         lastTracked.current.state,
         nextState,
         lastTracked.current.affected,
-        lastTracked.current.cache,
-        lastTracked.current.assumeChangedIfNotAffected,
       );
       if (changed) {
         lastTracked.current.state = nextState;
@@ -49,6 +64,5 @@ export const useReduxState = (opts = {}) => {
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
   }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-  const proxyCache = useRef(new WeakMap()); // per-hook proxyCache
-  return createDeepProxy(state, affected, proxyCache.current);
+  return trapped.state;
 };
