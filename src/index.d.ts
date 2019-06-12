@@ -8,7 +8,6 @@ import {
 
 export type ReduxProviderProps<S, A extends Action> = {
   store: Store<S, A>;
-  children?: React.ReactNode;
 };
 
 export type ReduxProviderType<S = unknown, A extends Action = AnyAction>
