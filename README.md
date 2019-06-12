@@ -205,7 +205,7 @@ import { createStore } from 'redux';
 import {
   ReduxProvider as Provider,
   useReduxState,
-} from 'react-redux';
+} from 'reactive-react-redux';
 
 const store = createStore(...);
 
