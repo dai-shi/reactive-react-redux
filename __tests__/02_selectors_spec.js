@@ -1,7 +1,7 @@
 import React, { useCallback, StrictMode } from 'react';
 import { createStore } from 'redux';
 
-import { render, fireEvent, cleanup } from 'react-testing-library';
+import { render, fireEvent, cleanup } from '@testing-library/react';
 
 import {
   ReduxProvider,
