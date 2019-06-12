@@ -32,9 +32,8 @@ const useTrapped = (state) => {
 
 export const useReduxStateRich = () => {
   const forceUpdate = useForceUpdate();
-  // redux store&state
-  const store = useContext(ReduxStoreContext);
-  const state = store.getState();
+  // redux state
+  const { state, subscribe } = useContext(ReduxStoreContext);
   // trapped
   const trapped = useTrapped(state);
   // ref
@@ -47,8 +46,7 @@ export const useReduxStateRich = () => {
   });
   // subscription
   useEffect(() => {
-    const callback = () => {
-      const nextState = store.getState();
+    const callback = (nextState) => {
       const changed = !proxyEqual(
         lastTracked.current.state,
         nextState,
@@ -59,10 +57,8 @@ export const useReduxStateRich = () => {
         forceUpdate();
       }
     };
-    // run once in case the state is already changed
-    callback();
-    const unsubscribe = store.subscribe(callback);
+    const unsubscribe = subscribe(callback);
     return unsubscribe;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscribe, forceUpdate]);
   return trapped.state;
 };

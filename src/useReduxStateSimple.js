@@ -15,7 +15,7 @@ import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
 export const useReduxStateSimple = () => {
   const forceUpdate = useForceUpdate();
-  const store = useContext(ReduxStoreContext);
+  const { state, subscribe } = useContext(ReduxStoreContext);
   const used = useRef({});
   const handler = useMemo(() => ({
     get: (target, name) => {
@@ -23,14 +23,12 @@ export const useReduxStateSimple = () => {
       return target[name];
     },
   }), []);
-  const state = store.getState();
   const lastState = useRef(null);
   useIsomorphicLayoutEffect(() => {
     lastState.current = state;
   });
   useEffect(() => {
-    const callback = () => {
-      const nextState = store.getState();
+    const callback = (nextState) => {
       const changed = Object.keys(used.current).find(
         key => lastState.current[key] !== nextState[key],
       );
@@ -38,14 +36,12 @@ export const useReduxStateSimple = () => {
         forceUpdate();
       }
     };
-    // run once in case the state is already changed
-    callback();
-    const unsubscribe = store.subscribe(callback);
+    const unsubscribe = subscribe(callback);
     const cleanup = () => {
       unsubscribe();
       used.current = {};
     };
     return cleanup;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscribe, forceUpdate]);
   return new Proxy(state, handler);
 };

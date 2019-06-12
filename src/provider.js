@@ -1,6 +1,14 @@
-import { createContext, createElement, useMemo } from 'react';
+import {
+  createContext,
+  createElement,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 
 import { batchedUpdates } from './batchedUpdates';
+
+import { useForceUpdate } from './utils';
 
 // context
 const warningObject = {
@@ -11,42 +19,37 @@ const warningObject = {
     throw new Error('Please use <ReduxProvider store={store}>');
   },
 };
-export const ReduxStoreContext = createContext(warningObject);
+const calculateChangedBits = () => 0;
+export const ReduxStoreContext = createContext(warningObject, calculateChangedBits);
 
-// patch store with batchedUpdates
-const patchReduxStore = (origStore) => {
-  if (!batchedUpdates) return origStore;
-  const listeners = [];
-  let unsubscribe;
-  const subscribe = (listener) => {
-    listeners.push(listener);
-    if (listeners.length === 1) {
-      unsubscribe = origStore.subscribe(() => {
-        batchedUpdates(() => {
-          listeners.forEach(l => l());
-        });
-      });
-    }
-    return () => {
-      const index = listeners.indexOf(listener);
-      listeners.splice(index, 1);
-      if (listeners.length === 0) {
-        unsubscribe();
-      }
-    };
-  };
-  return {
-    ...origStore,
-    subscribe,
-  };
-};
-
-// provider
 export const ReduxProvider = ({ store, children }) => {
-  const patchedStore = useMemo(() => patchReduxStore(store), [store]);
+  const forceUpdate = useForceUpdate();
+  const state = store.getState();
+  const listeners = useRef([]);
+  useEffect(() => {
+    batchedUpdates(() => {
+      listeners.current.forEach(listener => listener(state));
+    });
+  }, [state]);
+  const subscribe = useCallback((listener) => {
+    listeners.current.push(listener);
+    const unsubscribe = () => {
+      const index = listeners.current.indexOf(listener);
+      listeners.current.splice(index, 1);
+    };
+    // run once in case the state is already changed
+    listener(store.getState());
+    return unsubscribe;
+  }, [store]);
+  useEffect(() => {
+    const unsubscribe = store.subscribe(() => {
+      forceUpdate();
+    });
+    return unsubscribe;
+  }, [store, forceUpdate]);
   return createElement(
     ReduxStoreContext.Provider,
-    { value: patchedStore },
+    { value: { state, dispatch: store.dispatch, subscribe } },
     children,
   );
 };

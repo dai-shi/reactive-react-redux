@@ -50,9 +50,8 @@ const runSelector = (state, selector) => {
 
 export const useReduxSelectors = (selectorMap) => {
   const forceUpdate = useForceUpdate();
-  // redux store&state
-  const store = useContext(ReduxStoreContext);
-  const state = store.getState();
+  // redux state
+  const { state, subscribe } = useContext(ReduxStoreContext);
   // mapped result
   const keys = Object.keys(selectorMap);
   const mapped = createMap(keys, key => runSelector(state, selectorMap[key]));
@@ -64,9 +63,8 @@ export const useReduxSelectors = (selectorMap) => {
   });
   // subscription
   useEffect(() => {
-    const callback = () => {
+    const callback = (nextState) => {
       try {
-        const nextState = store.getState();
         let changed = false;
         const nextMapped = createMap(lastTracked.current.keys, (key) => {
           const lastResult = lastTracked.current.mapped[key];
@@ -86,10 +84,8 @@ export const useReduxSelectors = (selectorMap) => {
         forceUpdate();
       }
     };
-    // run once in case the state is already changed
-    callback();
-    const unsubscribe = store.subscribe(callback);
+    const unsubscribe = subscribe(callback);
     return unsubscribe;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscribe, forceUpdate]);
   return trapped.proxy;
 };
