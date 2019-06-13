@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, StrictMode } from 'react';
 import { createStore } from 'redux';
 
-import { ReduxProvider } from 'reactive-react-redux';
+import { Provider } from 'reactive-react-redux';
 
 import { reducer } from './state';
 
@@ -19,14 +19,14 @@ const App = () => {
       <div>
         <button type="button" onClick={() => setStore(store1)}>store1</button>
         <button type="button" onClick={() => setStore(store2)}>store2</button>
-        <ReduxProvider store={store}>
+        <Provider store={store}>
           <h1>Counter</h1>
           <Counter />
           <Counter />
           <h1>Person</h1>
           <Person />
           <Person />
-        </ReduxProvider>
+        </Provider>
       </div>
     </StrictMode>
   );

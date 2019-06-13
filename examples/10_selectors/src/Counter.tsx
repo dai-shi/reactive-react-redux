@@ -1,14 +1,14 @@
 import * as React from 'react';
 
-import { useReduxDispatch, useReduxSelectors } from 'reactive-react-redux';
+import { useDispatch, useTrackedSelectors } from 'reactive-react-redux';
 
 import { Action, State } from './state';
 
 const Counter = () => {
-  const { counter } = useReduxSelectors<State, { counter: number }>({
+  const { counter } = useTrackedSelectors<State, { counter: number }>({
     counter: state => state.counter,
   });
-  const dispatch = useReduxDispatch<Action>();
+  const dispatch = useDispatch<Action>();
   return (
     <div>
       {Math.random()}

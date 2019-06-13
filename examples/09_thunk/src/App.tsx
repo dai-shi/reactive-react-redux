@@ -3,7 +3,7 @@ import { StrictMode } from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import reduxThunk from 'redux-thunk';
 
-import { ReduxProvider } from 'reactive-react-redux';
+import { Provider } from 'reactive-react-redux';
 
 import { reducer } from './state';
 
@@ -14,14 +14,14 @@ const store = createStore(reducer, applyMiddleware(reduxThunk));
 
 const App = () => (
   <StrictMode>
-    <ReduxProvider store={store}>
+    <Provider store={store}>
       <h1>Counter</h1>
       <Counter />
       <Counter />
       <h1>Person</h1>
       <Person />
       <Person />
-    </ReduxProvider>
+    </Provider>
   </StrictMode>
 );
 

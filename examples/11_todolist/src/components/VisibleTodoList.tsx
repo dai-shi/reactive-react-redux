@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useReduxState } from 'reactive-react-redux';
+import { useTrackedState } from 'reactive-react-redux';
 
 import { TodoType, State, VisibilityFilterType } from '../types';
 import { useToggleTodo } from '../actions';
@@ -19,7 +19,7 @@ const getVisibleTodos = (todos: TodoType[], filter: VisibilityFilterType) => {
 };
 
 const VisibleTodoList: React.FC = () => {
-  const state = useReduxState<State>();
+  const state = useTrackedState<State>();
   const visibleTodos = getVisibleTodos(state.todos, state.visibilityFilter);
   const toggleTodo = useToggleTodo();
   return (
