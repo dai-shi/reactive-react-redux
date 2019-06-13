@@ -24,13 +24,13 @@ Object.defineProperty(exports, "useReduxState", {
 Object.defineProperty(exports, "useReduxStateRich", {
   enumerable: true,
   get: function get() {
-    return _useReduxState.useReduxStateRich;
+    return _useReduxStateRich.useReduxStateRich;
   }
 });
 Object.defineProperty(exports, "useReduxStateSimple", {
   enumerable: true,
   get: function get() {
-    return _useReduxState.useReduxStateSimple;
+    return _useReduxStateSimple.useReduxStateSimple;
   }
 });
 Object.defineProperty(exports, "useReduxSelectors", {
@@ -45,5 +45,9 @@ var _provider = require("./provider");
 var _useReduxDispatch = require("./useReduxDispatch");
 
 var _useReduxState = require("./useReduxState");
+
+var _useReduxStateRich = require("./useReduxStateRich");
+
+var _useReduxStateSimple = require("./useReduxStateSimple");
 
 var _useReduxSelectors = require("./useReduxSelectors");
