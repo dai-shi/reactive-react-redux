@@ -3,20 +3,26 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ReduxProvider = exports.defaultContext = void 0;
+exports.ReduxProvider = exports.defaultContext = exports.createCustomContext = void 0;
 
 var _react = require("react");
 
 var _utils = require("./utils");
 
+// -------------------------------------------------------
 // context
+// -------------------------------------------------------
 var warningObject = {
-  get dispatch() {
-    throw new Error('Please use <ReduxProvider store={store}>');
+  get state() {
+    throw new Error('Please use <TrackedProvider ...>');
   },
 
-  get getState() {
-    throw new Error('Please use <ReduxProvider store={store}>');
+  get dispatch() {
+    throw new Error('Please use <TrackedProvider ...>');
+  },
+
+  get subscribe() {
+    throw new Error('Please use <TrackedProvider ...>');
   }
 
 };
@@ -25,7 +31,17 @@ var calculateChangedBits = function calculateChangedBits(a, b) {
   return a.dispatch !== b.dispatch || a.subscribe !== b.subscribe ? 1 : 0;
 };
 
-var defaultContext = (0, _react.createContext)(warningObject, calculateChangedBits);
+var createCustomContext = function createCustomContext() {
+  var w = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : warningObject;
+  var c = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : calculateChangedBits;
+  return (0, _react.createContext)(w, c);
+};
+
+exports.createCustomContext = createCustomContext;
+var defaultContext = createCustomContext(); // -------------------------------------------------------
+// provider
+// -------------------------------------------------------
+
 exports.defaultContext = defaultContext;
 
 var ReduxProvider = function ReduxProvider(_ref) {

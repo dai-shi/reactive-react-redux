@@ -6,7 +6,13 @@ Object.defineProperty(exports, "__esModule", {
 Object.defineProperty(exports, "ReduxProvider", {
   enumerable: true,
   get: function get() {
-    return _provider.ReduxProvider;
+    return _ReduxProvider.ReduxProvider;
+  }
+});
+Object.defineProperty(exports, "createCustomContext", {
+  enumerable: true,
+  get: function get() {
+    return _ReduxProvider.createCustomContext;
   }
 });
 Object.defineProperty(exports, "useReduxDispatch", {
@@ -40,7 +46,7 @@ Object.defineProperty(exports, "useReduxSelectors", {
   }
 });
 
-var _provider = require("./provider");
+var _ReduxProvider = require("./ReduxProvider");
 
 var _useReduxDispatch = require("./useReduxDispatch");
 

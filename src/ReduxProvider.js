@@ -8,19 +8,36 @@ import {
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
+// -------------------------------------------------------
 // context
+// -------------------------------------------------------
+
 const warningObject = {
-  get dispatch() {
-    throw new Error('Please use <ReduxProvider store={store}>');
+  get state() {
+    throw new Error('Please use <TrackedProvider ...>');
   },
-  get getState() {
-    throw new Error('Please use <ReduxProvider store={store}>');
+  get dispatch() {
+    throw new Error('Please use <TrackedProvider ...>');
+  },
+  get subscribe() {
+    throw new Error('Please use <TrackedProvider ...>');
   },
 };
+
 const calculateChangedBits = (a, b) => (
   a.dispatch !== b.dispatch || a.subscribe !== b.subscribe ? 1 : 0
 );
-export const defaultContext = createContext(warningObject, calculateChangedBits);
+
+export const createCustomContext = (
+  w = warningObject,
+  c = calculateChangedBits,
+) => createContext(w, c);
+
+export const defaultContext = createCustomContext();
+
+// -------------------------------------------------------
+// provider
+// -------------------------------------------------------
 
 export const ReduxProvider = ({
   store,
