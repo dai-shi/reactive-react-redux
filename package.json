@@ -1,7 +1,7 @@
 {
   "name": "reactive-react-redux",
   "description": "React Redux binding with React Hooks and Proxy",
-  "version": "4.0.0-alpha.2",
+  "version": "4.0.0-beta.0",
   "author": "Daishi Kato",
   "repository": {
     "type": "git",
@@ -44,7 +44,6 @@
   "license": "MIT",
   "dependencies": {
     "memoize-state": "^2.0.7",
-    "proxyequal": "^2.0.7",
     "with-known-usage": "^1.0.0"
   },
   "devDependencies": {

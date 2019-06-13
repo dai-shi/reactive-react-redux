@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ReduxProvider = exports.defaultContext = exports.createCustomContext = void 0;
+exports.Provider = exports.defaultContext = exports.createCustomContext = void 0;
 
 var _react = require("react");
 
@@ -44,7 +44,7 @@ var defaultContext = createCustomContext(); // ---------------------------------
 
 exports.defaultContext = defaultContext;
 
-var ReduxProvider = function ReduxProvider(_ref) {
+var Provider = function Provider(_ref) {
   var store = _ref.store,
       _ref$customContext = _ref.customContext,
       customContext = _ref$customContext === void 0 ? defaultContext : _ref$customContext,
@@ -84,4 +84,4 @@ var ReduxProvider = function ReduxProvider(_ref) {
   }, children);
 };
 
-exports.ReduxProvider = ReduxProvider;
+exports.Provider = Provider;

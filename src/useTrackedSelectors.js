@@ -8,7 +8,7 @@ import memoize from 'memoize-state';
 
 import { withKnowUsage } from 'with-known-usage';
 
-import { defaultContext } from './ReduxProvider';
+import { defaultContext } from './Provider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
@@ -48,7 +48,7 @@ const runSelector = (state, selector) => {
   return { selector, value };
 };
 
-export const useReduxSelectors = (selectorMap, opts = {}) => {
+export const useTrackedSelectors = (selectorMap, opts = {}) => {
   const {
     customContext = defaultContext,
   } = opts;

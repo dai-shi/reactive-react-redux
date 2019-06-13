@@ -14,15 +14,15 @@ with a capability of auto-detecting state usage.
 
 The hook in the official `redux-redux` is
 [`useSelector`](https://react-redux.js.org/api/hooks#useselector)
-which is already simple, but the hook `useReduxState` in this library
+which is already simple, but the hook `useTrackedState` in this library
 is simpler than that without a selector.
-Technically, `useReduxState` has no [stale props](https://react-redux.js.org/api/hooks#stale-props-and-zombie-children) issue.
+Technically, `useTrackedState` has no [stale props](https://react-redux.js.org/api/hooks#stale-props-and-zombie-children) issue.
 
 See [comparison](#comparison-with-useselector) for details.
 
 ## How it works
 
-A hook `useReduxState` returns the entire Redux state object,
+A hook `useTrackedState` returns the entire Redux state object,
 but it keeps track of which properties of the object are used
 in render. When the state is updated, this hook checks
 whether used properties are changed.
@@ -40,9 +40,9 @@ npm install reactive-react-redux
 import React from 'react';
 import { createStore } from 'redux';
 import {
-  ReduxProvider,
-  useReduxDispatch,
-  useReduxState,
+  Provider,
+  useDispatch,
+  useTrackedState,
 } from 'reactive-react-redux';
 
 const initialState = {
@@ -62,8 +62,8 @@ const reducer = (state = initialState, action) => {
 const store = createStore(reducer);
 
 const Counter = () => {
-  const state = useReduxState();
-  const dispatch = useReduxDispatch();
+  const state = useTrackedState();
+  const dispatch = useDispatch();
   return (
     <div>
       {Math.random()}
@@ -77,8 +77,8 @@ const Counter = () => {
 };
 
 const TextBox = () => {
-  const state = useReduxState();
-  const dispatch = useReduxDispatch();
+  const state = useTrackedState();
+  const dispatch = useDispatch();
   return (
     <div>
       {Math.random()}
@@ -91,25 +91,25 @@ const TextBox = () => {
 };
 
 const App = () => (
-  <ReduxProvider store={store}>
+  <Provider store={store}>
     <h1>Counter</h1>
     <Counter />
     <Counter />
     <h1>TextBox</h1>
     <TextBox />
     <TextBox />
-  </ReduxProvider>
+  </Provider>
 );
 ```
 
 ## Advanced Usage
 
 <details>
-<summary>Experimental useReduxSelectors</summary>
+<summary>Experimental useTrackedSelectors</summary>
 
 ```javascript
 import React, { useCallback } from 'react';
-import { useReduxSelectors } from 'reactive-react-redux';
+import { useTrackedSelectors } from 'reactive-react-redux';
 
 const globalSelectors = {
   firstName: state => state.person.first,
@@ -117,13 +117,13 @@ const globalSelectors = {
 };
 
 const Person = () => {
-  const { firstName } = useReduxSelectors(globalSelectors);
+  const { firstName } = useTrackedSelectors(globalSelectors);
   return <div>{firstName}</div>;
   // this component will only render when `state.person.first` is changed.
 };
 
 const Person2 = ({ threshold }) => {
-  const { firstName, isYoung } = useReduxSelectors({
+  const { firstName, isYoung } = useTrackedSelectors({
     ...globalSelectors,
     isYoung: useCallback(state => (state.person.age < threshold), [threshold]),
   });
@@ -166,7 +166,7 @@ See [#3](https://github.com/dai-shi/reactive-react-redux/issues/3#issuecomment-4
 ## Comparison with useSelector
 
 Here is a example to compare `useSelector` in react-redux
-and `useReduxState` in reactive-react-redux.
+and `useTrackedState` in reactive-react-redux.
 
 ### useSelector
 
@@ -197,20 +197,20 @@ const App = () => (
 );
 ```
 
-### useReduxState
+### useTrackedState
 
 ```javascript
 import React from 'react';
 import { createStore } from 'redux';
 import {
-  ReduxProvider as Provider,
-  useReduxState,
+  Provider,
+  useTrackedState,
 } from 'reactive-react-redux';
 
 const store = createStore(...);
 
 const UserName = ({ id }) => {
-  const state = useReduxState();
+  const state = useTrackedState();
   const { firstName, lastName } = state.users[id];
   return (
     <div>
@@ -235,8 +235,8 @@ and some false positives (extra re-renders) in edge cases.
 ### Proxied states are referentially equal only in per-hook basis
 
 ```javascript
-const state1 = useReduxState();
-const state2 = useReduxState();
+const state1 = useTrackedState();
+const state2 = useTrackedState();
 // state1 and state2 is not referentially equal
 // even if the underlying redux state is referentially equal.
 ```
@@ -244,7 +244,7 @@ const state2 = useReduxState();
 ### An object referential change doesn't trigger re-render if an property of the object is accessed in previous render
 
 ```javascript
-const state = useReduxState();
+const state = useTrackedState();
 const foo = useMemo(() => state.foo, [state]);
 const bar = state.bar;
 // if state.foo is not evaluated in render,
@@ -254,8 +254,8 @@ const bar = state.bar;
 ### Proxied state shouldn't be used outside of render
 
 ```javascript
-const state = useReduxState();
-const dispatch = useReduxDispatch();
+const state = useTrackedState();
+const dispatch = useDispatch();
 dispatch({ type: 'FOO', value: state.foo }); // This may lead unexpected behaviour if state.foo is an object
 dispatch({ type: 'FOO', value: state.fooStr }); // This is OK if state.fooStr is a string
 ```
