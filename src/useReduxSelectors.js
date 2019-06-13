@@ -8,7 +8,7 @@ import memoize from 'memoize-state';
 
 import { withKnowUsage } from 'with-known-usage';
 
-import { defaultContext } from './provider';
+import { defaultContext } from './ReduxProvider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 

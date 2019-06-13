@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { defaultContext } from './provider';
+import { defaultContext } from './ReduxProvider';
 
 export const useReduxDispatch = (opts = {}) => {
   const {

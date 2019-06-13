@@ -11,7 +11,7 @@ var _memoizeState = _interopRequireDefault(require("memoize-state"));
 
 var _withKnownUsage = require("with-known-usage");
 
-var _provider = require("./provider");
+var _ReduxProvider = require("./ReduxProvider");
 
 var _utils = require("./utils");
 
@@ -64,7 +64,7 @@ var runSelector = function runSelector(state, selector) {
 var useReduxSelectors = function useReduxSelectors(selectorMap) {
   var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var _opts$customContext = opts.customContext,
-      customContext = _opts$customContext === void 0 ? _provider.defaultContext : _opts$customContext;
+      customContext = _opts$customContext === void 0 ? _ReduxProvider.defaultContext : _opts$customContext;
   var forceUpdate = (0, _utils.useForceUpdate)(); // redux state
 
   var _useContext = (0, _react.useContext)(customContext),

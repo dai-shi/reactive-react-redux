@@ -6,7 +6,7 @@ import {
 
 import { proxyState, proxyEqual } from 'proxyequal';
 
-import { defaultContext } from './provider';
+import { defaultContext } from './ReduxProvider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 

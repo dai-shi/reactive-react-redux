@@ -4,7 +4,7 @@ import {
   useRef,
 } from 'react';
 
-import { defaultContext } from './provider';
+import { defaultContext } from './ReduxProvider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
