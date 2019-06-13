@@ -11,7 +11,7 @@ var _memoizeState = _interopRequireDefault(require("memoize-state"));
 
 var _withKnownUsage = require("with-known-usage");
 
-var _provider = require("./provider");
+var _ReduxProvider = require("./ReduxProvider");
 
 var _utils = require("./utils");
 
@@ -62,10 +62,15 @@ var runSelector = function runSelector(state, selector) {
 };
 
 var useReduxSelectors = function useReduxSelectors(selectorMap) {
-  var forceUpdate = (0, _utils.useForceUpdate)(); // redux store&state
+  var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var _opts$customContext = opts.customContext,
+      customContext = _opts$customContext === void 0 ? _ReduxProvider.defaultContext : _opts$customContext;
+  var forceUpdate = (0, _utils.useForceUpdate)(); // redux state
 
-  var store = (0, _react.useContext)(_provider.ReduxStoreContext);
-  var state = store.getState(); // mapped result
+  var _useContext = (0, _react.useContext)(customContext),
+      state = _useContext.state,
+      subscribe = _useContext.subscribe; // mapped result
+
 
   var keys = Object.keys(selectorMap);
   var mapped = createMap(keys, function (key) {
@@ -85,9 +90,8 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
   }); // subscription
 
   (0, _react.useEffect)(function () {
-    var callback = function callback() {
+    var callback = function callback(nextState) {
       try {
-        var nextState = store.getState();
         var changed = false;
         var nextMapped = createMap(lastTracked.current.keys, function (key) {
           var lastResult = lastTracked.current.mapped[key];
@@ -109,13 +113,11 @@ var useReduxSelectors = function useReduxSelectors(selectorMap) {
         // detect erorr (probably stale props)
         forceUpdate();
       }
-    }; // run once in case the state is already changed
+    };
 
-
-    callback();
-    var unsubscribe = store.subscribe(callback);
+    var unsubscribe = subscribe(callback);
     return unsubscribe;
-  }, [store, forceUpdate]);
+  }, [subscribe, forceUpdate]);
   return trapped.proxy;
 };
 

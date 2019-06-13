@@ -1,8 +1,11 @@
 import { useContext } from 'react';
 
-import { ReduxStoreContext } from './provider';
+import { defaultContext } from './ReduxProvider';
 
-export const useReduxDispatch = () => {
-  const store = useContext(ReduxStoreContext);
-  return store.dispatch;
+export const useReduxDispatch = (opts = {}) => {
+  const {
+    customContext = defaultContext,
+  } = opts;
+  const { dispatch } = useContext(customContext);
+  return dispatch;
 };

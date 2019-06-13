@@ -1,6 +1,10 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Direct state context
+  - No breaking change in API, but it may behave differently
+- Support custom context
 
 ## [3.0.0] - 2019-05-18
 ### Changed

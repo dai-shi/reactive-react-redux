@@ -7,11 +7,17 @@ exports.useReduxDispatch = void 0;
 
 var _react = require("react");
 
-var _provider = require("./provider");
+var _ReduxProvider = require("./ReduxProvider");
 
 var useReduxDispatch = function useReduxDispatch() {
-  var store = (0, _react.useContext)(_provider.ReduxStoreContext);
-  return store.dispatch;
+  var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var _opts$customContext = opts.customContext,
+      customContext = _opts$customContext === void 0 ? _ReduxProvider.defaultContext : _opts$customContext;
+
+  var _useContext = (0, _react.useContext)(customContext),
+      dispatch = _useContext.dispatch;
+
+  return dispatch;
 };
 
 exports.useReduxDispatch = useReduxDispatch;

@@ -6,7 +6,7 @@ import {
 
 import { proxyState, proxyEqual } from 'proxyequal';
 
-import { ReduxStoreContext } from './provider';
+import { defaultContext } from './ReduxProvider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
@@ -30,11 +30,13 @@ const useTrapped = (state) => {
   return trapped;
 };
 
-export const useReduxStateRich = () => {
+export const useReduxStateRich = (opts = {}) => {
+  const {
+    customContext = defaultContext,
+  } = opts;
   const forceUpdate = useForceUpdate();
-  // redux store&state
-  const store = useContext(ReduxStoreContext);
-  const state = store.getState();
+  // redux state
+  const { state, subscribe } = useContext(customContext);
   // trapped
   const trapped = useTrapped(state);
   // ref
@@ -47,8 +49,7 @@ export const useReduxStateRich = () => {
   });
   // subscription
   useEffect(() => {
-    const callback = () => {
-      const nextState = store.getState();
+    const callback = (nextState) => {
       const changed = !proxyEqual(
         lastTracked.current.state,
         nextState,
@@ -59,10 +60,8 @@ export const useReduxStateRich = () => {
         forceUpdate();
       }
     };
-    // run once in case the state is already changed
-    callback();
-    const unsubscribe = store.subscribe(callback);
+    const unsubscribe = subscribe(callback);
     return unsubscribe;
-  }, [store, forceUpdate]);
+  }, [subscribe, forceUpdate]);
   return trapped.state;
 };

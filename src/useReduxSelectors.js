@@ -8,7 +8,7 @@ import memoize from 'memoize-state';
 
 import { withKnowUsage } from 'with-known-usage';
 
-import { ReduxStoreContext } from './provider';
+import { defaultContext } from './ReduxProvider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
@@ -48,11 +48,13 @@ const runSelector = (state, selector) => {
   return { selector, value };
 };
 
-export const useReduxSelectors = (selectorMap) => {
+export const useReduxSelectors = (selectorMap, opts = {}) => {
+  const {
+    customContext = defaultContext,
+  } = opts;
   const forceUpdate = useForceUpdate();
-  // redux store&state
-  const store = useContext(ReduxStoreContext);
-  const state = store.getState();
+  // redux state
+  const { state, subscribe } = useContext(customContext);
   // mapped result
   const keys = Object.keys(selectorMap);
   const mapped = createMap(keys, key => runSelector(state, selectorMap[key]));
@@ -64,9 +66,8 @@ export const useReduxSelectors = (selectorMap) => {
   });
   // subscription
   useEffect(() => {
-    const callback = () => {
+    const callback = (nextState) => {
       try {
-        const nextState = store.getState();
         let changed = false;
         const nextMapped = createMap(lastTracked.current.keys, (key) => {
           const lastResult = lastTracked.current.mapped[key];
@@ -86,10 +87,8 @@ export const useReduxSelectors = (selectorMap) => {
         forceUpdate();
       }
     };
-    // run once in case the state is already changed
-    callback();
-    const unsubscribe = store.subscribe(callback);
+    const unsubscribe = subscribe(callback);
     return unsubscribe;
-  }, [store, forceUpdate]);
+  }, [subscribe, forceUpdate]);
   return trapped.proxy;
 };

@@ -1,4 +1,4 @@
-export { ReduxProvider } from './provider';
+export { ReduxProvider, createCustomContext } from './ReduxProvider';
 export { useReduxDispatch } from './useReduxDispatch';
 export { useReduxState } from './useReduxState';
 

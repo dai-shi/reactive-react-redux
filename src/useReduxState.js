@@ -4,16 +4,18 @@ import {
   useRef,
 } from 'react';
 
-import { ReduxStoreContext } from './provider';
+import { defaultContext } from './ReduxProvider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
 import { createDeepProxy, isDeepChanged } from './deepProxy';
 
 export const useReduxState = (opts = {}) => {
+  const {
+    customContext = defaultContext,
+  } = opts;
   const forceUpdate = useForceUpdate();
-  const store = useContext(ReduxStoreContext);
-  const state = store.getState();
+  const { state, subscribe } = useContext(customContext);
   const affected = new WeakMap();
   const lastTracked = useRef(null);
   useIsomorphicLayoutEffect(() => {
@@ -30,8 +32,7 @@ export const useReduxState = (opts = {}) => {
     };
   });
   useEffect(() => {
-    const callback = () => {
-      const nextState = store.getState();
+    const callback = (nextState) => {
       const changed = isDeepChanged(
         lastTracked.current.state,
         nextState,
@@ -44,11 +45,9 @@ export const useReduxState = (opts = {}) => {
         forceUpdate();
       }
     };
-    // run once in case the state is already changed
-    callback();
-    const unsubscribe = store.subscribe(callback);
+    const unsubscribe = subscribe(callback);
     return unsubscribe;
-  }, [store, forceUpdate]);
+  }, [subscribe, forceUpdate]);
   const proxyCache = useRef(new WeakMap()); // per-hook proxyCache
   return createDeepProxy(state, affected, proxyCache.current);
 };

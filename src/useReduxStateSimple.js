@@ -5,7 +5,7 @@ import {
   useRef,
 } from 'react';
 
-import { ReduxStoreContext } from './provider';
+import { defaultContext } from './ReduxProvider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
@@ -13,9 +13,12 @@ import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 // simple version: one depth comparison
 // -------------------------------------------------------
 
-export const useReduxStateSimple = () => {
+export const useReduxStateSimple = (opts = {}) => {
+  const {
+    customContext = defaultContext,
+  } = opts;
   const forceUpdate = useForceUpdate();
-  const store = useContext(ReduxStoreContext);
+  const { state, subscribe } = useContext(customContext);
   const used = useRef({});
   const handler = useMemo(() => ({
     get: (target, name) => {
@@ -23,14 +26,12 @@ export const useReduxStateSimple = () => {
       return target[name];
     },
   }), []);
-  const state = store.getState();
   const lastState = useRef(null);
   useIsomorphicLayoutEffect(() => {
     lastState.current = state;
   });
   useEffect(() => {
-    const callback = () => {
-      const nextState = store.getState();
+    const callback = (nextState) => {
       const changed = Object.keys(used.current).find(
         key => lastState.current[key] !== nextState[key],
       );
@@ -38,14 +39,12 @@ export const useReduxStateSimple = () => {
         forceUpdate();
       }
     };
-    // run once in case the state is already changed
-    callback();
-    const unsubscribe = store.subscribe(callback);
+    const unsubscribe = subscribe(callback);
     const cleanup = () => {
       unsubscribe();
       used.current = {};
     };
     return cleanup;
-  }, [store, forceUpdate]);
+  }, [subscribe, forceUpdate]);
   return new Proxy(state, handler);
 };
