@@ -4,17 +4,17 @@ import { createStore } from 'redux';
 import { render, fireEvent, cleanup } from '@testing-library/react';
 
 import {
-  ReduxProvider,
-  useReduxState,
-  useReduxDispatch,
+  Provider,
+  useTrackedState,
+  useDispatch,
 } from '../src/index';
 
 describe('basic spec', () => {
   afterEach(cleanup);
 
   it('hooks are defiend', () => {
-    expect(useReduxState).toBeDefined();
-    expect(useReduxDispatch).toBeDefined();
+    expect(useTrackedState).toBeDefined();
+    expect(useDispatch).toBeDefined();
   });
 
   it('create a component', () => {
@@ -29,8 +29,8 @@ describe('basic spec', () => {
     };
     const store = createStore(reducer);
     const Counter = () => {
-      const value = useReduxState();
-      const dispatch = useReduxDispatch();
+      const value = useTrackedState();
+      const dispatch = useDispatch();
       return (
         <div>
           <span>{value.counter1}</span>
@@ -40,10 +40,10 @@ describe('basic spec', () => {
     };
     const App = () => (
       <StrictMode>
-        <ReduxProvider store={store}>
+        <Provider store={store}>
           <Counter />
           <Counter />
-        </ReduxProvider>
+        </Provider>
       </StrictMode>
     );
     const { getAllByText, container } = render(<App />);

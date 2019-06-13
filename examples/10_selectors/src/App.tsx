@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StrictMode } from 'react';
 import { createStore } from 'redux';
 
-import { ReduxProvider } from 'reactive-react-redux';
+import { Provider } from 'reactive-react-redux';
 
 import { reducer } from './state';
 
@@ -13,14 +13,14 @@ const store = createStore(reducer);
 
 const App = () => (
   <StrictMode>
-    <ReduxProvider store={store}>
+    <Provider store={store}>
       <h1>Counter</h1>
       <Counter />
       <Counter />
       <h1>Person</h1>
       <Person />
       <Person />
-    </ReduxProvider>
+    </Provider>
   </StrictMode>
 );
 

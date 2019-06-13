@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { useReduxDispatch, useReduxState } from 'reactive-react-redux';
+import { useDispatch, useTrackedState } from 'reactive-react-redux';
 
 import { Action, State } from './state';
 
@@ -11,8 +11,8 @@ const TextBox: React.SFC<{ text: string }> = ({ text }) => {
 };
 
 const PersonFirstName = () => {
-  const state = useReduxState<State>();
-  const dispatch = useReduxDispatch<Action>();
+  const state = useTrackedState<State>();
+  const dispatch = useDispatch<Action>();
   return (
     <div>
       First Name:
@@ -29,8 +29,8 @@ const PersonFirstName = () => {
 };
 
 const PersonLastName = () => {
-  const state = useReduxState<State>();
-  const dispatch = useReduxDispatch<Action>();
+  const state = useTrackedState<State>();
+  const dispatch = useDispatch<Action>();
   return (
     <div>
       Last Name:
@@ -47,8 +47,8 @@ const PersonLastName = () => {
 };
 
 const PersonAge = () => {
-  const state = useReduxState<State>();
-  const dispatch = useReduxDispatch<Action>();
+  const state = useTrackedState<State>();
+  const dispatch = useDispatch<Action>();
   return (
     <div>
       Age:

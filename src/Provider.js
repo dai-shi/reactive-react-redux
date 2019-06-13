@@ -39,7 +39,7 @@ export const defaultContext = createCustomContext();
 // provider
 // -------------------------------------------------------
 
-export const ReduxProvider = ({
+export const Provider = ({
   store,
   customContext = defaultContext,
   children,

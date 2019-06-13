@@ -10,28 +10,31 @@ type CustomContext = React.Context<unknown>;
 
 export type createCustomContext = () => CustomContext;
 
-export type ReduxProviderProps<S, A extends Action> = {
+export type ProviderProps<S, A extends Action> = {
   store: Store<S, A>;
   customContext?: CustomContext;
 };
 
-export type ReduxProviderType<S = unknown, A extends Action = AnyAction>
-  = React.ComponentType<ReduxProviderProps<S, A>>;
+export type ProviderType<S = unknown, A extends Action = AnyAction>
+  = React.ComponentType<ProviderProps<S, A>>;
 
-export const ReduxProvider: ReduxProviderType;
+export const Provider: ProviderType;
 
-export const useReduxDispatch: <A extends Action>() => Dispatch<A>;
+export const useDispatch: <A extends Action>() => Dispatch<A>;
 
 type Opts = {
   customContext?: CustomContext;
 };
 
-export const useReduxState: <S extends {}>(opts?: Opts) => S;
+export const useTrackedState: <S extends {}>(opts?: Opts) => S;
 
-export const useReduxSelectors: <S extends {}, M extends {}>(
+export const useTrackedSelectors: <S extends {}, M extends {}>(
   selectors: { [K in keyof M]: (state: S) => M[K] },
   opts?: Opts,
 ) => M;
 
-export const useReduxStateSimple: <S extends {}>(opts?: Opts) => S;
-export const useReduxStateRich: <S extends {}>(opts?: Opts) => S;
+export const useSelector: <S, V>(
+  selector: (state: S) => V,
+  equalityFn?: (a: V, b: V) => boolean | Opts & { equalityFn?: (a: V, b: V) => boolean },
+  opts?: Opts,
+) => V;

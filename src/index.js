@@ -1,7 +1,5 @@
-export { ReduxProvider, createCustomContext } from './ReduxProvider';
-export { useReduxDispatch } from './useReduxDispatch';
-export { useReduxState } from './useReduxState';
-
-export { useReduxStateRich } from './useReduxStateRich';
-export { useReduxStateSimple } from './useReduxStateSimple';
-export { useReduxSelectors } from './useReduxSelectors';
+export { Provider, createCustomContext } from './Provider';
+export { useDispatch } from './useDispatch';
+export { useTrackedState } from './useTrackedState';
+export { useTrackedSelectors } from './useTrackedSelectors';
+export { useSelector } from './useSelector';

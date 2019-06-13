@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useReduxState } from 'reactive-react-redux';
+import { useTrackedState } from 'reactive-react-redux';
 
 import { useSetVisibilityFilter } from '../actions';
 import { State, VisibilityFilterType } from '../types';
@@ -9,7 +9,7 @@ type Props = {
 };
 
 const FilterLink: React.FC<Props> = ({ filter, children }) => {
-  const state = useReduxState<State>();
+  const state = useTrackedState<State>();
   const active = filter === state.visibilityFilter;
   const setVisibilityFilter = useSetVisibilityFilter();
   return (

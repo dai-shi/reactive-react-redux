@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useCallback } from 'react';
 
-import { useReduxDispatch, useReduxSelectors } from 'reactive-react-redux';
+import { useDispatch, useTrackedSelectors } from 'reactive-react-redux';
 
 import { Action, State } from './state';
 
@@ -12,11 +12,11 @@ type PersonNameType = {
 
 const PersonName = () => {
   const [mode, setMode] = useState('first');
-  const names = useReduxSelectors<State, PersonNameType>({
+  const names = useTrackedSelectors<State, PersonNameType>({
     first: useCallback(state => state.person.firstName, []),
     last: useCallback(state => state.person.lastName, []),
   });
-  const dispatch = useReduxDispatch<Action>();
+  const dispatch = useDispatch<Action>();
   return (
     <div>
       {Math.random()}
@@ -51,10 +51,10 @@ const PersonName = () => {
 };
 
 const PersonAge = () => {
-  const { age } = useReduxSelectors<State, { age: number }>({
+  const { age } = useTrackedSelectors<State, { age: number }>({
     age: state => state.person.age,
   });
-  const dispatch = useReduxDispatch<Action>();
+  const dispatch = useDispatch<Action>();
   return (
     <div>
       {Math.random()}

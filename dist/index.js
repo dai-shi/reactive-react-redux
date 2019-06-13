@@ -3,57 +3,49 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "ReduxProvider", {
+Object.defineProperty(exports, "Provider", {
   enumerable: true,
   get: function get() {
-    return _ReduxProvider.ReduxProvider;
+    return _Provider.Provider;
   }
 });
 Object.defineProperty(exports, "createCustomContext", {
   enumerable: true,
   get: function get() {
-    return _ReduxProvider.createCustomContext;
+    return _Provider.createCustomContext;
   }
 });
-Object.defineProperty(exports, "useReduxDispatch", {
+Object.defineProperty(exports, "useDispatch", {
   enumerable: true,
   get: function get() {
-    return _useReduxDispatch.useReduxDispatch;
+    return _useDispatch.useDispatch;
   }
 });
-Object.defineProperty(exports, "useReduxState", {
+Object.defineProperty(exports, "useTrackedState", {
   enumerable: true,
   get: function get() {
-    return _useReduxState.useReduxState;
+    return _useTrackedState.useTrackedState;
   }
 });
-Object.defineProperty(exports, "useReduxStateRich", {
+Object.defineProperty(exports, "useTrackedSelectors", {
   enumerable: true,
   get: function get() {
-    return _useReduxStateRich.useReduxStateRich;
+    return _useTrackedSelectors.useTrackedSelectors;
   }
 });
-Object.defineProperty(exports, "useReduxStateSimple", {
+Object.defineProperty(exports, "useSelector", {
   enumerable: true,
   get: function get() {
-    return _useReduxStateSimple.useReduxStateSimple;
-  }
-});
-Object.defineProperty(exports, "useReduxSelectors", {
-  enumerable: true,
-  get: function get() {
-    return _useReduxSelectors.useReduxSelectors;
+    return _useSelector.useSelector;
   }
 });
 
-var _ReduxProvider = require("./ReduxProvider");
+var _Provider = require("./Provider");
 
-var _useReduxDispatch = require("./useReduxDispatch");
+var _useDispatch = require("./useDispatch");
 
-var _useReduxState = require("./useReduxState");
+var _useTrackedState = require("./useTrackedState");
 
-var _useReduxStateRich = require("./useReduxStateRich");
+var _useTrackedSelectors = require("./useTrackedSelectors");
 
-var _useReduxStateSimple = require("./useReduxStateSimple");
-
-var _useReduxSelectors = require("./useReduxSelectors");
+var _useSelector = require("./useSelector");

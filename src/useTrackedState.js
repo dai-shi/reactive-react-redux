@@ -4,13 +4,13 @@ import {
   useRef,
 } from 'react';
 
-import { defaultContext } from './ReduxProvider';
+import { defaultContext } from './Provider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
 import { createDeepProxy, isDeepChanged } from './deepProxy';
 
-export const useReduxState = (opts = {}) => {
+export const useTrackedState = (opts = {}) => {
   const {
     customContext = defaultContext,
   } = opts;

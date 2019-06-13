@@ -4,9 +4,9 @@ import { createStore } from 'redux';
 import { render, fireEvent, cleanup } from '@testing-library/react';
 
 import {
-  ReduxProvider,
-  useReduxSelectors,
-  useReduxDispatch,
+  Provider,
+  useTrackedSelectors,
+  useDispatch,
 } from '../src/index';
 
 describe('selectors spec', () => {
@@ -30,11 +30,11 @@ describe('selectors spec', () => {
     let numOfRenders1 = 0;
     const Counter1 = () => {
       numOfRenders1 += 1;
-      const { c1 } = useReduxSelectors({
+      const { c1 } = useTrackedSelectors({
         c1: useCallback(state => state.counter1, []),
         c2: useCallback(state => state.counter2, []),
       });
-      const dispatch = useReduxDispatch();
+      const dispatch = useDispatch();
       return (
         <div>
           <span>{c1}</span>
@@ -45,11 +45,11 @@ describe('selectors spec', () => {
     let numOfRenders2 = 0;
     const Counter2 = () => {
       numOfRenders2 += 1;
-      const { c2 } = useReduxSelectors({
+      const { c2 } = useTrackedSelectors({
         c1: useCallback(state => state.counter1, []),
         c2: useCallback(state => state.counter2, []),
       });
-      const dispatch = useReduxDispatch();
+      const dispatch = useDispatch();
       return (
         <div>
           <span>{c2}</span>
@@ -59,10 +59,10 @@ describe('selectors spec', () => {
     };
     const App = () => (
       <StrictMode>
-        <ReduxProvider store={store}>
+        <Provider store={store}>
           <Counter1 />
           <Counter2 />
-        </ReduxProvider>
+        </Provider>
       </StrictMode>
     );
     const { getByText, container } = render(<App />);
@@ -93,11 +93,11 @@ describe('selectors spec', () => {
     let numOfRenders1 = 0;
     const Counter1 = () => {
       numOfRenders1 += 1;
-      const { isBig1 } = useReduxSelectors({
+      const { isBig1 } = useTrackedSelectors({
         isBig1: useCallback(state => state.counter1 > 2, []),
         isBig2: useCallback(state => state.counter2 > 2, []),
       });
-      const dispatch = useReduxDispatch();
+      const dispatch = useDispatch();
       return (
         <div>
           <span>{isBig1 ? 'big' : 'not big'}</span>
@@ -107,10 +107,10 @@ describe('selectors spec', () => {
     };
     const App = () => (
       <StrictMode>
-        <ReduxProvider store={store}>
+        <Provider store={store}>
           <Counter1 />
           <Counter1 />
-        </ReduxProvider>
+        </Provider>
       </StrictMode>
     );
     const { getAllByText, container } = render(<App />);
