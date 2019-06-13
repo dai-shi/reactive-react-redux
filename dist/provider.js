@@ -7,8 +7,6 @@ exports.ReduxProvider = exports.defaultContext = void 0;
 
 var _react = require("react");
 
-var _batchedUpdates = require("./batchedUpdates");
-
 var _utils = require("./utils");
 
 // context
@@ -38,11 +36,9 @@ var ReduxProvider = function ReduxProvider(_ref) {
   var forceUpdate = (0, _utils.useForceUpdate)();
   var state = store.getState();
   var listeners = (0, _react.useRef)([]);
-  (0, _react.useEffect)(function () {
-    (0, _batchedUpdates.batchedUpdates)(function () {
-      listeners.current.forEach(function (listener) {
-        return listener(state);
-      });
+  (0, _utils.useIsomorphicLayoutEffect)(function () {
+    listeners.current.forEach(function (listener) {
+      return listener(state);
     });
   }, [state]);
   var subscribe = (0, _react.useCallback)(function (listener) {

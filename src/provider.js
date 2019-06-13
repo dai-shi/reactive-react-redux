@@ -6,9 +6,7 @@ import {
   useRef,
 } from 'react';
 
-import { batchedUpdates } from './batchedUpdates';
-
-import { useForceUpdate } from './utils';
+import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
 // context
 const warningObject = {
@@ -32,10 +30,8 @@ export const ReduxProvider = ({
   const forceUpdate = useForceUpdate();
   const state = store.getState();
   const listeners = useRef([]);
-  useEffect(() => {
-    batchedUpdates(() => {
-      listeners.current.forEach(listener => listener(state));
-    });
+  useIsomorphicLayoutEffect(() => {
+    listeners.current.forEach(listener => listener(state));
   }, [state]);
   const subscribe = useCallback((listener) => {
     listeners.current.push(listener);
