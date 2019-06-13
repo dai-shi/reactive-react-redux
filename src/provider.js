@@ -19,7 +19,9 @@ const warningObject = {
     throw new Error('Please use <ReduxProvider store={store}>');
   },
 };
-const calculateChangedBits = () => 0;
+const calculateChangedBits = (a, b) => (
+  a.dispatch !== b.dispatch || a.subscribe !== b.subscribe ? 1 : 0
+);
 export const ReduxStoreContext = createContext(warningObject, calculateChangedBits);
 
 export const ReduxProvider = ({ store, children }) => {
