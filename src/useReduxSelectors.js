@@ -90,6 +90,6 @@ export const useReduxSelectors = (selectorMap) => {
     callback();
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [store, forceUpdate]);
   return trapped.proxy;
 };

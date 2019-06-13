@@ -53,8 +53,7 @@ var useReduxStateSimple = function useReduxStateSimple() {
     };
 
     return cleanup;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-
+  }, [store, forceUpdate]);
   return new Proxy(state, handler);
 };
 

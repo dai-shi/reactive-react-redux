@@ -63,6 +63,6 @@ export const useReduxStateRich = () => {
     callback();
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [store, forceUpdate]);
   return trapped.state;
 };

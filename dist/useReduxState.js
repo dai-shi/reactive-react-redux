@@ -49,8 +49,7 @@ var useReduxState = function useReduxState() {
     callback();
     var unsubscribe = store.subscribe(callback);
     return unsubscribe;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-
+  }, [store, forceUpdate]);
   var proxyCache = (0, _react.useRef)(new WeakMap()); // per-hook proxyCache
 
   return (0, _deepProxy.createDeepProxy)(state, affected, proxyCache.current);

@@ -48,7 +48,7 @@ export const useReduxState = (opts = {}) => {
     callback();
     const unsubscribe = store.subscribe(callback);
     return unsubscribe;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [store, forceUpdate]);
   const proxyCache = useRef(new WeakMap()); // per-hook proxyCache
   return createDeepProxy(state, affected, proxyCache.current);
 };

@@ -46,6 +46,6 @@ export const useReduxStateSimple = () => {
       used.current = {};
     };
     return cleanup;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [store, forceUpdate]);
   return new Proxy(state, handler);
 };
