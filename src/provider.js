@@ -22,9 +22,13 @@ const warningObject = {
 const calculateChangedBits = (a, b) => (
   a.dispatch !== b.dispatch || a.subscribe !== b.subscribe ? 1 : 0
 );
-export const ReduxStoreContext = createContext(warningObject, calculateChangedBits);
+export const defaultContext = createContext(warningObject, calculateChangedBits);
 
-export const ReduxProvider = ({ store, children }) => {
+export const ReduxProvider = ({
+  store,
+  customContext = defaultContext,
+  children,
+}) => {
   const forceUpdate = useForceUpdate();
   const state = store.getState();
   const listeners = useRef([]);
@@ -50,7 +54,7 @@ export const ReduxProvider = ({ store, children }) => {
     return unsubscribe;
   }, [store, forceUpdate]);
   return createElement(
-    ReduxStoreContext.Provider,
+    customContext.Provider,
     { value: { state, dispatch: store.dispatch, subscribe } },
     children,
   );

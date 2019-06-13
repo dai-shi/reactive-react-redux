@@ -6,7 +6,7 @@ import {
 
 import { proxyState, proxyEqual } from 'proxyequal';
 
-import { ReduxStoreContext } from './provider';
+import { defaultContext } from './provider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
@@ -30,10 +30,13 @@ const useTrapped = (state) => {
   return trapped;
 };
 
-export const useReduxStateRich = () => {
+export const useReduxStateRich = (opts = {}) => {
+  const {
+    customContext = defaultContext,
+  } = opts;
   const forceUpdate = useForceUpdate();
   // redux state
-  const { state, subscribe } = useContext(ReduxStoreContext);
+  const { state, subscribe } = useContext(customContext);
   // trapped
   const trapped = useTrapped(state);
   // ref

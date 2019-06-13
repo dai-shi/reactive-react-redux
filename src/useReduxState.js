@@ -4,15 +4,18 @@ import {
   useRef,
 } from 'react';
 
-import { ReduxStoreContext } from './provider';
+import { defaultContext } from './provider';
 
 import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
 import { createDeepProxy, isDeepChanged } from './deepProxy';
 
 export const useReduxState = (opts = {}) => {
+  const {
+    customContext = defaultContext,
+  } = opts;
   const forceUpdate = useForceUpdate();
-  const { state, subscribe } = useContext(ReduxStoreContext);
+  const { state, subscribe } = useContext(customContext);
   const affected = new WeakMap();
   const lastTracked = useRef(null);
   useIsomorphicLayoutEffect(() => {
