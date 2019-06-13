@@ -35,10 +35,12 @@ var useTrapped = function useTrapped(state) {
 };
 
 var useReduxStateRich = function useReduxStateRich() {
-  var forceUpdate = (0, _utils.useForceUpdate)(); // redux store&state
+  var forceUpdate = (0, _utils.useForceUpdate)(); // redux state
 
-  var store = (0, _react.useContext)(_provider.ReduxStoreContext);
-  var state = store.getState(); // trapped
+  var _useContext = (0, _react.useContext)(_provider.ReduxStoreContext),
+      state = _useContext.state,
+      subscribe = _useContext.subscribe; // trapped
+
 
   var trapped = useTrapped(state); // ref
 
@@ -51,22 +53,18 @@ var useReduxStateRich = function useReduxStateRich() {
   }); // subscription
 
   (0, _react.useEffect)(function () {
-    var callback = function callback() {
-      var nextState = store.getState();
+    var callback = function callback(nextState) {
       var changed = !(0, _proxyequal.proxyEqual)(lastTracked.current.state, nextState, lastTracked.current.affected);
 
       if (changed) {
         lastTracked.current.state = nextState;
         forceUpdate();
       }
-    }; // run once in case the state is already changed
+    };
 
-
-    callback();
-    var unsubscribe = store.subscribe(callback);
+    var unsubscribe = subscribe(callback);
     return unsubscribe;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-
+  }, [subscribe, forceUpdate]);
   return trapped.state;
 };
 

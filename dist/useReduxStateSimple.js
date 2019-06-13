@@ -16,7 +16,11 @@ var _utils = require("./utils");
 // -------------------------------------------------------
 var useReduxStateSimple = function useReduxStateSimple() {
   var forceUpdate = (0, _utils.useForceUpdate)();
-  var store = (0, _react.useContext)(_provider.ReduxStoreContext);
+
+  var _useContext = (0, _react.useContext)(_provider.ReduxStoreContext),
+      state = _useContext.state,
+      subscribe = _useContext.subscribe;
+
   var used = (0, _react.useRef)({});
   var handler = (0, _react.useMemo)(function () {
     return {
@@ -26,14 +30,12 @@ var useReduxStateSimple = function useReduxStateSimple() {
       }
     };
   }, []);
-  var state = store.getState();
   var lastState = (0, _react.useRef)(null);
   (0, _utils.useIsomorphicLayoutEffect)(function () {
     lastState.current = state;
   });
   (0, _react.useEffect)(function () {
-    var callback = function callback() {
-      var nextState = store.getState();
+    var callback = function callback(nextState) {
       var changed = Object.keys(used.current).find(function (key) {
         return lastState.current[key] !== nextState[key];
       });
@@ -41,11 +43,9 @@ var useReduxStateSimple = function useReduxStateSimple() {
       if (changed) {
         forceUpdate();
       }
-    }; // run once in case the state is already changed
+    };
 
-
-    callback();
-    var unsubscribe = store.subscribe(callback);
+    var unsubscribe = subscribe(callback);
 
     var cleanup = function cleanup() {
       unsubscribe();
@@ -53,8 +53,7 @@ var useReduxStateSimple = function useReduxStateSimple() {
     };
 
     return cleanup;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-
+  }, [subscribe, forceUpdate]);
   return new Proxy(state, handler);
 };
 

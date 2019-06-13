@@ -16,8 +16,11 @@ var _deepProxy = require("./deepProxy");
 var useReduxState = function useReduxState() {
   var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var forceUpdate = (0, _utils.useForceUpdate)();
-  var store = (0, _react.useContext)(_provider.ReduxStoreContext);
-  var state = store.getState();
+
+  var _useContext = (0, _react.useContext)(_provider.ReduxStoreContext),
+      state = _useContext.state,
+      subscribe = _useContext.subscribe;
+
   var affected = new WeakMap();
   var lastTracked = (0, _react.useRef)(null);
   (0, _utils.useIsomorphicLayoutEffect)(function () {
@@ -35,22 +38,18 @@ var useReduxState = function useReduxState() {
     };
   });
   (0, _react.useEffect)(function () {
-    var callback = function callback() {
-      var nextState = store.getState();
+    var callback = function callback(nextState) {
       var changed = (0, _deepProxy.isDeepChanged)(lastTracked.current.state, nextState, lastTracked.current.affected, lastTracked.current.cache, lastTracked.current.assumeChangedIfNotAffected);
 
       if (changed) {
         lastTracked.current.state = nextState;
         forceUpdate();
       }
-    }; // run once in case the state is already changed
+    };
 
-
-    callback();
-    var unsubscribe = store.subscribe(callback);
+    var unsubscribe = subscribe(callback);
     return unsubscribe;
-  }, [store]); // eslint-disable-line react-hooks/exhaustive-deps
-
+  }, [subscribe, forceUpdate]);
   var proxyCache = (0, _react.useRef)(new WeakMap()); // per-hook proxyCache
 
   return (0, _deepProxy.createDeepProxy)(state, affected, proxyCache.current);

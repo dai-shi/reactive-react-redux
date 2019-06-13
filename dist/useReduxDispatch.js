@@ -10,8 +10,10 @@ var _react = require("react");
 var _provider = require("./provider");
 
 var useReduxDispatch = function useReduxDispatch() {
-  var store = (0, _react.useContext)(_provider.ReduxStoreContext);
-  return store.dispatch;
+  var _useContext = (0, _react.useContext)(_provider.ReduxStoreContext),
+      dispatch = _useContext.dispatch;
+
+  return dispatch;
 };
 
 exports.useReduxDispatch = useReduxDispatch;
