@@ -33,10 +33,8 @@ export const useTrackedSelectors: <S extends {}, M extends {}>(
   opts?: Opts,
 ) => M;
 
-/*
-export const useSelector <S, V>(
+export const useSelector: <S, V>(
   selector: (state: S) => V,
   equalityFn?: (a: V, b: V) => boolean | Opts & { equalityFn?: (a: V, b: V) => boolean },
   opts?: Opts,
 ) => V;
-*/

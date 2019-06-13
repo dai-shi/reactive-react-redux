@@ -33,6 +33,12 @@ Object.defineProperty(exports, "useTrackedSelectors", {
     return _useTrackedSelectors.useTrackedSelectors;
   }
 });
+Object.defineProperty(exports, "useSelector", {
+  enumerable: true,
+  get: function get() {
+    return _useSelector.useSelector;
+  }
+});
 
 var _Provider = require("./Provider");
 
@@ -41,3 +47,5 @@ var _useDispatch = require("./useDispatch");
 var _useTrackedState = require("./useTrackedState");
 
 var _useTrackedSelectors = require("./useTrackedSelectors");
+
+var _useSelector = require("./useSelector");
