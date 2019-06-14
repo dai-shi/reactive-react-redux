@@ -18,8 +18,6 @@ which is already simple, but the hook `useTrackedState` in this library
 is simpler than that without a selector.
 Technically, `useTrackedState` has no [stale props](https://react-redux.js.org/api/hooks#stale-props-and-zombie-children) issue.
 
-See [comparison](#comparison-with-useselector) for details.
-
 ## How it works
 
 A hook `useTrackedState` returns the entire Redux state object,
@@ -31,7 +29,7 @@ Only if it detects changes in the state, it triggers re-render.
 ## Install
 
 ```bash
-npm install reactive-react-redux
+npm install reactive-react-redux@next
 ```
 
 ## Usage
@@ -162,69 +160,6 @@ You can also try them in codesandbox.io:
 ![benchmark result](https://user-images.githubusercontent.com/490574/58372012-3bde9700-7f52-11e9-9a54-0e3f78bce38a.png)
 
 See [#3](https://github.com/dai-shi/reactive-react-redux/issues/3#issuecomment-495929564) for details.
-
-## Comparison with useSelector
-
-Here is a example to compare `useSelector` in react-redux
-and `useTrackedState` in reactive-react-redux.
-
-### useSelector
-
-```javascript
-import React from 'react';
-import { createStore } from 'redux';
-import {
-  Provider,
-  useSelector,
-} from 'react-redux';
-
-const store = createStore(...);
-
-const UserName = ({ id }) => {
-  const firstName = useSelector(state => state.users[id].firstName);
-  const lastName = useSelector(state => state.users[id].lastName);
-  return (
-    <div>
-      User Name: {firstName} {lastName}
-    </div>
-  );
-};
-
-const App = () => (
-  <Provider store={store}>
-    <UserName id={1} />
-  </Provider>
-);
-```
-
-### useTrackedState
-
-```javascript
-import React from 'react';
-import { createStore } from 'redux';
-import {
-  Provider,
-  useTrackedState,
-} from 'reactive-react-redux';
-
-const store = createStore(...);
-
-const UserName = ({ id }) => {
-  const state = useTrackedState();
-  const { firstName, lastName } = state.users[id];
-  return (
-    <div>
-      User Name: {firstName} {lastName}
-    </div>
-  );
-};
-
-const App = () => (
-  <Provider store={store}>
-    <UserName id={1} />
-  </Provider>
-);
-```
 
 ## Limitations
 
