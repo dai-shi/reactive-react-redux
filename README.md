@@ -6,6 +6,8 @@
 
 React Redux binding with React Hooks and Proxy
 
+> If you are looking for a non-Redux library, please visit [react-tracked](https://github.com/dai-shi/react-tracked) which has  the same hooks API.
+
 ## Introduction
 
 This is a library to bind React and Redux with Hooks API.
