@@ -19,7 +19,7 @@ if you are using only basic functionality.
 There are two major features in this library
 that are not in the official react-redux.
 
-### 1. `useTrackedState` hook
+### 1. useTrackedState hook
 
 This library provides another hook `useTrackedState`
 which is a simpler API than already simple `useSelector`.
@@ -255,7 +255,7 @@ const bar = state.bar;
 ```javascript
 const state = useTrackedState();
 const dispatch = useDispatch();
-dispatch({ type: 'FOO', value: state.foo }); // This may lead unexpected behaviour if state.foo is an object
+dispatch({ type: 'FOO', value: state.foo }); // This may lead unexpected behavior if state.foo is an object
 dispatch({ type: 'FOO', value: state.fooStr }); // This is OK if state.fooStr is a string
 ```
 
