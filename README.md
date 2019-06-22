@@ -11,22 +11,43 @@ React Redux binding with React Hooks and Proxy
 ## Introduction
 
 This is a library to bind React and Redux with Hooks API.
-This is an alternative to the official `react-redux`,
-with a capability of auto-detecting state usage.
+It has mostly the same API as the official
+[react-redux Hooks API](https://react-redux.js.org/api/hooks),
+so it can be used as a drop-in replacement
+if you are using only basic functionality.
 
-The hook in the official `redux-redux` is
-[`useSelector`](https://react-redux.js.org/api/hooks#useselector)
-which is already simple, but the hook `useTrackedState` in this library
-is simpler than that without a selector.
+There are two major features in this library
+that are not in the official react-redux.
+
+### 1. `useTrackedState` hook
+
+This library provides another hook `useTrackedState`
+which is a simpler API than already simple `useSelector`.
+It returns an entire state, but the library takes care of
+optimization of re-renders.
+Most likely, `useTrackedState` performs better than
+`useSelector` without perfectly tuned selectors.
+
 Technically, `useTrackedState` has no [stale props](https://react-redux.js.org/api/hooks#stale-props-and-zombie-children) issue.
 
-## How it works
+### 2. state-based object for context value
 
-A hook `useTrackedState` returns the entire Redux state object,
-but it keeps track of which properties of the object are used
+react-redux v7 uses store-based object for context value,
+while react-redux v6 used to use state-based object.
+Using state-based object naively has
+[unable-to-bail-out issue](https://github.com/facebook/react/issues/14110),
+but this library uses state-based object with
+undocumented function `calculateChangedBits`
+to stop propagation of re-renders.
+
+## How tracking works
+
+A hook `useTrackedState` returns an entire Redux state object with Proxy,
+and it keeps track of which properties of the object are used
 in render. When the state is updated, this hook checks
 whether used properties are changed.
-Only if it detects changes in the state, it triggers re-render.
+Only if it detects changes in the state,
+it triggers a component to re-render.
 
 ## Install
 
@@ -34,7 +55,7 @@ Only if it detects changes in the state, it triggers re-render.
 npm install reactive-react-redux@next
 ```
 
-## Usage
+## Usage (useTrackedState)
 
 ```javascript
 import React from 'react';
@@ -102,7 +123,47 @@ const App = () => (
 );
 ```
 
-## Advanced Usage
+## API
+
+### Provider
+
+```javascript
+const store = createStore(...);
+const App = () => (
+  <Provider store={store}>
+    ...
+  </Provider>
+);
+```
+
+### useDispatch
+
+```javascript
+const Component = () => {
+  const dispatch = useDispatch();
+  // ...
+};
+```
+
+### useSelector
+
+```javascript
+const Component = () => {
+  const selected = useSelector(selector);
+  // ...
+};
+```
+
+### useTrackedState
+
+```javascript
+const Component = () => {
+  const state = useTrackedState();
+  // ...
+};
+```
+
+## Advanced API
 
 <details>
 <summary>Experimental useTrackedSelectors</summary>
@@ -159,11 +220,12 @@ You can also try them in codesandbox.io:
 
 ## Benchmarks
 
-![benchmark result](https://user-images.githubusercontent.com/490574/58372012-3bde9700-7f52-11e9-9a54-0e3f78bce38a.png)
+![benchmark result](https://user-images.githubusercontent.com/490574/59726769-e609c000-926d-11e9-8821-cc14bbe78d54.png")
 
-See [#3](https://github.com/dai-shi/reactive-react-redux/issues/3#issuecomment-495929564) for details.
+See [blog entry](https://blog.axlight.com/posts/benchmark-react-tracked/)
+and [#3](https://github.com/dai-shi/reactive-react-redux/issues/3) for details.
 
-## Limitations
+## Limitations in tracking
 
 By relying on Proxy,
 there are some false negatives (failure to trigger re-renders)
