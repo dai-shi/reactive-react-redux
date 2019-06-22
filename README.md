@@ -52,7 +52,7 @@ it triggers a component to re-render.
 ## Install
 
 ```bash
-npm install reactive-react-redux@next
+npm install reactive-react-redux
 ```
 
 ## Usage (useTrackedState)
