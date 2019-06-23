@@ -220,7 +220,7 @@ You can also try them in codesandbox.io:
 
 ## Benchmarks
 
-![benchmark result](https://user-images.githubusercontent.com/490574/59726769-e609c000-926d-11e9-8821-cc14bbe78d54.png")
+![benchmark result](https://user-images.githubusercontent.com/490574/59726769-e609c000-926d-11e9-8821-cc14bbe78d54.png)
 
 See [blog entry](https://blog.axlight.com/posts/benchmark-react-tracked/)
 and [#3](https://github.com/dai-shi/reactive-react-redux/issues/3) for details.
