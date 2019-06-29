@@ -39,6 +39,7 @@ Using state-based object naively has
 but this library uses state-based object with
 undocumented function `calculateChangedBits`
 to stop propagation of re-renders.
+See [#29](https://github.com/dai-shi/reactive-react-redux/issues/29) for details.
 
 ## How tracking works
 
