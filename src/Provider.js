@@ -14,13 +14,13 @@ import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
 
 const warningObject = {
   get state() {
-    throw new Error('Please use <TrackedProvider ...>');
+    throw new Error('Please use <Provider store={...}>');
   },
   get dispatch() {
-    throw new Error('Please use <TrackedProvider ...>');
+    throw new Error('Please use <Provider store={...}>');
   },
   get subscribe() {
-    throw new Error('Please use <TrackedProvider ...>');
+    throw new Error('Please use <Provider store={...}>');
   },
 };
 

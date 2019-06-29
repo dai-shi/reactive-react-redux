@@ -33,9 +33,9 @@ var useSelector = function useSelector(selector, eqlFn, opts) {
       subscribe = _useContext.subscribe;
 
   var selected = selector(state);
-  var last = (0, _react.useRef)(null);
+  var ref = (0, _react.useRef)(null);
   (0, _utils.useIsomorphicLayoutEffect)(function () {
-    last.current = {
+    ref.current = {
       equalityFn: equalityFn,
       selector: selector,
       state: state,
@@ -44,17 +44,17 @@ var useSelector = function useSelector(selector, eqlFn, opts) {
   });
   (0, _react.useEffect)(function () {
     var callback = function callback(nextState) {
-      if (last.current.state === nextState) return;
+      if (ref.current.state === nextState) return;
       var changed;
 
       try {
-        changed = !last.current.equalityFn(last.current.selected, last.current.selector(nextState));
+        changed = !ref.current.equalityFn(ref.current.selected, ref.current.selector(nextState));
       } catch (e) {
         changed = true; // stale props or some other reason
       }
 
       if (changed) {
-        last.current.state = nextState;
+        ref.current.state = nextState;
         forceUpdate();
       }
     };

@@ -14,15 +14,15 @@ var _utils = require("./utils");
 // -------------------------------------------------------
 var warningObject = {
   get state() {
-    throw new Error('Please use <TrackedProvider ...>');
+    throw new Error('Please use <Provider store={...}>');
   },
 
   get dispatch() {
-    throw new Error('Please use <TrackedProvider ...>');
+    throw new Error('Please use <Provider store={...}>');
   },
 
   get subscribe() {
-    throw new Error('Please use <TrackedProvider ...>');
+    throw new Error('Please use <Provider store={...}>');
   }
 
 };
