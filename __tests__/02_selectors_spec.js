@@ -14,15 +14,15 @@ describe('selectors spec', () => {
 
   it('should re-render with no false negatives', () => {
     const initialState = {
-      counter1: 0,
-      counter2: 0,
+      count1: 0,
+      count2: 0,
     };
     const reducer = (state = initialState, action) => {
       if (action.type === 'increment1') {
-        return { ...state, counter1: state.counter1 + 1 };
+        return { ...state, count1: state.count1 + 1 };
       }
       if (action.type === 'increment2') {
-        return { ...state, counter2: state.counter2 + 1 };
+        return { ...state, count2: state.count2 + 1 };
       }
       return state;
     };
@@ -31,8 +31,8 @@ describe('selectors spec', () => {
     const Counter1 = () => {
       numOfRenders1 += 1;
       const { c1 } = useTrackedSelectors({
-        c1: useCallback(state => state.counter1, []),
-        c2: useCallback(state => state.counter2, []),
+        c1: useCallback(state => state.count1, []),
+        c2: useCallback(state => state.count2, []),
       });
       const dispatch = useDispatch();
       return (
@@ -46,8 +46,8 @@ describe('selectors spec', () => {
     const Counter2 = () => {
       numOfRenders2 += 1;
       const { c2 } = useTrackedSelectors({
-        c1: useCallback(state => state.counter1, []),
-        c2: useCallback(state => state.counter2, []),
+        c1: useCallback(state => state.count1, []),
+        c2: useCallback(state => state.count2, []),
       });
       const dispatch = useDispatch();
       return (
@@ -77,15 +77,15 @@ describe('selectors spec', () => {
 
   it('should re-render with no false positives', () => {
     const initialState = {
-      counter1: 0,
-      counter2: 0,
+      count1: 0,
+      count2: 0,
     };
     const reducer = (state = initialState, action) => {
       if (action.type === 'increment1') {
-        return { ...state, counter1: state.counter1 + 1 };
+        return { ...state, count1: state.count1 + 1 };
       }
       if (action.type === 'increment2') {
-        return { ...state, counter2: state.counter2 + 1 };
+        return { ...state, count2: state.count2 + 1 };
       }
       return state;
     };
@@ -94,8 +94,8 @@ describe('selectors spec', () => {
     const Counter1 = () => {
       numOfRenders1 += 1;
       const { isBig1 } = useTrackedSelectors({
-        isBig1: useCallback(state => state.counter1 > 2, []),
-        isBig2: useCallback(state => state.counter2 > 2, []),
+        isBig1: useCallback(state => state.count1 > 2, []),
+        isBig2: useCallback(state => state.count2 > 2, []),
       });
       const dispatch = useDispatch();
       return (

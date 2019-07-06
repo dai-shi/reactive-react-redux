@@ -1,5 +1,5 @@
 const initialState = {
-  counter: [0, 0, 0],
+  count: [0, 0, 0],
   person: {
     age: 0,
     firstName: '',
@@ -21,18 +21,18 @@ export const reducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case 'increment': return {
       ...state,
-      counter: [
-        ...state.counter.slice(0, action.index),
-        state.counter[action.index] + 1,
-        ...state.counter.slice(action.index + 1),
+      count: [
+        ...state.count.slice(0, action.index),
+        state.count[action.index] + 1,
+        ...state.count.slice(action.index + 1),
       ],
     };
     case 'decrement': return {
       ...state,
-      counter: [
-        ...state.counter.slice(0, action.index),
-        state.counter[action.index] - 1,
-        ...state.counter.slice(action.index + 1),
+      count: [
+        ...state.count.slice(0, action.index),
+        state.count[action.index] - 1,
+        ...state.count.slice(action.index + 1),
       ],
     };
     case 'setFirstName': return {

@@ -19,11 +19,11 @@ describe('basic spec', () => {
 
   it('create a component', () => {
     const initialState = {
-      counter1: 0,
+      count1: 0,
     };
     const reducer = (state = initialState, action) => {
       if (action.type === 'increment') {
-        return { ...state, counter1: state.counter1 + 1 };
+        return { ...state, count1: state.count1 + 1 };
       }
       return state;
     };
@@ -33,7 +33,7 @@ describe('basic spec', () => {
       const dispatch = useDispatch();
       return (
         <div>
-          <span>{value.counter1}</span>
+          <span>{value.count1}</span>
           <button type="button" onClick={() => dispatch({ type: 'increment' })}>+1</button>
         </div>
       );

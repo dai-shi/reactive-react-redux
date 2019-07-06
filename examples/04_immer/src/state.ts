@@ -1,7 +1,7 @@
 import { produce } from 'immer';
 
 const initialState = {
-  counter: 0,
+  count: 0,
   person: {
     age: 0,
     firstName: '',
@@ -20,8 +20,8 @@ export type Action =
 
 export const reducer = (state = initialState, action: Action) => produce(state, (draft) => {
   switch (action.type) {
-    case 'increment': draft.counter += 1; break;
-    case 'decrement': draft.counter -= 1; break;
+    case 'increment': draft.count += 1; break;
+    case 'decrement': draft.count -= 1; break;
     case 'setFirstName': draft.person.firstName = action.firstName; break;
     case 'setLastName': draft.person.lastName = action.lastName; break;
     case 'setAge': draft.person.age = action.age; break;
