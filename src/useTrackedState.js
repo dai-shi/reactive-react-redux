@@ -33,17 +33,19 @@ export const useTrackedState = (opts = {}) => {
   });
   useEffect(() => {
     const callback = (nextState) => {
-      const changed = isDeepChanged(
-        lastTracked.current.state,
-        nextState,
-        lastTracked.current.affected,
-        lastTracked.current.cache,
-        lastTracked.current.assumeChangedIfNotAffected,
-      );
-      if (changed) {
-        lastTracked.current.state = nextState;
-        forceUpdate();
+      if (lastTracked.current.state === nextState
+        || !isDeepChanged(
+          lastTracked.current.state,
+          nextState,
+          lastTracked.current.affected,
+          lastTracked.current.cache,
+          lastTracked.current.assumeChangedIfNotAffected,
+        )) {
+        // not changed
+        return;
       }
+      lastTracked.current.state = nextState;
+      forceUpdate();
     };
     const unsubscribe = subscribe(callback);
     return unsubscribe;

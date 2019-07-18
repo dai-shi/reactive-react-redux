@@ -30,17 +30,17 @@ export const useSelector = (selector, eqlFn, opts) => {
   });
   useEffect(() => {
     const callback = (nextState) => {
-      if (ref.current.state === nextState) return;
-      let changed;
       try {
-        changed = !ref.current.equalityFn(ref.current.selected, ref.current.selector(nextState));
+        if (ref.current.state === nextState
+          || ref.current.equalityFn(ref.current.selected, ref.current.selector(nextState))) {
+          // not changed
+          return;
+        }
       } catch (e) {
-        changed = true; // stale props or some other reason
+        // ignored (stale props or some other reason)
       }
-      if (changed) {
-        ref.current.state = nextState;
-        forceUpdate();
-      }
+      ref.current.state = nextState;
+      forceUpdate();
     };
     const unsubscribe = subscribe(callback);
     return unsubscribe;

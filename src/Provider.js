@@ -6,7 +6,8 @@ import {
   useRef,
 } from 'react';
 
-import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
+import { batchedUpdates } from './batchedUpdates';
+import { useForceUpdate } from './utils';
 
 // -------------------------------------------------------
 // context
@@ -47,9 +48,15 @@ export const Provider = ({
   const forceUpdate = useForceUpdate();
   const state = store.getState();
   const listeners = useRef([]);
-  useIsomorphicLayoutEffect(() => {
+  // we call listeners in render intentionally.
+  // listeners are not technically pure, but
+  // otherwise we can't get benefits from concurrent mode.
+  // we make sure to work with double or more invocation of listeners.
+  // maybe we don't need `batchedUpdates` here to ensure top-down updates,
+  // but put it just in case. (review wanted)
+  batchedUpdates(() => {
     listeners.current.forEach(listener => listener(state));
-  }, [state]);
+  });
   const subscribe = useCallback((listener) => {
     listeners.current.push(listener);
     const unsubscribe = () => {
