@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [4.0.0] - 2019-06-22
 ### Changed
 - Direct state context
 - Support custom context
