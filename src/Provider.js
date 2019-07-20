@@ -6,7 +6,7 @@ import {
   useRef,
 } from 'react';
 
-import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
+import { useForceUpdate } from './utils';
 
 // -------------------------------------------------------
 // context
@@ -47,9 +47,11 @@ export const Provider = ({
   const forceUpdate = useForceUpdate();
   const state = store.getState();
   const listeners = useRef([]);
-  useIsomorphicLayoutEffect(() => {
-    listeners.current.forEach(listener => listener(state));
-  }, [state]);
+  // we call listeners in render intentionally.
+  // listeners are not technically pure, but
+  // otherwise we can't get benefits from concurrent mode.
+  // we make sure to work with double or more invocation of listeners.
+  listeners.current.forEach(listener => listener(state));
   const subscribe = useCallback((listener) => {
     listeners.current.push(listener);
     const unsubscribe = () => {

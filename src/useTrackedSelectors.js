@@ -62,30 +62,31 @@ export const useTrackedSelectors = (selectorMap, opts = {}) => {
   // update ref
   const lastTracked = useRef(null);
   useIsomorphicLayoutEffect(() => {
-    lastTracked.current = { keys, mapped, trapped };
+    lastTracked.current = {
+      state,
+      keys,
+      mapped,
+      trapped,
+    };
   });
   // subscription
   useEffect(() => {
     const callback = (nextState) => {
+      if (lastTracked.current.state === nextState) return;
       try {
-        let changed = false;
-        const nextMapped = createMap(lastTracked.current.keys, (key) => {
+        const changed = lastTracked.current.keys.some((key) => {
+          if (!lastTracked.current.trapped.usage.has(key)) return false;
           const lastResult = lastTracked.current.mapped[key];
-          if (!lastTracked.current.trapped.usage.has(key)) return lastResult;
           const nextResult = runSelector(nextState, lastResult.selector);
-          if (nextResult.value !== lastResult.value) {
-            changed = true;
-          }
-          return nextResult;
+          return nextResult.value !== lastResult.value;
         });
-        if (changed) {
-          lastTracked.current.mapped = nextMapped;
-          forceUpdate();
+        if (!changed) {
+          return;
         }
       } catch (e) {
-        // detect erorr (probably stale props)
-        forceUpdate();
+        // ignored (probably stale props)
       }
+      forceUpdate();
     };
     const unsubscribe = subscribe(callback);
     return unsubscribe;
