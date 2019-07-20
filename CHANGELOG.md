@@ -1,8 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+
+## [4.1.0] - 2019-07-20
 ### Changed
 - No useLayoutEffect for invoking listeners (which leads de-opt sync mode)
+  - Ref: https://github.com/dai-shi/reactive-react-redux/pull/31
 
 ## [4.0.0] - 2019-06-22
 ### Changed
