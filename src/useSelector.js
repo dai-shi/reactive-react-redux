@@ -39,7 +39,6 @@ export const useSelector = (selector, eqlFn, opts) => {
       } catch (e) {
         // ignored (stale props or some other reason)
       }
-      ref.current.state = nextState;
       forceUpdate();
     };
     const unsubscribe = subscribe(callback);

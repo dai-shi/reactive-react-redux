@@ -44,7 +44,6 @@ export const useTrackedState = (opts = {}) => {
         // not changed
         return;
       }
-      lastTracked.current.state = nextState;
       forceUpdate();
     };
     const unsubscribe = subscribe(callback);
