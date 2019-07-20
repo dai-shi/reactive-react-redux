@@ -83,6 +83,7 @@ var useTrackedSelectors = function useTrackedSelectors(selectorMap) {
   var lastTracked = (0, _react.useRef)(null);
   (0, _utils.useIsomorphicLayoutEffect)(function () {
     lastTracked.current = {
+      state: state,
       keys: keys,
       mapped: mapped,
       trapped: trapped
@@ -91,28 +92,23 @@ var useTrackedSelectors = function useTrackedSelectors(selectorMap) {
 
   (0, _react.useEffect)(function () {
     var callback = function callback(nextState) {
+      if (lastTracked.current.state === nextState) return;
+
       try {
-        var changed = false;
-        var nextMapped = createMap(lastTracked.current.keys, function (key) {
+        var changed = lastTracked.current.keys.some(function (key) {
+          if (!lastTracked.current.trapped.usage.has(key)) return false;
           var lastResult = lastTracked.current.mapped[key];
-          if (!lastTracked.current.trapped.usage.has(key)) return lastResult;
           var nextResult = runSelector(nextState, lastResult.selector);
-
-          if (nextResult.value !== lastResult.value) {
-            changed = true;
-          }
-
-          return nextResult;
+          return nextResult.value !== lastResult.value;
         });
 
-        if (changed) {
-          lastTracked.current.mapped = nextMapped;
-          forceUpdate();
+        if (!changed) {
+          return;
         }
-      } catch (e) {
-        // detect erorr (probably stale props)
-        forceUpdate();
+      } catch (e) {// ignored (probably stale props)
       }
+
+      forceUpdate();
     };
 
     var unsubscribe = subscribe(callback);

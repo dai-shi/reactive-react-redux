@@ -44,19 +44,15 @@ var useSelector = function useSelector(selector, eqlFn, opts) {
   });
   (0, _react.useEffect)(function () {
     var callback = function callback(nextState) {
-      if (ref.current.state === nextState) return;
-      var changed;
-
       try {
-        changed = !ref.current.equalityFn(ref.current.selected, ref.current.selector(nextState));
-      } catch (e) {
-        changed = true; // stale props or some other reason
+        if (ref.current.state === nextState || ref.current.equalityFn(ref.current.selected, ref.current.selector(nextState))) {
+          // not changed
+          return;
+        }
+      } catch (e) {// ignored (stale props or some other reason)
       }
 
-      if (changed) {
-        ref.current.state = nextState;
-        forceUpdate();
-      }
+      forceUpdate();
     };
 
     var unsubscribe = subscribe(callback);

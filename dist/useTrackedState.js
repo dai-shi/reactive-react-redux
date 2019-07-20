@@ -41,12 +41,12 @@ var useTrackedState = function useTrackedState() {
   });
   (0, _react.useEffect)(function () {
     var callback = function callback(nextState) {
-      var changed = (0, _deepProxy.isDeepChanged)(lastTracked.current.state, nextState, lastTracked.current.affected, lastTracked.current.cache, lastTracked.current.assumeChangedIfNotAffected);
-
-      if (changed) {
-        lastTracked.current.state = nextState;
-        forceUpdate();
+      if (lastTracked.current.state === nextState || !(0, _deepProxy.isDeepChanged)(lastTracked.current.state, nextState, lastTracked.current.affected, lastTracked.current.cache, lastTracked.current.assumeChangedIfNotAffected)) {
+        // not changed
+        return;
       }
+
+      forceUpdate();
     };
 
     var unsubscribe = subscribe(callback);

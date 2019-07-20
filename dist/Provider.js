@@ -51,12 +51,14 @@ var Provider = function Provider(_ref) {
       children = _ref.children;
   var forceUpdate = (0, _utils.useForceUpdate)();
   var state = store.getState();
-  var listeners = (0, _react.useRef)([]);
-  (0, _utils.useIsomorphicLayoutEffect)(function () {
-    listeners.current.forEach(function (listener) {
-      return listener(state);
-    });
-  }, [state]);
+  var listeners = (0, _react.useRef)([]); // we call listeners in render intentionally.
+  // listeners are not technically pure, but
+  // otherwise we can't get benefits from concurrent mode.
+  // we make sure to work with double or more invocation of listeners.
+
+  listeners.current.forEach(function (listener) {
+    return listener(state);
+  });
   var subscribe = (0, _react.useCallback)(function (listener) {
     listeners.current.push(listener);
 
