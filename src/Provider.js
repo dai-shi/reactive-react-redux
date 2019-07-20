@@ -6,7 +6,6 @@ import {
   useRef,
 } from 'react';
 
-import { batchedUpdates } from './batchedUpdates';
 import { useForceUpdate } from './utils';
 
 // -------------------------------------------------------
@@ -52,11 +51,7 @@ export const Provider = ({
   // listeners are not technically pure, but
   // otherwise we can't get benefits from concurrent mode.
   // we make sure to work with double or more invocation of listeners.
-  // maybe we don't need `batchedUpdates` here to ensure top-down updates,
-  // but put it just in case. (review wanted)
-  batchedUpdates(() => {
-    listeners.current.forEach(listener => listener(state));
-  });
+  listeners.current.forEach(listener => listener(state));
   const subscribe = useCallback((listener) => {
     listeners.current.push(listener);
     const unsubscribe = () => {
