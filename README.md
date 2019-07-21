@@ -221,10 +221,9 @@ You can also try them in codesandbox.io:
 
 ## Benchmarks
 
-<img alt="benchmark result" src="https://user-images.githubusercontent.com/490574/59726769-e609c000-926d-11e9-8821-cc14bbe78d54.png" width="425" />
+<img alt="benchmark result" src="https://user-images.githubusercontent.com/490574/61585382-405fae80-ab95-11e9-9f28-3b1a49dd1e5f.png" width="425" />
 
-See [blog entry](https://blog.axlight.com/posts/benchmark-react-tracked/)
-and [#3](https://github.com/dai-shi/reactive-react-redux/issues/3) for details.
+See [#32](https://github.com/dai-shi/reactive-react-redux/issues/32) for details.
 
 ## Limitations in tracking
 
