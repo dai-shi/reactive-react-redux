@@ -28,11 +28,6 @@ type Opts = {
 
 export const useTrackedState: <S extends {}>(opts?: Opts) => S;
 
-export const useTrackedSelectors: <S extends {}, M extends {}>(
-  selectors: { [K in keyof M]: (state: S) => M[K] },
-  opts?: Opts,
-) => M;
-
 export const useSelector: <S, V>(
   selector: (state: S) => V,
   equalityFn?: (a: V, b: V) => boolean | Opts & { equalityFn?: (a: V, b: V) => boolean },
