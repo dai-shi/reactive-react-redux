@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Removed
+- Remove the experimental useTrackedSelectors hook
 
 ## [4.1.0] - 2019-07-20
 ### Changed
