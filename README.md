@@ -186,6 +186,7 @@ You can also try them in codesandbox.io:
 [08](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/08_dynamic)
 [09](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/09_thunk)
 [11](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/11_todolist)
+[12](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/12_async)
 
 ## Benchmarks
 

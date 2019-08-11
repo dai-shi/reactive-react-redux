@@ -29,7 +29,8 @@
     "examples:multistore": "DIR=07_multistore webpack-dev-server",
     "examples:dynamic": "DIR=08_dynamic webpack-dev-server",
     "examples:thunk": "DIR=09_thunk webpack-dev-server",
-    "examples:todolist": "DIR=11_todolist EXT=tsx webpack-dev-server"
+    "examples:todolist": "DIR=11_todolist EXT=tsx webpack-dev-server",
+    "examples:async": "DIR=12_async EXT=tsx webpack-dev-server"
   },
   "keywords": [
     "react",
