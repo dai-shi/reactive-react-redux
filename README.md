@@ -241,3 +241,4 @@ dispatch({ type: 'FOO', value: state.fooStr }); // This is OK if state.fooStr is
 - [What is state usage tracking? A novel approach to intuitive and performant global state with React hooks and Proxy](https://blog.axlight.com/posts/what-is-state-usage-tracking-a-novel-approach-to-intuitive-and-performant-api-with-react-hooks-and-proxy/)
 - [Effortless render optimization with state usage tracking with React hooks](https://blog.axlight.com/posts/effortless-render-optimization-with-state-usage-tracking-with-react-hooks/)
 - [How I developed a Concurrent Mode friendly library for React Redux](https://blog.axlight.com/posts/how-i-developed-a-concurrent-mode-friendly-library-for-react-redux/)
+- [React hooks-oriented Redux coding pattern without thunks and action creators](https://blog.axlight.com/posts/react-hooks-oriented-redux-coding-pattern-without-thunks-and-action-creators/)
