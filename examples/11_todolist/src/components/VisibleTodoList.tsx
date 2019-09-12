@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-props-no-spreading */
+
 import * as React from 'react';
 import { useTrackedState } from 'reactive-react-redux';
 
