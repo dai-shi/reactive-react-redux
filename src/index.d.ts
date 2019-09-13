@@ -20,11 +20,11 @@ export type ProviderType<S = unknown, A extends Action = AnyAction>
 
 export const Provider: ProviderType;
 
-export const useDispatch: <A extends Action>() => Dispatch<A>;
-
 type Opts = {
   customContext?: CustomContext;
 };
+
+export const useDispatch: <A extends Action>(opts?: Opts) => Dispatch<A>;
 
 export const useTrackedState: <S extends {}>(opts?: Opts) => S;
 
