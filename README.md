@@ -183,6 +183,33 @@ const Component = () => {
 };
 ```
 
+## Recipes
+
+### useTrackedSelector
+
+You can create a selector hook with tracking support.
+
+```javascript
+import { useTrackedState } from 'reactive-react-redux';
+
+export const useTrackedSelector = selector => selector(useTrackedState());
+```
+
+### useTracked
+
+You can combine useTrackedState and useDispatch to
+make a hook that returns a tuple like `useReducer`.
+
+```javascript
+import { useTrackedState, useDispatch } from 'reactive-react-redux';
+
+export const useTracked = () => {
+  const state = useTrackedState();
+  const dispatch = useDispatch();
+  return [state, dispatch];
+};
+```
+
 ## Examples
 
 The [examples](examples) folder contains working examples.
