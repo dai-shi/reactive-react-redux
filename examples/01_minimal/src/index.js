@@ -1,5 +1,3 @@
-/* eslint-env browser */
-
 import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
