@@ -126,7 +126,15 @@ const App = () => (
 
 ## API
 
+This library exports four functions.
+The first three `Provider`, `useDispatch` and `useSelector` are
+compatible with [react-redux hooks](https://react-redux.js.org/api/hooks).
+The last `useTrackedState` is unique in this library.
+
 ### Provider
+
+This is a provider component.
+Typically, it's used closely in the app root component.
 
 ```javascript
 const store = createStore(...);
@@ -139,6 +147,8 @@ const App = () => (
 
 ### useDispatch
 
+This is a hook that returns `store.dispatch`.
+
 ```javascript
 const Component = () => {
   const dispatch = useDispatch();
@@ -148,6 +158,10 @@ const Component = () => {
 
 ### useSelector
 
+This is a hook that returns a selected value from a state.
+This is compatible with react-redux's useSelector.
+It also supports [equalityFn](https://react-redux.js.org/api/hooks#equality-comparisons-and-updates).
+
 ```javascript
 const Component = () => {
   const selected = useSelector(selector);
@@ -156,6 +170,11 @@ const Component = () => {
 ```
 
 ### useTrackedState
+
+This is a hook that returns a whole state wraped by proxies.
+It detects the usage of the state and record it.
+It will only trigger re-render if the used part is changed.
+There are some [limitations](#limitations-in-tracking).
 
 ```javascript
 const Component = () => {
