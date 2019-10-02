@@ -16,7 +16,9 @@ const store = createStore(rootReducer);
 const StoreContext = createContext(store);
 export const useStore = () => useContext(StoreContext);
 
-createRoot(document.getElementById('app')).render(
+const ele = document.getElementById('app');
+if (!ele) throw new Error('no app');
+createRoot(ele).render(
   <StoreContext.Provider value={store}>
     <Provider store={store}>
       <App />

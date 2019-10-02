@@ -52,7 +52,6 @@ const App: React.FC = () => {
         {lastUpdated && (
           <span>
             Last updated at {new Date(lastUpdated).toLocaleTimeString()}.
-            {' '}
           </span>
         )}
         {!isFetching && (
