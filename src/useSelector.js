@@ -18,8 +18,12 @@ export const useSelector = (selector, eqlFn, opts) => {
   } = opts || (!isFunction(eqlFn) && eqlFn) || {};
   const forceUpdate = useForceUpdate();
   const { state, subscribe } = useContext(customContext);
-  const selected = selector(state);
   const ref = useRef(null);
+  let selected = selector(state);
+  if (ref.current && equalityFn(ref.current.selected, selected)) {
+    // to keep referential equality of the selected object
+    selected = ref.current.selected;
+  }
   useIsomorphicLayoutEffect(() => {
     ref.current = {
       equalityFn,
