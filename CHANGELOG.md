@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [4.2.1] - 2019-10-05
 ### Changed
 - Inline useForceUpdate to remove unnecessary deps
 
