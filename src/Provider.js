@@ -4,9 +4,8 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useReducer,
 } from 'react';
-
-import { useForceUpdate } from './utils';
 
 // -------------------------------------------------------
 // context
@@ -44,7 +43,7 @@ export const Provider = ({
   customContext = defaultContext,
   children,
 }) => {
-  const forceUpdate = useForceUpdate();
+  const [, forceUpdate] = useReducer(c => c + 1, 0);
   const state = store.getState();
   const listeners = useRef([]);
   // we call listeners in render intentionally.
@@ -67,7 +66,7 @@ export const Provider = ({
       forceUpdate();
     });
     return unsubscribe;
-  }, [store, forceUpdate]);
+  }, [store]);
   return createElement(
     customContext.Provider,
     { value: { state, dispatch: store.dispatch, subscribe } },

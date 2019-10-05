@@ -2,11 +2,12 @@ import {
   useContext,
   useEffect,
   useRef,
+  useReducer,
 } from 'react';
 
 import { defaultContext } from './Provider';
 
-import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
+import { useIsomorphicLayoutEffect } from './utils';
 
 const isFunction = f => typeof f === 'function';
 const defaultEqualityFn = (a, b) => a === b;
@@ -16,7 +17,7 @@ export const useSelector = (selector, eqlFn, opts) => {
     equalityFn = isFunction(eqlFn) ? eqlFn : defaultEqualityFn,
     customContext = defaultContext,
   } = opts || (!isFunction(eqlFn) && eqlFn) || {};
-  const forceUpdate = useForceUpdate();
+  const [, forceUpdate] = useReducer(c => c + 1, 0);
   const { state, subscribe } = useContext(customContext);
   const selected = selector(state);
   const ref = useRef(null);
@@ -43,6 +44,6 @@ export const useSelector = (selector, eqlFn, opts) => {
     };
     const unsubscribe = subscribe(callback);
     return unsubscribe;
-  }, [subscribe, forceUpdate]);
+  }, [subscribe]);
   return selected;
 };

@@ -2,11 +2,12 @@ import {
   useContext,
   useEffect,
   useRef,
+  useReducer,
 } from 'react';
 
 import { defaultContext } from './Provider';
 
-import { useIsomorphicLayoutEffect, useForceUpdate } from './utils';
+import { useIsomorphicLayoutEffect } from './utils';
 
 import { createDeepProxy, isDeepChanged } from './deepProxy';
 
@@ -14,7 +15,7 @@ export const useTrackedState = (opts = {}) => {
   const {
     customContext = defaultContext,
   } = opts;
-  const forceUpdate = useForceUpdate();
+  const [, forceUpdate] = useReducer(c => c + 1, 0);
   const { state, subscribe } = useContext(customContext);
   const affected = new WeakMap();
   const lastTracked = useRef(null);
@@ -48,7 +49,7 @@ export const useTrackedState = (opts = {}) => {
     };
     const unsubscribe = subscribe(callback);
     return unsubscribe;
-  }, [subscribe, forceUpdate]);
+  }, [subscribe]);
   const proxyCache = useRef(new WeakMap()); // per-hook proxyCache
   return createDeepProxy(state, affected, proxyCache.current);
 };
