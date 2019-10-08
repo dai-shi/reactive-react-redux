@@ -7,7 +7,7 @@
     "react-dom": "latest",
     "reactive-react-redux": "latest",
     "react-scripts": "^2.1.1",
-    "redux": "^4.0.1"
+    "redux": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
