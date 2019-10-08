@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- A new API trackMemo to mark objects as used in React.memo
 
 ## [4.2.1] - 2019-10-05
 ### Changed

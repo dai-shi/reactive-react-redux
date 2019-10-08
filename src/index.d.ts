@@ -33,3 +33,5 @@ export const useSelector: <S, V>(
   equalityFn?: (a: V, b: V) => boolean | Opts & { equalityFn?: (a: V, b: V) => boolean },
   opts?: Opts,
 ) => V;
+
+export const trackMemo: (obj: unknown) => void;
