@@ -183,6 +183,21 @@ const Component = () => {
 };
 ```
 
+### trackMemo
+
+This is used to explicitly mark a prop object as used in a memoized component.
+Otherwise, usage tracking may not work correctly because a memoized component
+doesn't always render when a parent component renders.
+
+```javascript
+import { trackMemo } from 'react-tracked';
+const ChildComponent = React.memo(({ num1, str1, obj1, obj2 }) => {
+  trackMemo(obj1);
+  trackMemo(obj2);
+  // ...
+});
+```
+
 ## Recipes
 
 ### useTrackedSelector
@@ -206,23 +221,8 @@ import { useTrackedState, useDispatch } from 'reactive-react-redux';
 export const useTracked = () => {
   const state = useTrackedState();
   const dispatch = useDispatch();
-  return [state, dispatch];
+  return useMemo(() => [state, dispatch], [state, dispatch]);
 };
-```
-
-### trackMemo
-
-This is used to explicitly mark a prop object as used in a memoized component.
-Otherwise, usage tracking may not work correctly because a memoized component
-doesn't always render when a parent component renders.
-
-```javascript
-import { trackMemo } from 'react-tracked';
-const ChildComponent = React.memo(({ num1, str1, obj1, obj2 }) => {
-  trackMemo(obj1);
-  trackMemo(obj2);
-  // ...
-});
 ```
 
 ## Caveats
