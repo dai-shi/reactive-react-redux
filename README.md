@@ -191,8 +191,6 @@ work correctly because a memoized component doesn't always render
 when a parent component renders.
 
 ```javascript
-import { trackMemo } from 'react-tracked';
-
 const ChildComponent = React.memo(({ num1, str1, obj1, obj2 }) => {
   trackMemo(obj1);
   trackMemo(obj2);
@@ -208,8 +206,6 @@ Although it's not a recommended pattern,
 the library exports a function as an escape hatch.
 
 ```javascript
-import { getUntrackedObject } from 'react-tracked';
-
 const Component = () => {
   const state = useTrackedState();
   const dispatch = useUpdate();
@@ -283,8 +279,6 @@ const Child = React.memo(({ foo }) => {
 You need to explicitly notify an object as used in a memoized component.
 
 ```javascript
-import { trackMemo } from 'react-tracked';
-
 const Child = React.memo(({ foo }) => {
   trackMemo(foo);
   // ...
@@ -305,8 +299,6 @@ It's recommended to use primitive values for `dispatch`, `setState` and others.
 In case you need to pass an object itself, here's a workaround.
 
 ```javascript
-import { getUntrackedObject } from 'react-tracked';
-
 dispatch({ type: 'FOO', value: getUntrackedObject(state.foo) });
 ```
 
