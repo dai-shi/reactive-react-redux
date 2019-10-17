@@ -185,12 +185,14 @@ const Component = () => {
 
 ### trackMemo
 
-This is used to explicitly mark a prop object as used in a memoized component.
-Otherwise, usage tracking may not work correctly because a memoized component
-doesn't always render when a parent component renders.
+This is used to explicitly mark a prop object as used
+in a memoized component. Otherwise, usage tracking may not
+work correctly because a memoized component doesn't always render
+when a parent component renders.
 
 ```javascript
 import { trackMemo } from 'react-tracked';
+
 const ChildComponent = React.memo(({ num1, str1, obj1, obj2 }) => {
   trackMemo(obj1);
   trackMemo(obj2);
@@ -198,6 +200,29 @@ const ChildComponent = React.memo(({ num1, str1, obj1, obj2 }) => {
 });
 ```
 
+### getUntrackedObject
+
+There are some cases when we need to get an original object
+instead of a tracked object.
+Although it's not a recommended pattern,
+the library exports a function as an escape hatch.
+
+```javascript
+import { getUntrackedObject } from 'react-tracked';
+
+const Component = () => {
+  const state = useTrackedState();
+  const dispatch = useUpdate();
+  const onClick = () => {
+    // this leaks a proxy outside of render
+    dispatch({ type: 'FOO', value: state.foo });
+
+    // this works as expected
+    dispatch({ type: 'FOO', value: getUntrackedObject(state.foo) });
+  };
+  // ...
+};
+```
 ## Recipes
 
 ### useTrackedSelector
@@ -275,7 +300,15 @@ dispatch({ type: 'FOO', value: state.foo }); // This may lead unexpected behavio
 dispatch({ type: 'FOO', value: state.fooStr }); // This is OK if state.fooStr is a string
 ```
 
-You should use primitive values for `dispatch` and others.
+It's recommended to use primitive values for `dispatch`, `setState` and others.
+
+In case you need to pass an object itself, here's a workaround.
+
+```javascript
+import { getUntrackedObject } from 'react-tracked';
+
+dispatch({ type: 'FOO', value: getUntrackedObject(state.foo) });
+```
 
 ## Examples
 

@@ -34,4 +34,16 @@ export const useSelector: <S, V>(
   opts?: Opts,
 ) => V;
 
+// deep proxy utils
+
+/**
+ * If `obj` is a proxy, it will mark the entire object as used.
+ * Otherwise, it does nothing.
+ */
 export const trackMemo: (obj: unknown) => void;
+
+/**
+ * If `obj` is a proxy, it will return the original object.
+ * Otherwise, it will return null.
+ */
+export const getUntrackedObject: <T>(obj: T) => T | null;
