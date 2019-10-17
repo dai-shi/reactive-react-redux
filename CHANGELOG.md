@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## [4.4.0] - 2019-10-17
 ### Added
 - A new API getUntrackedObject to revert proxy
 
