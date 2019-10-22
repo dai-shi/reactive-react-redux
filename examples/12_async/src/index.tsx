@@ -3,7 +3,7 @@ import { createContext, useContext } from 'react';
 import {
   // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
   // @ts-ignore
-  unstable_createRoot as createRoot,
+  createRoot,
 } from 'react-dom';
 import { Provider } from 'reactive-react-redux';
 import { createStore } from 'redux';
