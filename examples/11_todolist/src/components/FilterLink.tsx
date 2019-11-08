@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useTrackedState } from 'reactive-react-redux';
 
 import { useSetVisibilityFilter } from '../actions';

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import * as React from 'react';
+import React from 'react';
 import { useTrackedState } from 'reactive-react-redux';
 
 import { TodoType, State, VisibilityFilterType } from '../types';

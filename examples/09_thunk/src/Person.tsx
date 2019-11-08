@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 

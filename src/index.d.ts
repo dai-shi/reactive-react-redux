@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { Context, ComponentType } from 'react';
 import {
   Action,
   AnyAction,
@@ -6,7 +6,7 @@ import {
   Store,
 } from 'redux';
 
-type CustomContext = React.Context<unknown>;
+type CustomContext = Context<unknown>;
 
 export type createCustomContext = () => CustomContext;
 
@@ -16,7 +16,7 @@ export type ProviderProps<S, A extends Action> = {
 };
 
 export type ProviderType<S = unknown, A extends Action = AnyAction>
-  = React.ComponentType<ProviderProps<S, A>>;
+  = ComponentType<ProviderProps<S, A>>;
 
 export const Provider: ProviderType;
 

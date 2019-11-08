@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState, StrictMode } from 'react';
+import React, { useState, StrictMode } from 'react';
 import { createStore } from 'redux';
 
 import { Provider } from 'reactive-react-redux';

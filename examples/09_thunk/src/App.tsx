@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { StrictMode } from 'react';
+import React, { StrictMode } from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import reduxThunk from 'redux-thunk';
 

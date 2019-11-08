@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'reactive-react-redux';
 
 import { State, SelectedSubreddit } from '../store/actions';
