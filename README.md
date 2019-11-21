@@ -174,7 +174,7 @@ const Component = () => {
 This is a hook that returns a whole state wraped by proxies.
 It detects the usage of the state and record it.
 It will only trigger re-render if the used part is changed.
-There are some [limitations](#limitations-in-tracking).
+There are some [caveats](#caveats).
 
 ```javascript
 const Component = () => {
@@ -284,6 +284,9 @@ const Child = React.memo(({ foo }) => {
   // ...
 };
 ```
+
+Check out [this issue](https://github.com/dai-shi/react-tracked/issues/30)
+to learn more about the problem and trackMemo.
 
 ### Proxied state shouldn't be used outside of render
 
