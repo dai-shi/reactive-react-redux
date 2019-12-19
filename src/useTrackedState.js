@@ -15,7 +15,7 @@ export const useTrackedState = (opts = {}) => {
   const {
     customContext = defaultContext,
   } = opts;
-  const [, forceUpdate] = useReducer(c => c + 1, 0);
+  const [, forceUpdate] = useReducer((c) => c + 1, 0);
   const { state, subscribe } = useContext(customContext);
   const affected = new WeakMap();
   const lastTracked = useRef(null);

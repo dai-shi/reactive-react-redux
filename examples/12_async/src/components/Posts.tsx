@@ -7,7 +7,7 @@ const Posts: React.FC<{
   }[];
 }> = ({ posts }) => (
   <ul>
-    {posts.map(post => (
+    {posts.map((post) => (
       <li key={post.id}>{post.title}</li>
     ))}
   </ul>

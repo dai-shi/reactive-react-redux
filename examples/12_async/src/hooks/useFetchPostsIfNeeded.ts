@@ -26,9 +26,9 @@ const extractPosts = (json: unknown): Post[] | null => {
           };
         }[];
       };
-    }).data.children.map(child => child.data);
+    }).data.children.map((child) => child.data);
     // type check
-    if (posts.every(post => (
+    if (posts.every((post) => (
       typeof post.id === 'string' && typeof post.title === 'string'
     ))) {
       return posts;

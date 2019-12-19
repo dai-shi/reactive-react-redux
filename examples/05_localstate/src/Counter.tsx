@@ -12,8 +12,8 @@ const Counter = () => {
     <div>
       <div>
         <span>Local count: {count}</span>
-        <button type="button" onClick={() => setCount(v => v + 1)}>+1</button>
-        <button type="button" onClick={() => setCount(v => v - 1)}>-1</button>
+        <button type="button" onClick={() => setCount((v) => v + 1)}>+1</button>
+        <button type="button" onClick={() => setCount((v) => v - 1)}>-1</button>
       </div>
       <div>
         <span>Global count: {state.count}</span>

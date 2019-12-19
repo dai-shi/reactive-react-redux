@@ -15,7 +15,7 @@ const Counter = () => {
         <span>Count: {state.count[index]}</span>
         <button type="button" onClick={() => dispatch({ index, type: 'increment' })}>+1</button>
         <button type="button" onClick={() => dispatch({ index, type: 'decrement' })}>-1</button>
-        <input value={index} onChange={e => setIndex(Number(e.target.value) || 0)} />
+        <input value={index} onChange={(e) => setIndex(Number(e.target.value) || 0)} />
       </div>
     </div>
   );
