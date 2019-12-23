@@ -1,6 +1,6 @@
 import { createDeepProxy, isDeepChanged, trackMemo } from '../src/deepProxy';
 
-const noop = () => {};
+const noop = () => undefined;
 
 describe('object tracking', () => {
   it('should fail without trackMemo', () => {

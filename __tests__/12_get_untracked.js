@@ -1,6 +1,6 @@
 import { createDeepProxy, getUntrackedObject } from '../src/deepProxy';
 
-const noop = () => {};
+const noop = () => undefined;
 
 describe('object tracking', () => {
   it('should get untracked object', () => {
