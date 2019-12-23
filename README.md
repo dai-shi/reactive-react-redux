@@ -231,6 +231,8 @@ import { useTrackedState } from 'reactive-react-redux';
 export const useTrackedSelector = selector => selector(useTrackedState());
 ```
 
+Please refer [this issue](https://github.com/dai-shi/reactive-react-redux/issues/41) for more information.
+
 ### useTracked
 
 You can combine useTrackedState and useDispatch to
