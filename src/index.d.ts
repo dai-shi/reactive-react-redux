@@ -1,7 +1,6 @@
 import { Context, ComponentType } from 'react';
 import {
   Action,
-  AnyAction,
   Dispatch,
   Store,
 } from 'redux';
@@ -15,7 +14,8 @@ export type ProviderProps<S, A extends Action> = {
   customContext?: CustomContext;
 };
 
-export type ProviderType<S = unknown, A extends Action = AnyAction>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ProviderType<S = unknown, A extends Action = any>
   = ComponentType<ProviderProps<S, A>>;
 
 export const Provider: ProviderType;
