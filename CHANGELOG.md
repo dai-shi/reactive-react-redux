@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- useSelector avoids stale props without try-catch mitigation
 
 ## [4.4.0] - 2019-10-17
 ### Added
