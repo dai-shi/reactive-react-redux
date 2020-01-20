@@ -11,21 +11,14 @@ export const useSelector = (selector, eqlFn, opts) => {
     customContext = defaultContext,
   } = opts || (!isFunction(eqlFn) && eqlFn) || {};
   const { state, subscribe } = useContext(customContext);
-  const [selected, updateSelected] = useReducer((prevSelected, nextState) => {
-    const nextSelected = selector(nextState);
+  const [selected, updateSelected] = useReducer((prevSelected) => {
+    const nextSelected = selector(state);
     if (equalityFn(prevSelected, nextSelected)) return prevSelected;
     return nextSelected;
   }, state, selector);
-  let selectedToReturn = selected;
-  const currSelected = selector(state);
-  if (!equalityFn(selected, currSelected)) {
-    // schedule another update, because state from context has been changed
-    updateSelected(state);
-    selectedToReturn = currSelected;
-  }
   useEffect(() => {
     const unsubscribe = subscribe(updateSelected);
     return unsubscribe;
   }, [subscribe]);
-  return selectedToReturn;
+  return selected;
 };
