@@ -7,8 +7,6 @@ import {
 
 type CustomContext = Context<unknown>;
 
-export type createCustomContext = () => CustomContext;
-
 export type ProviderProps<S, A extends Action> = {
   store: Store<S, A>;
   customContext?: CustomContext;
@@ -17,6 +15,8 @@ export type ProviderProps<S, A extends Action> = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ProviderType<S = unknown, A extends Action = any>
   = ComponentType<ProviderProps<S, A>>;
+
+export const createCustomContext: () => CustomContext;
 
 export const Provider: ProviderType;
 
