@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [4.4.1] - 2020-01-24
+### Added
+- Fix typing for createCustomContext (#44)
+
 ## [4.4.0] - 2019-10-17
 ### Added
 - A new API getUntrackedObject to revert proxy
