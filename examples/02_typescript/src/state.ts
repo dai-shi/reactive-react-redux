@@ -7,14 +7,19 @@ const initialState = {
   },
 };
 
-export type State = typeof initialState;
+type State = typeof initialState;
 
-export type Action =
+type Action =
   | { type: 'increment' }
   | { type: 'decrement' }
   | { type: 'setFirstName'; firstName: string }
   | { type: 'setLastName'; lastName: string }
   | { type: 'setAge'; age: number };
+
+declare module 'reactive-react-redux' {
+  interface RootState extends State {}
+  function useDispatch(): Dispatch<Action>
+}
 
 export const reducer = (state = initialState, action: Action) => {
   switch (action.type) {
