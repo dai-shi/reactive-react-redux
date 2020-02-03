@@ -1,3 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+import { Dispatch } from 'reactive-react-redux';
+
 const initialState = {
   count: 0,
   person: {

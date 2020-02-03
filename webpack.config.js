@@ -32,7 +32,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
-      'reactive-react-redux': __dirname,
+      'reactive-react-redux': `${__dirname}/src`,
     },
   },
   devServer: {
