@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Improve TypeScript typing (#46)
 
 ## [4.4.1] - 2020-01-24
 ### Added

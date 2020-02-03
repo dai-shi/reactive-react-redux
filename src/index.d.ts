@@ -1,38 +1,41 @@
 import { Context, ComponentType } from 'react';
-import {
-  Action,
-  Dispatch,
-  Store,
-} from 'redux';
+import { Store } from 'redux';
+
+type BaseState = {};
+
+export interface RootState extends BaseState {}
 
 type CustomContext = Context<unknown>;
 
-export type ProviderProps<S, A extends Action> = {
-  store: Store<S, A>;
+export function createCustomContext(): CustomContext;
+
+export const Provider: ComponentType<{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  store: Store<any, any>;
   customContext?: CustomContext;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ProviderType<S = unknown, A extends Action = any>
-  = ComponentType<ProviderProps<S, A>>;
-
-export const createCustomContext: () => CustomContext;
-
-export const Provider: ProviderType;
+}>;
 
 type Opts = {
   customContext?: CustomContext;
 };
 
-export const useDispatch: <A extends Action>(opts?: Opts) => Dispatch<A>;
+export type Dispatch<Action> = <T extends Action>(action: T) => T;
 
-export const useTrackedState: <S extends {}>(opts?: Opts) => S;
+export function useDispatch<Action>(opts?: Opts): Dispatch<Action>;
 
-export const useSelector: <S, V>(
-  selector: (state: S) => V,
-  equalityFn?: (a: V, b: V) => boolean | Opts & { equalityFn?: (a: V, b: V) => boolean },
+export function useTrackedState<
+  State extends BaseState = RootState
+>(opts?: Opts): State;
+
+export function useSelector<
+  State extends BaseState = RootState,
+  Selected = unknown
+>(
+  selector: (state: State) => Selected,
+  equalityFn?: (a: Selected, b: Selected) => boolean
+    | Opts & { equalityFn?: (a: Selected, b: Selected) => boolean },
   opts?: Opts,
-) => V;
+): Selected;
 
 // deep proxy utils
 
@@ -40,10 +43,10 @@ export const useSelector: <S, V>(
  * If `obj` is a proxy, it will mark the entire object as used.
  * Otherwise, it does nothing.
  */
-export const trackMemo: (obj: unknown) => void;
+export function trackMemo<T>(obj: T): void;
 
 /**
  * If `obj` is a proxy, it will return the original object.
  * Otherwise, it will return null.
  */
-export const getUntrackedObject: <T>(obj: T) => T | null;
+export function getUntrackedObject<T>(obj: T): T | null;
