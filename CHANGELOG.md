@@ -1,11 +1,13 @@
 # Change Log
 
 ## [Unreleased]
+
+## [4.5.0] - 2020-02-03
 ### Changed
 - Improve TypeScript typing (#46)
 
 ## [4.4.1] - 2020-01-24
-### Added
+### Changed
 - Fix typing for createCustomContext (#44)
 
 ## [4.4.0] - 2019-10-17
