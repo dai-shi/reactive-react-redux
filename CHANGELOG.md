@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- A workaround for React render warning (hopefully temporarily)
 
 ## [4.5.0] - 2020-02-03
 ### Changed

@@ -2,6 +2,7 @@ import {
   createContext,
   createElement,
   useCallback,
+  useLayoutEffect,
   useEffect,
   useRef,
   useReducer,
@@ -46,11 +47,22 @@ export const Provider = ({
   const [, forceUpdate] = useReducer((c) => c + 1, 0);
   const state = store.getState();
   const listeners = useRef([]);
-  // we call listeners in render intentionally.
-  // listeners are not technically pure, but
-  // otherwise we can't get benefits from concurrent mode.
-  // we make sure to work with double or more invocation of listeners.
-  listeners.current.forEach((listener) => listener(state));
+  if (process.env.NODE_ENV !== 'production') {
+    // we use layout effect to eliminate warnings.
+    // but, this leads tearing with startTransition.
+    // https://github.com/dai-shi/use-context-selector/pull/13
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useLayoutEffect(() => {
+      listeners.current.forEach((listener) => listener(state));
+    });
+  } else {
+    // we call listeners in render for optimization.
+    // although this is not a recommended pattern,
+    // so far this is only the way to make it as expected.
+    // we are looking for better solutions.
+    // https://github.com/dai-shi/use-context-selector/pull/12
+    listeners.current.forEach((listener) => listener(state));
+  }
   const subscribe = useCallback((listener) => {
     listeners.current.push(listener);
     const unsubscribe = () => {
@@ -65,6 +77,7 @@ export const Provider = ({
     const unsubscribe = store.subscribe(() => {
       forceUpdate();
     });
+    forceUpdate(); // in case it's already changed
     return unsubscribe;
   }, [store]);
   return createElement(
