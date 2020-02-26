@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Use improved useIsomorphicLayoutEffect in Provider (#47)
 
 ## [4.6.0] - 2020-02-24
 ### Changed

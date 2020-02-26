@@ -2,11 +2,12 @@ import {
   createContext,
   createElement,
   useCallback,
-  useLayoutEffect,
   useEffect,
   useRef,
   useReducer,
 } from 'react';
+
+import { useIsomorphicLayoutEffect } from './utils';
 
 // -------------------------------------------------------
 // context
@@ -52,7 +53,7 @@ export const Provider = ({
     // but, this leads tearing with startTransition.
     // https://github.com/dai-shi/use-context-selector/pull/13
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
       listeners.current.forEach((listener) => listener(state));
     });
   } else {
