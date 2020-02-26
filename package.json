@@ -1,7 +1,7 @@
 {
   "name": "reactive-react-redux",
   "description": "React Redux binding with React Hooks and Proxy",
-  "version": "4.6.0",
+  "version": "4.6.1",
   "author": "Daishi Kato",
   "repository": {
     "type": "git",
