@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Add debug value to show tracked paths in useTrackedState
 
 ## [4.6.1] - 2020-02-26
 ### Changed
