@@ -210,7 +210,7 @@ const Component = () => {
   const state = useTrackedState();
   const dispatch = useUpdate();
   const onClick = () => {
-    // this leaks a proxy outside of render
+    // this leaks a proxy outside render
     dispatch({ type: 'FOO', value: state.foo });
 
     // this works as expected
@@ -290,22 +290,38 @@ const Child = React.memo(({ foo }) => {
 Check out [this issue](https://github.com/dai-shi/react-tracked/issues/30)
 to learn more about the problem and trackMemo.
 
-### Proxied state shouldn't be used outside of render
+### Proxied state might behave unexpectedly outside render
+
+Proxies are basically transparent, and it should behave like normal objects.
+However, there can be edge cases where it behaves unexpectedly.
+For example, if you console.log a proxied value,
+it will display a proxy wrapping an object.
+Notice, it will be kept tracking outside render,
+so any prorerty access will mark as used to trigger re-render on updates.
+
+The library will unwrap a Proxy before wrapping with a new Proxy,
+hence, it will work fine in usual use cases.
+There's only one known pitfall: If you wrap proxied state with your own Proxy
+outside the library, it might lead memory leaks, because the library
+wouldn't know how to unwrap your own Proxy.
+
+To work around such edge cases, the first option is to use primitive values.
 
 ```javascript
 const state = useTrackedState();
 const dispatch = useUpdate();
-dispatch({ type: 'FOO', value: state.foo }); // This may lead unexpected behavior if state.foo is an object
-dispatch({ type: 'FOO', value: state.fooStr }); // This is OK if state.fooStr is a string
+dispatch({ type: 'FOO', value: state.fooObj }); // Instead of using objects,
+dispatch({ type: 'FOO', value: state.fooStr }); // Use primitives.
 ```
 
-It's recommended to use primitive values for `dispatch`, `setState` and others.
-
-In case you need to pass an object itself, here's a workaround.
+The second option is to use `getUntrackedObject`.
 
 ```javascript
-dispatch({ type: 'FOO', value: getUntrackedObject(state.foo) });
+import { getUntrackedObject } from 'react-tracked';
+dispatch({ type: 'FOO', value: getUntrackedObject(state.fooObj) });
 ```
+
+You could implement a special dispatch function to do this automatically.
 
 ## Examples
 

@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Add debug value to show tracked paths in useTrackedState
+- Unwrap Proxy before wrapping to mitigate possible pitfalls
 
 ## [4.6.1] - 2020-02-26
 ### Changed
