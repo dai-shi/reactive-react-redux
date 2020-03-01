@@ -65,6 +65,12 @@ var useTrackedState = function useTrackedState() {
     var unsubscribe = subscribe(callback);
     return unsubscribe;
   }, [subscribe]);
+
+  if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    (0, _utils.useAffectedDebugValue)(state, affected);
+  }
+
   var proxyCache = (0, _react.useRef)(new WeakMap()); // per-hook proxyCache
 
   return (0, _deepProxy.createDeepProxy)(state, affected, proxyCache.current);
