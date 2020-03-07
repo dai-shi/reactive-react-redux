@@ -7,8 +7,6 @@ exports.Provider = exports.defaultContext = exports.createCustomContext = void 0
 
 var _react = require("react");
 
-var _utils = require("./utils");
-
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -58,36 +56,17 @@ var Provider = function Provider(_ref) {
       customContext = _ref$customContext === void 0 ? defaultContext : _ref$customContext,
       children = _ref.children;
 
-  var _useReducer = (0, _react.useReducer)(function (c) {
-    return c + 1;
-  }, 0),
-      _useReducer2 = _slicedToArray(_useReducer, 2),
-      forceUpdate = _useReducer2[1];
+  var _useState = (0, _react.useState)(store.getState()),
+      _useState2 = _slicedToArray(_useState, 2),
+      state = _useState2[0],
+      setState = _useState2[1];
 
-  var state = store.getState();
   var listeners = (0, _react.useRef)([]);
-
-  if (process.env.NODE_ENV !== 'production') {
-    // we use layout effect to eliminate warnings.
-    // but, this leads tearing with startTransition.
-    // https://github.com/dai-shi/use-context-selector/pull/13
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    (0, _utils.useIsomorphicLayoutEffect)(function () {
-      listeners.current.forEach(function (listener) {
-        return listener(state);
-      });
-    });
-  } else {
-    // we call listeners in render for optimization.
-    // although this is not a recommended pattern,
-    // so far this is only the way to make it as expected.
-    // we are looking for better solutions.
-    // https://github.com/dai-shi/use-context-selector/pull/12
+  (0, _react.useEffect)(function () {
     listeners.current.forEach(function (listener) {
       return listener(state);
     });
-  }
-
+  }, [state]);
   var subscribe = (0, _react.useCallback)(function (listener) {
     listeners.current.push(listener);
 
@@ -101,10 +80,16 @@ var Provider = function Provider(_ref) {
     return unsubscribe;
   }, [store]);
   (0, _react.useEffect)(function () {
-    var unsubscribe = store.subscribe(function () {
-      forceUpdate();
-    });
-    forceUpdate(); // in case it's already changed
+    var callback = function callback() {
+      var nextState = store.getState();
+      listeners.current.forEach(function (listener) {
+        return listener(nextState);
+      });
+      setState(nextState);
+    };
+
+    var unsubscribe = store.subscribe(callback);
+    callback(); // in case it's already changed
 
     return unsubscribe;
   }, [store]);

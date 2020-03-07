@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Notify child components updates in callback and effect not in render
 
 ## [4.7.0] - 2020-03-01
 ### Changed

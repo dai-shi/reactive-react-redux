@@ -4,10 +4,8 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useReducer,
+  useState,
 } from 'react';
-
-import { useIsomorphicLayoutEffect } from './utils';
 
 // -------------------------------------------------------
 // context
@@ -45,25 +43,11 @@ export const Provider = ({
   customContext = defaultContext,
   children,
 }) => {
-  const [, forceUpdate] = useReducer((c) => c + 1, 0);
-  const state = store.getState();
+  const [state, setState] = useState(store.getState());
   const listeners = useRef([]);
-  if (process.env.NODE_ENV !== 'production') {
-    // we use layout effect to eliminate warnings.
-    // but, this leads tearing with startTransition.
-    // https://github.com/dai-shi/use-context-selector/pull/13
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useIsomorphicLayoutEffect(() => {
-      listeners.current.forEach((listener) => listener(state));
-    });
-  } else {
-    // we call listeners in render for optimization.
-    // although this is not a recommended pattern,
-    // so far this is only the way to make it as expected.
-    // we are looking for better solutions.
-    // https://github.com/dai-shi/use-context-selector/pull/12
+  useEffect(() => {
     listeners.current.forEach((listener) => listener(state));
-  }
+  }, [state]);
   const subscribe = useCallback((listener) => {
     listeners.current.push(listener);
     const unsubscribe = () => {
@@ -75,10 +59,13 @@ export const Provider = ({
     return unsubscribe;
   }, [store]);
   useEffect(() => {
-    const unsubscribe = store.subscribe(() => {
-      forceUpdate();
-    });
-    forceUpdate(); // in case it's already changed
+    const callback = () => {
+      const nextState = store.getState();
+      listeners.current.forEach((listener) => listener(nextState));
+      setState(nextState);
+    };
+    const unsubscribe = store.subscribe(callback);
+    callback(); // in case it's already changed
     return unsubscribe;
   }, [store]);
   return createElement(
