@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useDispatch, useTrackedState } from 'reactive-react-redux';
+import { useDispatch, useTrackedState } from './state';
 
 const Counter = () => {
   const state = useTrackedState();

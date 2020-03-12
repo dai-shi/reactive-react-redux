@@ -1,10 +1,9 @@
 import { useCallback } from 'react';
-import { useDispatch } from 'reactive-react-redux';
 
-import { Action } from '../store/actions';
+import { useDispatch } from '../context';
 
 const useInvalidateSubreddit = () => {
-  const dispatch = useDispatch<Action>();
+  const dispatch = useDispatch();
   const invalidateSubreddit = useCallback((subreddit: string) => {
     dispatch({
       type: 'INVALIDATE_SUBREDDIT',

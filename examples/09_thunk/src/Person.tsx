@@ -2,13 +2,16 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { useDispatch, useTrackedState } from 'reactive-react-redux';
-
-import { Action, State } from './state';
+import {
+  useDispatch,
+  useTrackedState,
+  State,
+  Action,
+} from './state';
 
 const Counter: React.FC<{ firstName: string }> = ({ firstName }) => {
-  const state = useTrackedState<State>();
-  const dispatch = useDispatch<Action>();
+  const state = useTrackedState();
+  const dispatch = useDispatch();
   return (
     <div>
       {Math.random()}
@@ -23,8 +26,8 @@ const Counter: React.FC<{ firstName: string }> = ({ firstName }) => {
 };
 
 const Person = () => {
-  const state = useTrackedState<State>();
-  const dispatch = useDispatch<Action>();
+  const state = useTrackedState();
+  const dispatch = useDispatch();
   const setRandomFirstName = () => {
     const dispatchForThunk = dispatch as ThunkDispatch<State, {}, Action>;
     dispatchForThunk(async (d: Dispatch<Action>) => {

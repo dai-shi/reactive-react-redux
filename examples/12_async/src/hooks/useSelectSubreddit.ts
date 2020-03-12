@@ -1,10 +1,9 @@
 import { useCallback } from 'react';
-import { useDispatch } from 'reactive-react-redux';
 
-import { Action } from '../store/actions';
+import { useDispatch } from '../context';
 
 const useSelectSubreddit = () => {
-  const dispatch = useDispatch<Action>();
+  const dispatch = useDispatch();
   const selectSubreddit = useCallback((subreddit: string) => {
     dispatch({
       type: 'SELECT_SUBREDDIT',

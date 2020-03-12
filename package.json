@@ -1,26 +1,29 @@
 {
   "name": "reactive-react-redux",
   "description": "React Redux binding with React Hooks and Proxy",
-  "version": "4.8.0",
+  "version": "5.0.0-alpha.1",
   "author": "Daishi Kato",
   "repository": {
     "type": "git",
     "url": "https://github.com/dai-shi/reactive-react-redux.git"
   },
+  "source": "./src/index.ts",
   "main": "./dist/index.js",
-  "module": "./src/index.js",
-  "types": "./src/index.d.ts",
+  "module": "./dist/index.esm.js",
+  "browser": "./dist/index.umd.js",
+  "types": "./dist/src/index.d.ts",
   "sideEffects": false,
   "files": [
     "src",
     "dist"
   ],
   "scripts": {
-    "compile": "babel src -d dist",
+    "compile": "microbundle build --format cjs,es,umd",
     "test": "run-s eslint tsc-test jest",
     "eslint": "eslint --ext .js,.ts,.tsx --ignore-pattern dist .",
-    "jest": "jest",
+    "jest": "jest --preset ts-jest/presets/js-with-ts",
     "tsc-test": "tsc --project . --noEmit",
+    "apidoc": "documentation readme --section API --markdown-toc false --parse-extension ts src/*.ts",
     "examples:01_minimal": "DIR=01_minimal EXT=js webpack-dev-server",
     "examples:02_typescript": "DIR=02_typescript webpack-dev-server",
     "examples:03_deep": "DIR=03_deep webpack-dev-server",
@@ -43,19 +46,18 @@
     "pure"
   ],
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "proxy-compare": "^1.0.1"
+  },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.7",
-    "@babel/preset-env": "^7.8.7",
-    "@babel/preset-react": "^7.8.3",
     "@testing-library/react": "^9.5.0",
+    "@types/jest": "^25.1.4",
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.5",
     "@types/redux-logger": "^3.0.7",
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.22.0",
-    "babel-loader": "^8.0.6",
+    "documentation": "^12.1.4",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-plugin-import": "^2.20.1",
@@ -65,11 +67,13 @@
     "html-webpack-plugin": "^3.2.0",
     "immer": "^6.0.1",
     "jest": "^25.1.0",
+    "microbundle": "^0.12.0-next.8",
     "npm-run-all": "^4.1.5",
     "react": "experimental",
     "react-dom": "experimental",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "ts-jest": "^25.2.1",
     "ts-loader": "^6.2.1",
     "typescript": "^3.8.3",
     "webpack": "^4.42.0",
@@ -77,13 +81,7 @@
     "webpack-dev-server": "^3.10.3"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
+    "react": ">=16.14.0",
     "redux": ">=4.0.0"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ]
   }
 }

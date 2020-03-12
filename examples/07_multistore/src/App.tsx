@@ -1,15 +1,19 @@
 import React, { useState, StrictMode } from 'react';
 import { createStore } from 'redux';
+import { patchStore } from 'reactive-react-redux';
 
-import { Provider } from 'reactive-react-redux';
-
-import { reducer } from './state';
+import {
+  State,
+  Action,
+  Provider,
+  reducer,
+} from './state';
 
 import Counter from './Counter';
 import Person from './Person';
 
-const store1 = createStore(reducer);
-const store2 = createStore(reducer);
+const store1 = patchStore<State, Action>(createStore(reducer));
+const store2 = patchStore<State, Action>(createStore(reducer));
 
 const App = () => {
   const [store, setStore] = useState(store1);
