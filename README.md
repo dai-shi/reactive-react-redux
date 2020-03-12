@@ -37,6 +37,7 @@ This library is implemented with useMutableSource,
 and it patches the Redux store.
 APIs are provided without Context.
 It's up to developers to use Context based on them.
+Check out `./examples/11_todolist/src/context.ts`.
 
 There's another difference from react-redux v7.
 This library directly use useMutableSource, and requires

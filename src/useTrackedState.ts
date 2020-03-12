@@ -55,26 +55,25 @@ export const useTrackedState = <State, Action extends ReduxAction<any>>(
   const getSnapshot = useCallback((store: Store<State, Action>) => {
     const nextState = store.getState();
     const lastTrackedCurrent = lastTracked.current;
-    if (lastTrackedCurrent && (lastTrackedCurrent.state === nextState
-      || !isDeepChanged(
-        lastTrackedCurrent.state,
-        nextState,
-        lastTrackedCurrent.affected,
-        lastTrackedCurrent.cache,
-        lastTrackedCurrent.mode,
-      ))) {
-      // not changed
-      return lastTrackedCurrent.state;
-    }
-    return nextState;
-  }, []);
+    if (!lastTrackedCurrent) return nextState;
+    if (lastTrackedCurrent.affected !== affected) return nextState;
+    if (lastTrackedCurrent.state === nextState) return nextState;
+    if (isDeepChanged(
+      lastTrackedCurrent.state,
+      nextState,
+      lastTrackedCurrent.affected,
+      lastTrackedCurrent.cache,
+      lastTrackedCurrent.mode,
+    )) return nextState;
+    // not changed
+    return lastTrackedCurrent.state;
+  }, [affected]);
   const state: State = useMutableSource(mutableSource, getSnapshot, subscribe);
   useIsomorphicLayoutEffect(() => {
     lastTracked.current = {
       state,
       affected,
       cache: new WeakMap(),
-      /* eslint-disable no-nested-ternary, indent, @typescript-eslint/indent */
       /* eslint-disable no-nested-ternary, indent */
       mode:
       opts.unstable_forceUpdateForStateChange ? MODE_ALWAYS_ASSUME_CHANGED_IF_UNAFFECTED
