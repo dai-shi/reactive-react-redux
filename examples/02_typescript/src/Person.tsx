@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useDispatch, useTrackedState } from './state';
+import { useDispatch, useTrackedState } from './context';
 
 const Counter: React.FC<{ firstName: string }> = ({ firstName }) => {
   const state = useTrackedState();

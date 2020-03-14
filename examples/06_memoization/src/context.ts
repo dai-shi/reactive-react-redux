@@ -12,7 +12,7 @@ import {
   useTrackedState as useTrackedStateOrig,
 } from 'reactive-react-redux';
 
-import { State, Action } from './types';
+import { State, Action } from './state';
 
 // Context based APIs
 

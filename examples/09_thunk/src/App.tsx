@@ -1,19 +1,14 @@
 import React, { StrictMode } from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import reduxThunk from 'redux-thunk';
-import { patchStore } from 'reactive-react-redux';
 
-import {
-  State,
-  Action,
-  Provider,
-  reducer,
-} from './state';
+import { reducer } from './state';
+import { Provider } from './context';
 
 import Counter from './Counter';
 import Person from './Person';
 
-const store = patchStore<State, Action>(createStore(reducer, applyMiddleware(reduxThunk)));
+const store = createStore(reducer, applyMiddleware(reduxThunk));
 
 const App = () => (
   <StrictMode>

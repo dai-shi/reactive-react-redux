@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { useDispatch, useTrackedState } from './state';
+import { useDispatch, useTrackedState } from './context';
 
 const TextBox: React.SFC<{ text: string }> = ({ text }) => {
   // eslint-disable-next-line no-console

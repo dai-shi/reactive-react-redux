@@ -2,12 +2,8 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import {
-  useDispatch,
-  useTrackedState,
-  State,
-  Action,
-} from './state';
+import { State, Action } from './state';
+import { useDispatch, useTrackedState } from './context';
 
 const Counter: React.FC<{ firstName: string }> = ({ firstName }) => {
   const state = useTrackedState();

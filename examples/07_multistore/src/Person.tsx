@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useDispatch, useTrackedState } from './state';
+import { useDispatch, useTrackedState } from './context';
 
 const Person = () => {
   const state = useTrackedState();

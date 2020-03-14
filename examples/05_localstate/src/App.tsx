@@ -1,17 +1,12 @@
 import React, { StrictMode } from 'react';
 import { createStore } from 'redux';
-import { patchStore } from 'reactive-react-redux';
 
-import {
-  State,
-  Action,
-  Provider,
-  reducer,
-} from './state';
+import { reducer } from './state';
+import { Provider } from './context';
 
 import Counter from './Counter';
 
-const store = patchStore<State, Action>(createStore(reducer));
+const store = createStore(reducer);
 
 const App = () => (
   <StrictMode>
