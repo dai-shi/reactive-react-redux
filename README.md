@@ -83,7 +83,7 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-const store = patchStoroe(createStore(reducer));
+const store = patchStore(createStore(reducer));
 
 const Counter = () => {
   const state = useTrackedState(store);
