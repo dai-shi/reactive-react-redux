@@ -239,7 +239,7 @@ You can create a selector hook with tracking support.
 ```javascript
 import { useTrackedState } from 'reactive-react-redux';
 
-export const useTrackedSelector = selector => selector(useTrackedState());
+export const useTrackedSelector = (patchedStore, selector) => selector(useTrackedState(patchedStore));
 ```
 
 Please refer [this issue](https://github.com/dai-shi/reactive-react-redux/issues/41) for more information.
@@ -252,9 +252,9 @@ make a hook that returns a tuple like `useReducer`.
 ```javascript
 import { useTrackedState, useDispatch } from 'reactive-react-redux';
 
-export const useTracked = () => {
-  const state = useTrackedState();
-  const dispatch = useDispatch();
+export const useTracked = (patchedStore) => {
+  const state = useTrackedState(patchedStore);
+  const dispatch = useDispatch(patchedStore);
   return useMemo(() => [state, dispatch], [state, dispatch]);
 };
 ```
@@ -267,8 +267,8 @@ There are some limitations and workarounds.
 ### Proxied states are referentially equal only in per-hook basis
 
 ```javascript
-const state1 = useTrackedState();
-const state2 = useTrackedState();
+const state1 = useTrackedState(patchedStore);
+const state2 = useTrackedState(patchedStore);
 // state1 and state2 is not referentially equal
 // even if the underlying redux state is referentially equal.
 ```
@@ -278,7 +278,7 @@ You should use `useTrackedState` only once in a component.
 ### An object referential change doesn't trigger re-render if an property of the object is accessed in previous render
 
 ```javascript
-const state = useTrackedState();
+const state = useTrackedState(patchedStore);
 const { foo } = state;
 return <Child key={foo.id} foo={foo} />;
 
@@ -320,8 +320,8 @@ wouldn't know how to unwrap your own Proxy.
 To work around such edge cases, the first option is to use primitive values.
 
 ```javascript
-const state = useTrackedState();
-const dispatch = useUpdate();
+const state = useTrackedState(patchedStore);
+const dispatch = useUpdate(patchedStore);
 dispatch({ type: 'FOO', value: state.fooObj }); // Instead of using objects,
 dispatch({ type: 'FOO', value: state.fooStr }); // Use primitives.
 ```
