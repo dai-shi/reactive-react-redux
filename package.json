@@ -2,6 +2,9 @@
   "name": "reactive-react-redux",
   "description": "React Redux binding with React Hooks and Proxy",
   "version": "5.0.0-alpha.2",
+  "publishConfig": {
+    "tag": "next"
+  },
   "author": "Daishi Kato",
   "repository": {
     "type": "git",
