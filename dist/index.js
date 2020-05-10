@@ -33,10 +33,10 @@ Object.defineProperty(exports, "useSelector", {
     return _useSelector.useSelector;
   }
 });
-Object.defineProperty(exports, "trackMemo", {
+Object.defineProperty(exports, "memo", {
   enumerable: true,
   get: function get() {
-    return _deepProxy.trackMemo;
+    return _memo.memo;
   }
 });
 Object.defineProperty(exports, "getUntrackedObject", {
@@ -53,5 +53,7 @@ var _useDispatch = require("./useDispatch");
 var _useTrackedState = require("./useTrackedState");
 
 var _useSelector = require("./useSelector");
+
+var _memo = require("./memo");
 
 var _deepProxy = require("./deepProxy");

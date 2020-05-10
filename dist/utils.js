@@ -43,7 +43,7 @@ var useAffectedDebugValue = function useAffectedDebugValue(state, affected) {
   (0, _react.useEffect)(function () {
     pathList.current = affectedToPathList(state, affected);
   });
-  (0, _react.useDebugValue)(pathList);
+  (0, _react.useDebugValue)(pathList.current);
 };
 
 exports.useAffectedDebugValue = useAffectedDebugValue;
