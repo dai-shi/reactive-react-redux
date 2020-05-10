@@ -40,13 +40,14 @@ export function useSelector<
 // deep proxy utils
 
 /**
- * If `obj` is a proxy, it will mark the entire object as used.
- * Otherwise, it does nothing.
- */
-export function trackMemo<T>(obj: T): void;
-
-/**
  * If `obj` is a proxy, it will return the original object.
  * Otherwise, it will return null.
  */
 export function getUntrackedObject<T>(obj: T): T | null;
+
+// special React.memo with tracking suppoort
+
+export function memo<Props>(
+  Component: React.FC<Props>,
+  areEqual?: (prevProps: Props, nextProps: Props) => boolean,
+): React.FC<Props>;
