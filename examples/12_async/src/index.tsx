@@ -2,7 +2,7 @@
 /// <reference types="react-dom/experimental" />
 
 import React from 'react';
-import { createRoot } from 'react-dom';
+import { unstable_createRoot as createRoot } from 'react-dom';
 import { createStore } from 'redux';
 
 import { Provider } from './context';
