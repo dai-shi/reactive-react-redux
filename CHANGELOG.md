@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [4.9.0] - 2020-05-10
+### Changed
+- Introduce a special `memo` to be used instead of `trackMemo`
+  - This is technically a breaking change, but released as a minor update.
+
 ## [4.8.0] - 2020-03-07
 ### Changed
 - Notify child components updates in callback and effect not in render

@@ -232,6 +232,20 @@ export const useSelector = <Selected>(
 export const useTrackedState = () => useTrackedStateOrig(useContext(Context));
 ```
 
+### memo
+
+Using `React.memo` with tracked state is not compatible,
+because `React.memo` stops state access, thus no tracking occurs.
+This is a special memo to be used instead of `React.memo` with tracking support.
+
+```javascript
+const ChildComponent = memo(({ obj1, obj2 }) => {
+  // ...
+});
+```
+
+## Recipes
+
 ### useTrackedSelector
 
 You can create a selector hook with tracking support.
@@ -289,17 +303,15 @@ const Child = React.memo(({ foo }) => {
 // it won't trigger Child to re-render even if foo is changed.
 ```
 
-You need to explicitly notify an object as used in a memoized component.
+You need to use a special `memo` provided by this library.
 
 ```javascript
-const Child = React.memo(({ foo }) => {
-  trackMemo(foo);
+import { memo } from 'reactive-react-redux';
+
+const Child = memo(({ foo }) => {
   // ...
 };
 ```
-
-Check out [this issue](https://github.com/dai-shi/react-tracked/issues/30)
-to learn more about the problem and trackMemo.
 
 ### Proxied state might behave unexpectedly outside render
 
@@ -358,6 +370,7 @@ You can also try them in codesandbox.io:
 [09](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/09_thunk)
 [11](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/11_todolist)
 [12](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/12_async)
+[13](https://codesandbox.io/s/github/dai-shi/reactive-react-redux/tree/master/examples/13_memo)
 
 ## Benchmarks
 

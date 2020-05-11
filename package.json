@@ -37,7 +37,8 @@
     "examples:08_dynamic": "DIR=08_dynamic webpack-dev-server",
     "examples:09_thunk": "DIR=09_thunk webpack-dev-server",
     "examples:11_todolist": "DIR=11_todolist EXT=tsx webpack-dev-server",
-    "examples:12_async": "DIR=12_async EXT=tsx webpack-dev-server"
+    "examples:12_async": "DIR=12_async EXT=tsx webpack-dev-server",
+    "examples:13_memo": "DIR=13_memo webpack-dev-server"
   },
   "keywords": [
     "react",
