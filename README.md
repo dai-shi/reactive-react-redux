@@ -148,6 +148,30 @@ const reducer = ...;
 const store = patchStore(createStore(reducer));
 ```
 
+### useTrackedState
+
+useTrackedState hook
+
+It return the Redux state wrapped by Proxy,
+and the state prperty access is tracked.
+It will only re-render if accessed properties are changed.
+
+#### Parameters
+
+-   `patchedStore` **PatchedStore&lt;State, Action>** 
+-   `opts` **Opts**  (optional, default `{}`)
+
+#### Examples
+
+```javascript
+import { useTrackedState } from 'reactive-react-redux';
+
+const Component = () => {
+  const state = useTrackedState(store);
+  ...
+};
+```
+
 ### useSelector
 
 useSelector hook
@@ -172,28 +196,27 @@ const Component = ({ count }) => {
 };
 ```
 
-### useTrackedState
+### memo
 
-useTrackedState hook
+memo
 
-It return the Redux state wrapped by Proxy,
-and the state prperty access is tracked.
-It will only re-render if accessed properties are changed.
+Using `React.memo` with tracked state is not compatible,
+because `React.memo` stops state access, thus no tracking occurs.
+This is a special memo to be used instead of `React.memo` with tracking support.
 
 #### Parameters
 
--   `patchedStore` **PatchedStore&lt;State, Action>** 
--   `opts` **Opts**  (optional, default `{}`)
+-   `Component` **any** 
+-   `areEqual` **any?** 
 
 #### Examples
 
 ```javascript
-import { useTrackedState } from 'reactive-react-redux';
+import { memo } from 'reactive-react-redux';
 
-const Component = () => {
-  const state = useTrackedState(store);
-  ...
-};
+const ChildComponent = memo(({ obj1, obj2 }) => {
+  // ...
+});
 ```
 
 ## Recipes
@@ -231,20 +254,6 @@ export const useSelector = <Selected>(
 
 export const useTrackedState = () => useTrackedStateOrig(useContext(Context));
 ```
-
-### memo
-
-Using `React.memo` with tracked state is not compatible,
-because `React.memo` stops state access, thus no tracking occurs.
-This is a special memo to be used instead of `React.memo` with tracking support.
-
-```javascript
-const ChildComponent = memo(({ obj1, obj2 }) => {
-  // ...
-});
-```
-
-## Recipes
 
 ### useTrackedSelector
 
