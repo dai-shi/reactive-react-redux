@@ -1,8 +1,8 @@
 # reactive-react-redux
 
-[![Build Status](https://travis-ci.com/dai-shi/reactive-react-redux.svg?branch=master)](https://travis-ci.com/dai-shi/reactive-react-redux)
-[![npm version](https://badge.fury.io/js/reactive-react-redux.svg)](https://badge.fury.io/js/reactive-react-redux)
-[![bundle size](https://badgen.net/bundlephobia/minzip/reactive-react-redux)](https://bundlephobia.com/result?p=reactive-react-redux)
+[![CI](https://img.shields.io/github/workflow/status/dai-shi/reactive-react-redux/CI)](https://github.com/dai-shi/reactive-react-redux/actions?query=workflow%3ACI)
+[![npm](https://img.shields.io/npm/v/reactive-react-redux)](https://www.npmjs.com/package/reactive-react-redux)
+[![size](https://img.shields.io/bundlephobia/minzip/reactive-react-redux)](https://bundlephobia.com/result?p=reactive-react-redux)
 
 React Redux binding with React Hooks and Proxy
 
