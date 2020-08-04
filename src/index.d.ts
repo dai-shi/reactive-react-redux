@@ -1,7 +1,7 @@
 import { Context, ComponentType } from 'react';
 import { Store } from 'redux';
 
-type BaseState = {};
+type BaseState = Record<string, unknown>;
 
 export interface RootState extends BaseState {}
 
