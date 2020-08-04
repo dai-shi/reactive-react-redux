@@ -25,7 +25,7 @@ const Person = () => {
   const state = useTrackedState();
   const dispatch = useDispatch();
   const setRandomFirstName = () => {
-    const dispatchForThunk = dispatch as ThunkDispatch<State, Record<string, unknown>, Action>;
+    const dispatchForThunk = dispatch as ThunkDispatch<State, unknown, Action>;
     dispatchForThunk(async (d: Dispatch<Action>) => {
       d({ firstName: 'Loading...', type: 'setFirstName' });
       try {
