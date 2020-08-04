@@ -3,7 +3,7 @@
 import {
   useMemo,
   // @ts-ignore
-  useMutableSource,
+  unstable_useMutableSource as useMutableSource,
 } from 'react';
 import {
   Action as ReduxAction,

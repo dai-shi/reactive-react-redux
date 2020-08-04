@@ -2,7 +2,7 @@
 
 import {
   // @ts-ignore
-  createMutableSource,
+  unstable_createMutableSource as createMutableSource,
 } from 'react';
 import {
   Action as ReduxAction,
