@@ -50,7 +50,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "proxy-compare": "^1.0.2"
+    "proxy-compare": "^1.0.3"
   },
   "devDependencies": {
     "@testing-library/react": "^10.4.7",
