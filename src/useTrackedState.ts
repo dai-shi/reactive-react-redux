@@ -49,7 +49,7 @@ export const useTrackedState = <State, Action extends ReduxAction<any>>(
   opts: Opts = {},
 ) => {
   const { mutableSource } = patchedStore;
-  const affected = new WeakMap();
+  const affected = new WeakMap(); // eslint-disable-line react-hooks/exhaustive-deps
   const deepChangedMode = (
     /* eslint-disable no-nested-ternary, indent, no-multi-spaces */
       opts.unstable_forceUpdateForStateChange     ? MODE_ALWAYS_ASSUME_CHANGED_IF_UNAFFECTED

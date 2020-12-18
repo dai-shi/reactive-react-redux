@@ -34,7 +34,10 @@
     "no-param-reassign": "off",
     "no-plusplus": "off",
     "no-bitwise": "off",
-    "default-case": "off"
+    "default-case": "off",
+    "no-undef": "off",
+    "no-use-before-define": "off",
+    "no-unused-vars": "off"
   },
   "overrides": [{
     "files": ["__tests__/**/*"],
