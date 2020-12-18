@@ -1,3 +1,14 @@
+There are several projects related to this repo.
+Here's the index for those.
+
+- reactive-react-redux v5-alpha (this repo): This has an experimental react-redux binding with useMutableSource. It provides useTrackedState, which tracks the usage of state in render, and it's originally proposed in this repo.
+- [react-tracked](https://github.com/dai-shi/react-tracked): This project is to provide useTrackedState with React Context. v1.5 is fairly stable.
+- [react-redux #1503](https://github.com/reduxjs/react-redux/pull/1503): A pull request to add useTrackedState to the official react-redux library.
+- [react-tracked #71](https://github.com/dai-shi/react-tracked/pull/71): This provides createTrackedSelector that will create useTrackedState from useSelector.
+- [proxy-memoize](https://github.com/dai-shi/proxy-memoize): This is another project which is not tied to React, but combined with useSelector, we get a similarfunctionality like useTrackedState.
+
+----
+
 # reactive-react-redux
 
 [![CI](https://img.shields.io/github/workflow/status/dai-shi/reactive-react-redux/CI)](https://github.com/dai-shi/reactive-react-redux/actions?query=workflow%3ACI)

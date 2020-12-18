@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Changed
+- New API with useMutableSource (#48)
+
 ## [4.9.0] - 2020-05-10
 ### Changed
 - Introduce a special `memo` to be used instead of `trackMemo`
