@@ -1,8 +1,6 @@
 import React from 'react';
 
-import { useDispatch, useTrackedState } from 'reactive-react-redux';
-
-import { Action, State } from './state';
+import { useDispatch, useTrackedState } from './context';
 
 const TextBox: React.SFC<{ text: string }> = ({ text }) => {
   // eslint-disable-next-line no-console
@@ -11,8 +9,8 @@ const TextBox: React.SFC<{ text: string }> = ({ text }) => {
 };
 
 const PersonFirstName = () => {
-  const state = useTrackedState<State>();
-  const dispatch = useDispatch<Action>();
+  const state = useTrackedState();
+  const dispatch = useDispatch();
   return (
     <div>
       First Name:
@@ -29,8 +27,8 @@ const PersonFirstName = () => {
 };
 
 const PersonLastName = () => {
-  const state = useTrackedState<State>();
-  const dispatch = useDispatch<Action>();
+  const state = useTrackedState();
+  const dispatch = useDispatch();
   return (
     <div>
       Last Name:
@@ -47,8 +45,8 @@ const PersonLastName = () => {
 };
 
 const PersonAge = () => {
-  const state = useTrackedState<State>();
-  const dispatch = useDispatch<Action>();
+  const state = useTrackedState();
+  const dispatch = useDispatch();
   return (
     <div>
       Age:

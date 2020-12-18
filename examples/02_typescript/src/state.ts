@@ -1,7 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { Dispatch } from 'reactive-react-redux';
-
 const initialState = {
   count: 0,
   person: {
@@ -11,19 +7,14 @@ const initialState = {
   },
 };
 
-type State = typeof initialState;
+export type State = typeof initialState;
 
-type Action =
+export type Action =
   | { type: 'increment' }
   | { type: 'decrement' }
   | { type: 'setFirstName'; firstName: string }
   | { type: 'setLastName'; lastName: string }
   | { type: 'setAge'; age: number };
-
-declare module 'reactive-react-redux' {
-  interface RootState extends State {}
-  function useDispatch(): Dispatch<Action>
-}
 
 export const reducer = (state = initialState, action: Action) => {
   switch (action.type) {

@@ -66,7 +66,7 @@ const postsBySubreddit = (
   }
 };
 
-const rootReducer = combineReducers<State>({
+const rootReducer = combineReducers<State, Action>({
   postsBySubreddit,
   selectedSubreddit,
 });

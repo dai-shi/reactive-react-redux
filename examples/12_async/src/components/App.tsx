@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
-import { useSelector } from 'reactive-react-redux';
 
+import { useSelector } from '../context';
 import { State, SelectedSubreddit } from '../store/actions';
 import useSelectSubreddit from '../hooks/useSelectSubreddit';
 import useFetchPostsIfNeeded from '../hooks/useFetchPostsIfNeeded';

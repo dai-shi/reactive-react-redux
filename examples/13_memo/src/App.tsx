@@ -1,9 +1,8 @@
 import React, { StrictMode } from 'react';
 import { createStore } from 'redux';
 
-import { Provider } from 'reactive-react-redux';
-
 import { reducer } from './state';
+import { Provider } from './context';
 
 import TodoList from './TodoList';
 

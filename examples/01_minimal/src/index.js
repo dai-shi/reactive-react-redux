@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 
 import {
-  Provider,
-  useDispatch,
+  patchStore,
   useTrackedState,
 } from 'reactive-react-redux';
 
@@ -22,11 +21,11 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-const store = createStore(reducer);
+const store = patchStore(createStore(reducer));
 
 const Counter = () => {
-  const state = useTrackedState();
-  const dispatch = useDispatch();
+  const state = useTrackedState(store);
+  const { dispatch } = store;
   return (
     <div>
       {Math.random()}
@@ -40,8 +39,8 @@ const Counter = () => {
 };
 
 const TextBox = () => {
-  const state = useTrackedState();
-  const dispatch = useDispatch();
+  const state = useTrackedState(store);
+  const { dispatch } = store;
   return (
     <div>
       {Math.random()}
@@ -55,14 +54,14 @@ const TextBox = () => {
 
 const App = () => (
   <StrictMode>
-    <Provider store={store}>
+    <>
       <h1>Counter</h1>
       <Counter />
       <Counter />
       <h1>TextBox</h1>
       <TextBox />
       <TextBox />
-    </Provider>
+    </>
   </StrictMode>
 );
 

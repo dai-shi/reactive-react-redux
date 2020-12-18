@@ -1,36 +1,37 @@
 import React, { StrictMode } from 'react';
-import { createStore } from 'redux';
+import { AnyAction, createStore } from 'redux';
 
 import { render, fireEvent, cleanup } from '@testing-library/react';
 
 import {
-  Provider,
+  patchStore,
+  useSelector,
   useTrackedState,
-  useDispatch,
 } from '../src/index';
 
 describe('basic spec', () => {
   afterEach(cleanup);
 
   it('hooks are defiend', () => {
+    expect(useSelector).toBeDefined();
     expect(useTrackedState).toBeDefined();
-    expect(useDispatch).toBeDefined();
   });
 
   it('create a component', () => {
     const initialState = {
       count1: 0,
     };
-    const reducer = (state = initialState, action) => {
+    type State = typeof initialState;
+    const reducer = (state = initialState, action: AnyAction) => {
       if (action.type === 'increment') {
         return { ...state, count1: state.count1 + 1 };
       }
       return state;
     };
-    const store = createStore(reducer);
+    const store = patchStore<State, AnyAction>(createStore(reducer));
     const Counter = () => {
-      const value = useTrackedState();
-      const dispatch = useDispatch();
+      const value = useTrackedState(store);
+      const { dispatch } = store;
       return (
         <div>
           <span>{value.count1}</span>
@@ -40,10 +41,10 @@ describe('basic spec', () => {
     };
     const App = () => (
       <StrictMode>
-        <Provider store={store}>
+        <>
           <Counter />
           <Counter />
-        </Provider>
+        </>
       </StrictMode>
     );
     const { getAllByText, container } = render(<App />);

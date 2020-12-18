@@ -23,6 +23,7 @@
     "react-hooks/exhaustive-deps": ["error", { "additionalHooks": "useIsomorphicLayoutEffect" }],
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-empty-interface": "off",
     "react/jsx-filename-extension": ["error", { "extensions": [".js", ".tsx"] }],
     "react/prop-types": "off",
@@ -32,7 +33,7 @@
     "import/no-unresolved": ["error", { "ignore": ["reactive-react-redux"] }],
     "no-param-reassign": "off",
     "no-plusplus": "off",
-    "prefer-object-spread": "off",
+    "no-bitwise": "off",
     "default-case": "off"
   },
   "overrides": [{

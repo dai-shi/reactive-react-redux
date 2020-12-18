@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import { useDispatch } from 'reactive-react-redux';
 
-import { Action, VisibilityFilterType } from '../types';
+import { useDispatch } from '../context';
+import { VisibilityFilterType } from '../types';
 
 let nextTodoId = 0;
 
 export const useAddTodo = () => {
-  const dispatch = useDispatch<Action>();
+  const dispatch = useDispatch();
   return useCallback((text: string) => {
     dispatch({
       type: 'ADD_TODO',
@@ -17,7 +17,7 @@ export const useAddTodo = () => {
 };
 
 export const useSetVisibilityFilter = () => {
-  const dispatch = useDispatch<Action>();
+  const dispatch = useDispatch();
   return useCallback((filter: VisibilityFilterType) => {
     dispatch({
       type: 'SET_VISIBILITY_FILTER',
@@ -27,7 +27,7 @@ export const useSetVisibilityFilter = () => {
 };
 
 export const useToggleTodo = () => {
-  const dispatch = useDispatch<Action>();
+  const dispatch = useDispatch();
   return useCallback((id: number) => {
     dispatch({
       type: 'TOGGLE_TODO',

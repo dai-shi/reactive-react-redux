@@ -2,9 +2,8 @@ import React, { StrictMode } from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import reduxThunk from 'redux-thunk';
 
-import { Provider } from 'reactive-react-redux';
-
 import { reducer } from './state';
+import { Provider } from './context';
 
 import Counter from './Counter';
 import Person from './Person';

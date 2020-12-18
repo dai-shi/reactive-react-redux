@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { useDispatch, memo } from 'reactive-react-redux';
-import { TodoType, Action } from './state';
+import { memo } from 'reactive-react-redux';
+import { useDispatch } from './context';
+import { TodoType } from './state';
 
 type Props = {
   todo: TodoType;
@@ -10,7 +11,7 @@ type Props = {
 let numRendered = 0;
 
 const TodoItem: React.FC<Props> = ({ todo }) => {
-  const dispatch = useDispatch<Action>();
+  const dispatch = useDispatch();
   return (
     <li>
       numRendered: {++numRendered}

@@ -1,12 +1,10 @@
 import React from 'react';
 
-import { useTrackedState } from 'reactive-react-redux';
-
-import { State } from './state';
+import { useTrackedState } from './context';
 import TodoItem from './TodoItem';
 
 const TodoList: React.FC = () => {
-  const state = useTrackedState<State>();
+  const state = useTrackedState();
   const { todos } = state;
   return (
     <ul>

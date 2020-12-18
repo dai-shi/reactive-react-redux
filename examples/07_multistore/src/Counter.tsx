@@ -1,12 +1,10 @@
 import React from 'react';
 
-import { useDispatch, useTrackedState } from 'reactive-react-redux';
-
-import { Action, State } from './state';
+import { useDispatch, useTrackedState } from './context';
 
 const Counter = () => {
-  const state = useTrackedState<State>();
-  const dispatch = useDispatch<Action>();
+  const state = useTrackedState();
+  const dispatch = useDispatch();
   return (
     <div>
       <div>

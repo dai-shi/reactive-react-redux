@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { useDispatch, useTrackedState } from 'reactive-react-redux';
-
-import { Action, State } from './state';
+import { useDispatch, useTrackedState } from './context';
 
 const TextBox: React.SFC<{ text: string }> = ({ text }) => {
   // eslint-disable-next-line no-console
@@ -11,8 +9,8 @@ const TextBox: React.SFC<{ text: string }> = ({ text }) => {
 };
 
 const Person = () => {
-  const state = useTrackedState<State>();
-  const dispatch = useDispatch<Action>();
+  const state = useTrackedState();
+  const dispatch = useDispatch();
   const { age, firstName, lastName } = useMemo(
     () => ({
       age: state.person.age,

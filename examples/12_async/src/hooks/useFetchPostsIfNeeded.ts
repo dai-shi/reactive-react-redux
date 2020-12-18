@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
-import { useDispatch } from 'reactive-react-redux';
-import { useStore } from '../index';
 
-import { Action, State, Post } from '../store/actions';
+import { useDispatch, useStore } from '../context';
+import { State, Post } from '../store/actions';
 
 const shouldFetchPosts = (state: State, subreddit: string) => {
   const posts = state.postsBySubreddit[subreddit];
@@ -40,7 +39,7 @@ const extractPosts = (json: unknown): Post[] | null => {
 };
 
 const useFetchPostsIfNeeded = () => {
-  const dispatch = useDispatch<Action>();
+  const dispatch = useDispatch();
   const store = useStore();
   const fetchPostsIfNeeded = useCallback(async (subreddit: string) => {
     if (!shouldFetchPosts(store.getState(), subreddit)) {
