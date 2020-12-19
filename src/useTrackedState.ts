@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import {
+  useEffect,
+  useLayoutEffect,
   useMemo,
+  useReducer,
+  useRef,
   // @ts-ignore
   unstable_useMutableSource as useMutableSource,
 } from 'react';
@@ -19,6 +23,11 @@ import {
 
 import { PatchedStore, subscribe } from './patchStore';
 import { useAffectedDebugValue } from './utils';
+
+const isSSR = typeof window === 'undefined'
+  || /ServerSideRendering/.test(window.navigator && window.navigator.userAgent);
+
+const useIsomorphicLayoutEffect = isSSR ? useEffect : useLayoutEffect;
 
 const MODE_ALWAYS_ASSUME_CHANGED_IF_UNAFFECTED = 0;
 const MODE_ALWAYS_ASSUME_UNCHANGED_IF_UNAFFECTED = (
@@ -49,7 +58,6 @@ export const useTrackedState = <State, Action extends ReduxAction<any>>(
   opts: Opts = {},
 ) => {
   const { mutableSource } = patchedStore;
-  const affected = new WeakMap(); // eslint-disable-line react-hooks/exhaustive-deps
   const deepChangedMode = (
     /* eslint-disable no-nested-ternary, indent, no-multi-spaces */
       opts.unstable_forceUpdateForStateChange     ? MODE_ALWAYS_ASSUME_CHANGED_IF_UNAFFECTED
@@ -58,25 +66,48 @@ export const useTrackedState = <State, Action extends ReduxAction<any>>(
     : /* default */                                 MODE_DEFAULT
     /* eslint-enable no-nested-ternary, indent, no-multi-spaces */
   );
+  const [version, forceUpdate] = useReducer((c) => c + 1, 0);
+  const affected = new WeakMap();
+  const lastAffected = useRef<WeakMap<Record<string, unknown>, unknown>>();
+  const prevState = useRef<State>();
+  const lastState = useRef<State>();
+  useIsomorphicLayoutEffect(() => {
+    lastAffected.current = affected;
+    if (prevState.current !== lastState.current
+      && isDeepChanged(
+        prevState.current,
+        lastState.current,
+        affected,
+        new WeakMap(),
+        deepChangedMode,
+      )) {
+      prevState.current = lastState.current;
+      forceUpdate();
+    }
+  });
   const getSnapshot = useMemo(() => {
-    let prevState: State | null = null;
     const deepChangedCache = new WeakMap();
     return (store: Store<State, Action>) => {
       const nextState = store.getState();
-      if (prevState !== null && prevState !== nextState && !isDeepChanged(
-        prevState,
-        nextState,
-        affected,
-        deepChangedCache,
-        deepChangedMode,
-      )) {
+      lastState.current = nextState;
+      if (prevState.current
+        && prevState.current !== nextState
+        && lastAffected.current
+        && !isDeepChanged(
+          prevState.current,
+          nextState,
+          lastAffected.current,
+          deepChangedCache,
+          deepChangedMode,
+        )
+      ) {
         // not changed
-        return prevState;
+        return prevState.current;
       }
-      prevState = nextState;
+      prevState.current = nextState;
       return nextState;
     };
-  }, [affected, deepChangedMode]);
+  }, [version, deepChangedMode]); // eslint-disable-line react-hooks/exhaustive-deps
   const state: State = useMutableSource(mutableSource, getSnapshot, subscribe);
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
