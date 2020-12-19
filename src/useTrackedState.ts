@@ -9,17 +9,8 @@ import {
   // @ts-ignore
   unstable_useMutableSource as useMutableSource,
 } from 'react';
-import {
-  Action as ReduxAction,
-  Store,
-} from 'redux';
-import {
-  createDeepProxy,
-  isDeepChanged,
-  MODE_ASSUME_UNCHANGED_IF_UNAFFECTED,
-  MODE_IGNORE_REF_EQUALITY,
-  MODE_ASSUME_UNCHANGED_IF_UNAFFECTED_IN_DEEP,
-} from 'proxy-compare';
+import { Action as ReduxAction, Store } from 'redux';
+import { createDeepProxy, isDeepChanged } from 'proxy-compare';
 
 import { PatchedStore, subscribe } from './patchStore';
 import { useAffectedDebugValue } from './utils';
@@ -28,15 +19,6 @@ const isSSR = typeof window === 'undefined'
   || /ServerSideRendering/.test(window.navigator && window.navigator.userAgent);
 
 const useIsomorphicLayoutEffect = isSSR ? useEffect : useLayoutEffect;
-
-const MODE_ALWAYS_ASSUME_CHANGED_IF_UNAFFECTED = 0;
-const MODE_ALWAYS_ASSUME_UNCHANGED_IF_UNAFFECTED = (
-  MODE_ASSUME_UNCHANGED_IF_UNAFFECTED | MODE_ASSUME_UNCHANGED_IF_UNAFFECTED_IN_DEEP
-);
-const MODE_MUTABLE_ROOT_STATE = MODE_IGNORE_REF_EQUALITY; // only for root
-const MODE_DEFAULT = MODE_ASSUME_UNCHANGED_IF_UNAFFECTED; // only for root
-
-type Opts = any; // TODO types
 
 /**
  * useTrackedState hook
@@ -55,17 +37,8 @@ type Opts = any; // TODO types
  */
 export const useTrackedState = <State, Action extends ReduxAction<any>>(
   patchedStore: PatchedStore<State, Action>,
-  opts: Opts = {},
 ) => {
   const { mutableSource } = patchedStore;
-  const deepChangedMode = (
-    /* eslint-disable no-nested-ternary, indent, no-multi-spaces */
-      opts.unstable_forceUpdateForStateChange     ? MODE_ALWAYS_ASSUME_CHANGED_IF_UNAFFECTED
-    : opts.unstable_ignoreIntermediateObjectUsage ? MODE_ALWAYS_ASSUME_UNCHANGED_IF_UNAFFECTED
-    : opts.unstable_ignoreStateEquality           ? MODE_MUTABLE_ROOT_STATE
-    : /* default */                                 MODE_DEFAULT
-    /* eslint-enable no-nested-ternary, indent, no-multi-spaces */
-  );
   const [version, forceUpdate] = useReducer((c) => c + 1, 0);
   const affected = new WeakMap();
   const lastAffected = useRef<WeakMap<Record<string, unknown>, unknown>>();
@@ -79,7 +52,6 @@ export const useTrackedState = <State, Action extends ReduxAction<any>>(
         lastState.current,
         affected,
         new WeakMap(),
-        deepChangedMode,
       )) {
       prevState.current = lastState.current;
       forceUpdate();
@@ -98,7 +70,6 @@ export const useTrackedState = <State, Action extends ReduxAction<any>>(
           nextState,
           lastAffected.current,
           deepChangedCache,
-          deepChangedMode,
         )
       ) {
         // not changed
@@ -107,7 +78,7 @@ export const useTrackedState = <State, Action extends ReduxAction<any>>(
       prevState.current = nextState;
       return nextState;
     };
-  }, [version, deepChangedMode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [version]); // eslint-disable-line react-hooks/exhaustive-deps
   const state: State = useMutableSource(mutableSource, getSnapshot, subscribe);
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line react-hooks/rules-of-hooks
