@@ -13,6 +13,7 @@ Here's the index of those.
 [![CI](https://img.shields.io/github/workflow/status/dai-shi/reactive-react-redux/CI)](https://github.com/dai-shi/reactive-react-redux/actions?query=workflow%3ACI)
 [![npm](https://img.shields.io/npm/v/reactive-react-redux)](https://www.npmjs.com/package/reactive-react-redux)
 [![size](https://img.shields.io/bundlephobia/minzip/reactive-react-redux)](https://bundlephobia.com/result?p=reactive-react-redux)
+[![discord](https://img.shields.io/discord/627656437971288081)](https://discord.gg/MrQdmzd)
 
 React Redux binding with React Hooks and Proxy
 
