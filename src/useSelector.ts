@@ -10,7 +10,12 @@ import {
   Store,
 } from 'redux';
 
-import { PatchedStore, subscribe } from './patchStore';
+import { PatchedStore } from './patchStore';
+
+const subscribe = <State, Action extends ReduxAction<any>>(
+  store: Store<State, Action>,
+  callback: () => void,
+) => store.subscribe(callback);
 
 /**
  * useSelector hook
