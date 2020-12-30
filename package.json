@@ -1,7 +1,7 @@
 {
   "name": "reactive-react-redux",
   "description": "React Redux binding with React Hooks and Proxy",
-  "version": "5.0.0-alpha.6",
+  "version": "5.0.0-alpha.7",
   "publishConfig": {
     "tag": "next"
   },

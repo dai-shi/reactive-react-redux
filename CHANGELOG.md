@@ -1,7 +1,6 @@
 # Change Log
 
 ## [Unreleased]
-
 ### Changed
 - New API with useMutableSource (#48)
 
