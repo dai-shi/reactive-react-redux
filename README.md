@@ -1,3 +1,12 @@
+This project is no longer maintained.
+[react-tracked](https://react-tracked.js.org) works with react-redux
+and covers the use case of reactive-react-redux.
+Redux docs officially recommends [proxy-memoize](https://redux.js.org/usage/deriving-data-selectors#proxy-memoize) as a selector library,
+and it provides similar developer experience to that of reactive-react-redux.
+Both are good options.
+
+---
+
 There are several projects related to this repo.
 Here's the index of those.
 
@@ -6,7 +15,7 @@ Here's the index of those.
 - [react-redux #1503](https://github.com/reduxjs/react-redux/pull/1503): A pull request to add useTrackedState to the official react-redux library.
 - [proxy-memoize](https://github.com/dai-shi/proxy-memoize): This is another project which is not tied to React, but combined with useSelector, we get a similar functionality like useTrackedState.
 
-----
+---
 
 # reactive-react-redux
 
